@@ -84,8 +84,41 @@ def myMartinezSobolEstimator(distribution, size,model):
     sensitivityAnalysis = ot.MartinezSensitivityAlgorithm(inputDesign, outputDesign, size)
     return sensitivityAnalysis
 
+def mySaltelliSobolSequence(distribution, size,model):
+    sequence = ot.SobolSequence(distribution.getDimension())
+    experiment = ot.LowDiscrepancyExperiment(sequence, distribution, size)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    return sensitivity_algorithm
+
+def mySaltelliHaltonSequence(distribution, size,model):
+    sequence = ot.HaltonSequence(distribution.getDimension())
+    experiment = ot.LowDiscrepancyExperiment(sequence, distribution, size)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    return sensitivity_algorithm
+
+def mySaltelliSobolRandomizedSequence(distribution, size,model):
+    sequence = ot.SobolSequence(distribution.getDimension())
+    experiment = ot.LowDiscrepancyExperiment(sequence, distribution, size)
+    experiment.setRandomize(True)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    return sensitivity_algorithm
+
+def mySaltelliSamplingMethodQMCIndicesExperiment(distribution, size,model):
+    ot.ResourceMap.SetAsString('SobolIndicesExperiment-SamplingMethod', 'QMC')
+    inputDesign = ot.SobolIndicesExperiment(distribution, size, True).generate()
+    outputDesign = model(inputDesign)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
+    return sensitivity_algorithm
+
+def mySaltelliSamplingMethodLHSIndicesExperiment(distribution, size,model):
+    ot.ResourceMap.SetAsString('SobolIndicesExperiment-SamplingMethod', 'LHS')
+    inputDesign = ot.SobolIndicesExperiment(distribution, size, True).generate()
+    outputDesign = model(inputDesign)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
+    return sensitivity_algorithm
+
 def myBenchmark(myestimator,title):
-    n = 20
+    n = 18
     abserr = np.zeros((n,2*dimension))
     sizearray = np.zeros((n))
     size = 8
@@ -104,6 +137,7 @@ def myBenchmark(myestimator,title):
         size = size * 2
     
     # Figure
+    pl.figure()
     pl.plot(sizearray,abserr[:,0],"-",label="S1")
     pl.plot(sizearray,abserr[:,1],":",label="S2")
     pl.plot(sizearray,abserr[:,2],"--",label="S3")
@@ -119,6 +153,11 @@ def myBenchmark(myestimator,title):
     filename = title + ".pdf"
     pl.savefig(filename)
 
+myBenchmark(mySaltelliSobolRandomizedSequence,"SaltelliSobolRandomizeSequence")
+myBenchmark(mySaltelliHaltonSequence,"SaltelliHaltonSequence")
+myBenchmark(mySaltelliSobolSequence,"SaltelliSobolSequence")
+myBenchmark(mySaltelliSamplingMethodQMCIndicesExperiment,"SaltelliSamplingMethodQMC")
+myBenchmark(mySaltelliSamplingMethodLHSIndicesExperiment,"SaltelliSamplingMethodLHS")
 myBenchmark(mySaltelliSobolEstimator,"SaltelliSensitivityAlgorithm")
 myBenchmark(myJansenSobolEstimator,"JansenSensitivityAlgorithm")
 myBenchmark(myMauntzKucherenkoSobolEstimator,"MauntzKucherenkoSensitivityAlgorithm")
