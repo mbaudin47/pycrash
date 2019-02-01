@@ -1,31 +1,38 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jan 31 19:30:52 2019
+Estimates the sensitivity indices of Ishigami test function.
+Validation of the convergence of several estimators to the 
+exact solution. 
+The expected behaviour should be the one of a Monte-Carlo simulation, 
+i.e. the absolute error must decrease as 1/sqrt(n).
 
-@author: Gros
+References
+Introduction to sensitivity analysis with NISP
+Michael Baudin (EDF), Jean-Marc Martinez (CEA)
+Version 0.5, February 2014
+Section 4.5 "Summary of the results"
 """
 
 import openturns as ot
-from openturns.viewer import View
 from math import pi
 import numpy as np
 import pylab as pl
 
 def ishigamisa(a,b):
-    var = 1/2 + a**2/8 + b*pi**4/5 + b**2*pi**8/18
-    S1 = (1/2 + b*pi**4/5+b**2*pi**8/50)/var
+    var = 1.0/2 + a**2/8 + b*pi**4/5 + b**2*pi**8/18
+    S1 = (1.0/2 + b*pi**4/5+b**2*pi**8/50)/var
     S2 = (a**2/8)/var
     S3 = 0
-    S13 = b**2*pi**8/2*(1/9-1/25)/var
+    S13 = b**2*pi**8/2*(1.0/9-1.0/25)/var
     exact = {
             'expectation' : a/2, 
             'variance' : var,
-            'S1' : (1/2 + b*pi**4/5+b**2*pi**8/50)/var,
+            'S1' : (1.0/2 + b*pi**4/5+b**2*pi**8.0/50)/var,
             'S2' : (a**2/8)/var, 
             'S3' : 0,
             'S12' : 0,
             'S23' : 0,
-            'S13' : b**2*pi**8/2*(1/9-1/25)/var,
+            'S13' : S13,
             'S123' : 0,
             'ST1' : S1 + S13,
             'ST2' : S2,
