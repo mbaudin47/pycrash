@@ -77,24 +77,6 @@ first_order = sensitivityAnalysis.getFirstOrderIndices()
 total_order = sensitivityAnalysis.getTotalOrderIndices()
 print("S = %s " % (str(first_order)))
 print("ST = %s " % (str(total_order)))
-'''
-sequence = ot.SobolSequence(distribution.getDimension())
-experiment = ot.LowDiscrepancyExperiment(sequence, distribution, size)
-inputDesign = experiment.generate()
-outputDesign = model(inputDesign)
-salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
-first_order = salg.getFirstOrderIndices()
-total_order = salg.getTotalOrderIndices()
-print("S = %s " % (str(first_order)))
-print("ST = %s " % (str(total_order)))
-'''
-
-'''
-ot.ResourceMap.SetAsString('SobolIndicesExperiment-SamplingMethod', 'QMC')
-inputDesign = ot.SobolIndicesExperiment(distribution, size, False).generate()
-outputDesign = model(inputDesign)
-sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
-'''
 
 def generateSampleKernel(A,B,computeSecondOrder=False):
     '''
@@ -129,16 +111,35 @@ def generateByMonteCarlo(distribution, size, computeSecondOrder=False):
     design = generateSampleKernel(A,B,computeSecondOrder)
     return design
 
-inputDesign = generateByMonteCarlo(distribution, size)
-outputDesign = model(inputDesign)
-salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
-first_order = salg.getFirstOrderIndices()
-total_order = salg.getTotalOrderIndices()
-print("S = %s " % (str(first_order)))
-print("ST = %s " % (str(total_order)))
+def generateByLowDiscrepancy(distribution, size, computeSecondOrder=False):
+    '''
+    Generates the input DOE for the estimator of the Sobol' sensitivity 
+    indices.
+    Uses a Low Discrepancy sequence.
+    '''
+    dimension = distribution.getDimension()
+    # Create a doubled distribution
+    marginalList = [distribution.getMarginal(p) for p in range(dimension)]
+    twiceDistribution = ot.ComposedDistribution(marginalList*2)
+    # Generates a low discrepancy sequence in twice the dimension
+    sequence = ot.SobolSequence(2*dimension)
+    experiment = ot.LowDiscrepancyExperiment(sequence, twiceDistribution, size)
+    fullDesign = experiment.generate()
+    # Split the A and B designs
+    A = fullDesign[:,0:dimension] # A
+    B = fullDesign[:,dimension:2*dimension] # B
+    # Uses the kernel to generate the sample
+    design = generateSampleKernel(A,B,computeSecondOrder)
+    return design
 
-def myDedicatedMonteCarloExperiment(distribution, size,model):
+def myMonteCarloExperiment(distribution, size,model):
     inputDesign = generateByMonteCarlo(distribution, size)
+    outputDesign = model(inputDesign)
+    salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
+    return salg
+
+def myLowDiscrepancyExperiment(distribution, size,model):
+    inputDesign = generateByLowDiscrepancy(distribution, size)
     outputDesign = model(inputDesign)
     salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
     return salg
@@ -176,32 +177,20 @@ def myBenchmark(myestimator,title):
     pl.xscale("log")
     pl.yscale("log")
     pl.title(title)
-    filename = title + ".pdf"
-    pl.savefig(filename)
-
-myBenchmark(myDedicatedMonteCarloExperiment,"MonteCarloSampling")
+    pl.savefig(title + ".pdf")
+    pl.savefig(title + ".png")
 
 
-def generateByLowDiscrepancy(distribution, size, computeSecondOrder=False):
-    '''
-    Generates the input DOE for the estimator of the Sobol' sensitivity 
-    indices.
-    Uses a Low Discrepancy sequence.
-    '''
-    dimension = distribution.getDimension()
-    # Create a doubled distribution
-    marginalList = [distribution.getMarginal(p) for p in range(dimension)]
-    twiceDistribution = ot.ComposedDistribution(marginalList*2)
-    # Generates a low discrepancy sequence in twice the dimension
-    sequence = ot.SobolSequence(2*dimension)
-    experiment = ot.LowDiscrepancyExperiment(sequence, twiceDistribution, size)
-    fullDesign = experiment.generate()
-    # Split the A and B designs
-    A = fullDesign[:,0:dimension] # A
-    B = fullDesign[:,dimension:2*dimension] # B
-    # Uses the kernel to generate the sample
-    design = generateSampleKernel(A,B,computeSecondOrder)
-    return design
+
+inputDesign = generateByMonteCarlo(distribution, size)
+outputDesign = model(inputDesign)
+salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
+first_order = salg.getFirstOrderIndices()
+total_order = salg.getTotalOrderIndices()
+print("S = %s " % (str(first_order)))
+print("ST = %s " % (str(total_order)))
+
+myBenchmark(myMonteCarloExperiment,"MonteCarloSampling")
 
 inputDesign = generateByLowDiscrepancy(distribution, size)
 outputDesign = model(inputDesign)
@@ -211,10 +200,4 @@ total_order = salg.getTotalOrderIndices()
 print("S = %s " % (str(first_order)))
 print("ST = %s " % (str(total_order)))
 
-def myDedicatedLowDiscrepancyExperiment(distribution, size,model):
-    inputDesign = generateByLowDiscrepancy(distribution, size)
-    outputDesign = model(inputDesign)
-    salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
-    return salg
-
-myBenchmark(myDedicatedLowDiscrepancyExperiment,"LowDiscrepancySampling")
+myBenchmark(myLowDiscrepancyExperiment,"LowDiscrepancySampling")
