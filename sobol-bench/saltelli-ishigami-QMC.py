@@ -16,6 +16,10 @@ https://github.com/openturns/openturns/issues/1000
 
 The trick is to use a low discrepancy sequence with twice the dimension.
 
+Thanks to 
+* Bertrand Iooss
+* Régis Lebrun
+
 References
 Introduction to sensitivity analysis with NISP
 Michael Baudin (EDF), Jean-Marc Martinez (CEA)
@@ -132,6 +136,26 @@ def generateByLowDiscrepancy(distribution, size, computeSecondOrder=False):
     design = generateSampleKernel(A,B,computeSecondOrder)
     return design
 
+def generateByLHS(distribution, size, computeSecondOrder=False):
+    '''
+    Generates the input DOE for the estimator of the Sobol' sensitivity 
+    indices.
+    Uses a LHS design.
+    '''
+    dimension = distribution.getDimension()
+    # Create a doubled distribution
+    marginalList = [distribution.getMarginal(p) for p in range(dimension)]
+    twiceDistribution = ot.ComposedDistribution(marginalList*2)
+    # Generates a LHS in twice the dimension
+    experiment = ot.LHSExperiment(twiceDistribution, size)
+    fullDesign = experiment.generate()
+    # Split the A and B designs
+    A = fullDesign[:,0:dimension] # A
+    B = fullDesign[:,dimension:2*dimension] # B
+    # Uses the kernel to generate the sample
+    design = generateSampleKernel(A,B,computeSecondOrder)
+    return design
+
 def myMonteCarloExperiment(distribution, size,model):
     inputDesign = generateByMonteCarlo(distribution, size)
     outputDesign = model(inputDesign)
@@ -180,8 +204,6 @@ def myBenchmark(myestimator,title):
     pl.savefig(title + ".pdf")
     pl.savefig(title + ".png")
 
-
-
 inputDesign = generateByMonteCarlo(distribution, size)
 outputDesign = model(inputDesign)
 salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
@@ -200,4 +222,14 @@ total_order = salg.getTotalOrderIndices()
 print("S = %s " % (str(first_order)))
 print("ST = %s " % (str(total_order)))
 
-myBenchmark(myLowDiscrepancyExperiment,"LowDiscrepancySampling")
+myBenchmark(myLowDiscrepancyExperiment,"LowDiscrepancySampling-fixed")
+
+inputDesign = generateByLHS(distribution, size)
+outputDesign = model(inputDesign)
+salg = ot.SaltelliSensitivityAlgorithm(inputDesign, outputDesign, size)
+first_order = salg.getFirstOrderIndices()
+total_order = salg.getTotalOrderIndices()
+print("S = %s " % (str(first_order)))
+print("ST = %s " % (str(total_order)))
+
+myBenchmark(myLowDiscrepancyExperiment,"LHSSampling-fixed")

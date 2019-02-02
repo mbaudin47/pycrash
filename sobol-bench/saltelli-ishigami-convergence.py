@@ -91,13 +91,13 @@ def myMartinezSobolEstimator(distribution, size,model):
     sensitivityAnalysis = ot.MartinezSensitivityAlgorithm(inputDesign, outputDesign, size)
     return sensitivityAnalysis
 
-def mySaltelliSobolSequence(distribution, size,model):
+def mySobolLowDiscrepancyExperiment(distribution, size,model):
     sequence = ot.SobolSequence(distribution.getDimension())
     experiment = ot.LowDiscrepancyExperiment(sequence, distribution, size)
     sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
     return sensitivity_algorithm
 
-def mySaltelliHaltonSequence(distribution, size,model):
+def myHaltonLowDiscrepancyExperiment(distribution, size,model):
     sequence = ot.HaltonSequence(distribution.getDimension())
     experiment = ot.LowDiscrepancyExperiment(sequence, distribution, size)
     sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
@@ -109,6 +109,37 @@ def mySaltelliSobolRandomizedSequence(distribution, size,model):
     experiment.setRandomize(True)
     sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
     return sensitivity_algorithm
+
+def myLHSExperiment(distribution, size,model):
+    experiment = ot.LHSExperiment(distribution, size)
+    # lhs.setAlwaysShuffle(True) # randomized = works
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    return sensitivity_algorithm
+
+def myMonteCarloExperiment(distribution, size,model):
+    experiment = ot.MonteCarloExperiment(distribution, size)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    return sensitivity_algorithm
+
+def myImportanceSamplingExperiment(distribution, size,model):
+    experiment = ot.ImportanceSamplingExperiment(distribution, distribution,size)
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    # Fails : this is good
+    return sensitivity_algorithm
+
+def myOptimalLHSExperiment(distribution, size,model):
+    # Build standard randomized LHS algorithm
+    lhs = ot.LHSExperiment(distribution, size)
+    #lhs.setAlwaysShuffle(False) # randomized
+    # Defining space fillings
+    spaceFilling = ot.SpaceFillingC2()
+    # RandomBruteForce MonteCarlo with N designs (LHS with C2 optimization)
+    N = 10000
+    optimalLHSAlgorithm = ot.MonteCarloLHS(lhs, N, spaceFilling)
+    experiment = optimalLHSAlgorithm.getLHS()
+    sensitivity_algorithm = ot.SaltelliSensitivityAlgorithm(experiment, model)
+    return sensitivity_algorithm
+
 
 def mySaltelliSamplingMethodQMCIndicesExperiment(distribution, size,model):
     ot.ResourceMap.SetAsString('SobolIndicesExperiment-SamplingMethod', 'QMC')
@@ -157,15 +188,23 @@ def myBenchmark(myestimator,title):
     pl.xscale("log")
     pl.yscale("log")
     pl.title(title)
-    filename = title + ".pdf"
-    pl.savefig(filename)
+    pl.savefig(title + ".pdf")
+    #pl.savefig(title + ".png")
 
+
+
+myBenchmark(myLHSExperiment,"LHSExperiment")
+
+'''
+myBenchmark(myOptimalLHSExperiment,"OptimalLHSExperiment")
+myBenchmark(myMonteCarloExperiment,"MonteCarloExperiment")
 myBenchmark(mySaltelliSobolRandomizedSequence,"SaltelliSobolRandomizeSequence")
-myBenchmark(mySaltelliHaltonSequence,"SaltelliHaltonSequence")
-myBenchmark(mySaltelliSobolSequence,"SaltelliSobolSequence")
+myBenchmark(myHaltonLowDiscrepancyExperiment,"HaltonLowDiscrepancyExperiment")
+myBenchmark(mySobolLowDiscrepancyExperiment,"SobolLowDiscrepancyExperiment")
 myBenchmark(mySaltelliSamplingMethodQMCIndicesExperiment,"SaltelliSamplingMethodQMC")
 myBenchmark(mySaltelliSamplingMethodLHSIndicesExperiment,"SaltelliSamplingMethodLHS")
 myBenchmark(mySaltelliSobolEstimator,"SaltelliSensitivityAlgorithm")
 myBenchmark(myJansenSobolEstimator,"JansenSensitivityAlgorithm")
 myBenchmark(myMauntzKucherenkoSobolEstimator,"MauntzKucherenkoSensitivityAlgorithm")
 myBenchmark(myMartinezSobolEstimator,"MartinezSensitivityAlgorithm")
+'''
