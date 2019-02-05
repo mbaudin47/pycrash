@@ -10,48 +10,17 @@
 
 \title{OpenTURNS and its graphical interface}
 
-\author{
-	Michaël Baudin$^1$
-	\and
-Anne Dutfoy$^1$
-	\and
-Anthony Geay$^1$
-	\and
-Ovidiu Mircescu$^1$
-	\and
-Thibault Delage$^1$
-	\and
-Aurélie Ladier$^2$
-	\and
-Julien Schueller$^2$
-	\and
-Thierry Yalamas$^2$
-}
-
-
-%\author[1]{Michaël Baudin}
-%\author[1]{Anne Dutfoy}
-%\author[1]{Anthony Geay}
-%\author[1]{Ovidiu Mircescu}
-%\author[1]{Thibault Delage}
-%\author[2]{Aurélie Ladier}
-%\author[2]{Julien Schueller}
-%\author[2]{Thierry Yalamas}
-%\affil[1]{Phimeca Engineering. 18/20 boulevard de Reuilly, 75012 Paris - France, yalamas@phimeca.com}
-%\affil[2]{EDF R\&D. 6, quai Watier, 78401, Chatou Cedex - France, michael.baudin@edf.fr}
+\author[1]{Michaël Baudin}
+\author[1]{Anne Dutfoy}
+\author[1]{Anthony Geay}
+\author[1]{Thibault Delage}
+\author[2]{Aurélie Ladier}
+\author[2]{Julien Schueller}
+\author[2]{Thierry Yalamas}
+\affil[1]{Phimeca Engineering. 18/20 boulevard de Reuilly, 75012 Paris - France, yalamas@phimeca.com}
+\affil[2]{EDF R\&D. 6, quai Watier, 78401, Chatou Cedex - France, michael.baudin@edf.fr}
 
 \maketitle
-
-\begin{center}
-$^1$ EDF R\&D. 6, quai Watier,
-	78401, Chatou Cedex - France,
-	michael.baudin@edf.fr
-
-$^2$ Phimeca Engineering.
-18/20 boulevard de Reuilly, 
-75012 Paris - France,  \\
-yalamas@phimeca.com
-\end{center}
 
 
 \abstract{
@@ -192,8 +161,8 @@ import pylab as pl
 \end{lstlisting}
 
 
-We first define the function through which we want to propagate the uncertainties with the 
-\pyobj{def} operator.
+We first define the function through which we want to propagate the 
+uncertainties with the \pyobj{def} operator.
 
 \lstset{language=Python}
 \begin{lstlisting}
@@ -211,7 +180,7 @@ def functionFlood(X) :
 \end{lstlisting}
 
 Then we convert this Python function into an OpenTURNS function with the 
-\pyobj{PythonFunction} class. 
+\pyobj{Python\-Function} class. 
 
 \lstset{language=Python}
 \begin{lstlisting}
