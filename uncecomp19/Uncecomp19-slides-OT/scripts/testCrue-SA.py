@@ -1,4 +1,14 @@
-from openturns.viewer import View
+'''
+Perform sensitivity analysis on the Crue test-case. 
+
+Reference
+SaltelliSensitivityAlgorithm with LowDiscrepancyExperiment produces wrong results
+https://github.com/openturns/openturns/issues/1005
+
+The draw method of SobolSimulationAlgorithm can make OpenTURNS crash
+https://github.com/openturns/openturns/issues/1001
+'''
+
 import openturns as ot
 from math import sqrt
 import pylab as pl
@@ -39,7 +49,9 @@ def progress(percent):
     print('-- progress=%.2f %%' % (percent))
 
 alpha = 0.05
-blockSize = 50
+epsilon = 0.2
+blocksize = 50
+batchsize = 16
 
 # By Chaos
 S_exact = [0.489983, 0.166346, 0.320333, 0.00589773]
@@ -52,10 +64,10 @@ estimator = ot.SaltelliSensitivityAlgorithm()
 estimator.setUseAsymptoticDistribution(True)
 algo = ot.SobolSimulationAlgorithm(X, g, estimator)
 algo.setMaximumOuterSampling(100) # number of iterations
-algo.setBlockSize(blockSize) # size of Sobol experiment at each iteration
-algo.setBatchSize(16) # number of points evaluated simultaneously
+algo.setBlockSize(blocksize) # size of Sobol experiment at each iteration
+algo.setBatchSize(batchsize) # number of points evaluated simultaneously
 algo.setIndexQuantileLevel(alpha) # alpha
-algo.setIndexQuantileEpsilon(0.2) # epsilon
+algo.setIndexQuantileEpsilon(epsilon) # epsilon
 #algo.setProgressCallback(progress)
 algo.run()
 result = algo.getResult()
@@ -73,19 +85,22 @@ pl.plot(range(input_dimension),to,"bo",label="Total Order")
 pl.xlabel("Inputs")
 pl.ylabel("Sensitivity indices")
 size = g.getEvaluationCallsNumber()
-pl.title("Sobol' indices - n=%d - 1-alpha=%.4f %%" % (size,(1-alpha)*100))
+pl.title("Sobol' indices - n=%d - 1-alpha=%.2f %%" % (size,(1-2*alpha)*100))
 pl.axis([-0.5,input_dimension-0.5,-0.1,1.1])
 print("Level alpha=%.4f" % (alpha))
 for i in range(input_dimension):
     dist_fo_i = dist_fo.getMarginal(i)
     dist_to_i = dist_to.getMarginal(i)
-    fo_ci = dist_fo_i.computeBilateralConfidenceInterval(1-alpha)
-    to_ci = dist_to_i.computeBilateralConfidenceInterval(1-alpha)
+    fo_ci = dist_fo_i.computeBilateralConfidenceInterval(1-2*alpha)
+    to_ci = dist_to_i.computeBilateralConfidenceInterval(1-2*alpha)
     fo_ci_a = fo_ci.getLowerBound()[0]
     fo_ci_b = fo_ci.getUpperBound()[0]
     to_ci_a = to_ci.getLowerBound()[0]
     to_ci_b = to_ci.getUpperBound()[0]
     print("X%d, S in [%.4f,%.4f], ST in [%.4f,%.4f]" % (i,fo_ci_a,fo_ci_b,to_ci_a,to_ci_b))
+    fo_cilength = fo_ci_b - fo_ci_a
+    to_cilength = to_ci_b - to_ci_a
+    print("    C.I.Length S - = %.4f, ST - = %.4f" % (fo_cilength, to_cilength))
     pl.plot([i,i],[fo_ci_a,fo_ci_b],"r-")
     pl.plot([i,i],[to_ci_a,to_ci_b],"b-")
 pl.legend()
@@ -99,7 +114,7 @@ for i in range(input_dimension):
 Nombre d'évaluations
 
 '''
-nbiter = outerSampling * blockSize
+nbiter = outerSampling * blocksize
 print("Nb iterations = %d" % (nbiter))
 nbfunceval = nbiter * (input_dimension + 2)
 print("Nb function evaluations = %d" % (nbfunceval))
