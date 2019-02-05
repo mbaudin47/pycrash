@@ -10,6 +10,7 @@ https://github.com/openturns/openturns/issues/1001
 '''
 
 import openturns as ot
+from openturns.viewer import View
 from math import sqrt
 import pylab as pl
 
@@ -104,6 +105,7 @@ for i in range(input_dimension):
     pl.plot([i,i],[fo_ci_a,fo_ci_b],"r-")
     pl.plot([i,i],[to_ci_a,to_ci_b],"b-")
 pl.legend()
+pl.savefig("crue-Sobol-indices.pdf")
 
 for i in range(input_dimension):
     dist_fo_i = dist_fo.getMarginal(i)
@@ -119,10 +121,6 @@ print("Nb iterations = %d" % (nbiter))
 nbfunceval = nbiter * (input_dimension + 2)
 print("Nb function evaluations = %d" % (nbfunceval))
 
-'''
-View(algo.drawFirstOrderIndexConvergence())
-View(algo.drawTotalOrderIndexConvergence())
-
 for i in range(input_dimension):
     dist_fo_i = dist_fo.getMarginal(i)
     graph = dist_fo_i.drawPDF()
@@ -130,12 +128,19 @@ for i in range(input_dimension):
     graph.setXTitle("S%d" % (i))
     graph.setLegends([""])
     View(graph)
+    pl.savefig("S%d-distribution.pdf" % (i))
     dist_to_i = dist_to.getMarginal(i)
     graph = dist_to_i.drawPDF()
     graph.setTitle("ST%d" % (i))
     graph.setXTitle("ST%d" % (i))
     graph.setLegends([""])
     View(graph)
+    pl.savefig("ST%d-distribution.pdf" % (i))
+
+'''
+View(algo.drawFirstOrderIndexConvergence())
+View(algo.drawTotalOrderIndexConvergence())
+
 
 '''
 

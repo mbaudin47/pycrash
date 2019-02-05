@@ -8,8 +8,10 @@ ot.RandomGenerator.SetSeed(0)
 # 1. The function G
 def functionCrue(X) :
     Q, Ks, Zv, Zm = X
-    alpha = (Zm - Zv)/5.0e3
-    H = (Q/(Ks*300.0*sqrt(alpha)))**(3.0/5.0)
+    L = 5.0e3
+    B = 300.0
+    alpha = (Zm - Zv)/L
+    H = (Q/(Ks*B*sqrt(alpha)))**(3.0/5.0)
     S = [H + Zv]
     return S
 
@@ -45,27 +47,45 @@ View(Zm.drawPDF()).show()
 X = ot.ComposedDistribution([Q, Ks, Zv, Zm])
 Y = ot.RandomVector(g, ot.RandomVector(X))
 
+
+# 6. Estimate expectation with algorithm
+algo = ot.ExpectationSimulationAlgorithm(Y)
+algo.setMaximumOuterSampling(1000)
+algo.setBlockSize(10)
+algo.setMaximumCoefficientOfVariation(0.001)
+algo.run()
+result = algo.getResult()
+expectation = result.getExpectationEstimate()
+print("Mean by ESA = %f " % expectation[0])
+expectationDistribution = result.getExpectationDistribution()
+graph = expectationDistribution.drawPDF()
+graph.setTitle("")
+graph.setXTitle("Mean river height estimate")
+graph.setLegends([""])
+View(graph)
+pl.savefig("MeanDistribution.pdf")
+
+# Check accuracy
+n = g.getCallsNumber()
+print("Number of calls to G = %d" % n)
+cv = result.getCoefficientOfVariation()[0]
+print("Coef. of var.=%.6f" % (cv))
+outputSample = g.getOutputHistory()
+e = outputSample.computeMean()[0]
+s = outputSample.computeStandardDeviationPerComponent()[0]
+trueCV = s/e/sqrt(n)
+print("True CV=%f" % (trueCV))
+
+'''
 # 5. Estimate expectation with simple Monte-Carlo
 sampleSize = 10000
 sampleX = X.getSample(sampleSize)
 sampleY = g(sampleX)
 sampleMean = sampleY.computeMean()
 print("Mean by MC = %f" % (sampleMean[0]))
+'''
 
-# 6. Estimate expectation with algorithm
-algo = ot.ExpectationSimulationAlgorithm(Y)
-algo.setMaximumOuterSampling(1000)
-algo.setBlockSize(1)
-algo.setCoefficientOfVariationCriterionType('NONE')
-algo.run()
-result = algo.getResult()
-expectation = result.getExpectationEstimate()
-print("Mean by ESA = %f " % expectation[0])
-expectationDistribution = result.getExpectationDistribution()
-
-View(expectationDistribution.drawPDF())
-pl.savefig("MeanDistribution.pdf")
-
+'''
 # Sensitivity analysis
 estimator = ot.SaltelliSensitivityAlgorithm()
 estimator.setUseAsymptoticDistribution(True)
@@ -89,3 +109,4 @@ saest = algo.getEstimator()
 # View(saest.draw()) Fail
 
 View(saest.DrawSobolIndices(["Q","Ks","Zv","Zm"],fo,to))
+'''
