@@ -1,0 +1,92 @@
+% Michaël Baudin, 2017
+\documentclass{article}
+
+\include{macros}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\title{The Delta-Method applied to Sobol' indices}
+
+\author{Michaël Baudin}
+
+\maketitle
+
+
+\abstract{
+We explore the use of the Delta-method in order to estimate 
+the Sobol' indices.
+}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Convergence in distribution}
+
+\begin{definition}
+(\emph{Convergence in distribution})
+Assume that $X_1,X_2,...$ is a sequence of real-valued random variables 
+with cumulative distribution functions $\{F_n\}_{n\geq 0}$. 
+Assume that $X$ is a real-valued random variable 
+with cumulative distribution function $\{F\}_{n\geq 0}$. 
+The sequence $X_n$ converges in distribution to $X$ if:
+$$
+\lim_{n\rightarrow \infty} F_n(X_n)=F(x).
+$$
+for any $x\in \RR$ at which $F$ is continuous.
+In this case, we write:
+$$
+X_n \xrightarrow{D} X.
+$$
+\end{definition}
+
+The following theorem gives an example of such convergence. 
+
+\begin{theorem}
+(\emph{Maximum of uniform random numbers})
+Assume that $X_1,X_2,...$ are independent random numbers such that $X_n\sim U(0,1)$. 
+Let $Y_n$ be the maximum:
+$$
+Y_n = \max_{1\leq i\leq n}  X_i.
+$$
+Therefore the sequence $Y_n$ converges in distribution to an exponential random variable, i.e.:
+$$
+n(1-Y_n) \xrightarrow{D} \mathcal{E}(1).
+$$
+\end{theorem}
+
+\begin{proof}
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Delta method}
+
+\begin{theorem}
+(\emph{Delta-method})
+Assume that $X_1,X_2,...$ is a sequence of real-valued random variables 
+so that 
+$$
+\sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}(0,\sigma^2).
+$$
+Assume that $g$ is a real function. 
+Let $\theta\in\RR$ and suppose that $g'(\theta)$ exists and that $g'(\theta)\neq 0$. 
+Therefore, 
+$$
+\sqrt{n} (g(X_n) - g(\theta)) \xrightarrow{D} \mathcal{N}(0,\sigma^2 g'(\theta)^2).
+$$
+\end{theorem}
+
+%
+% BibTeX users please use
+\bibliographystyle{plain}
+\bibliography{deltasobol}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
