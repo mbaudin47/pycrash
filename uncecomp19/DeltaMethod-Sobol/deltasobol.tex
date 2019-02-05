@@ -52,34 +52,200 @@ Let $Y_n$ be the maximum:
 $$
 Y_n = \max_{1\leq i\leq n}  X_i.
 $$
-Therefore the sequence $Y_n$ converges in distribution to an exponential random variable, i.e.:
+Therefore the sequence $n(1-Y_n)$ converges in distribution to an exponential random variable, i.e.:
 $$
 n(1-Y_n) \xrightarrow{D} \mathcal{E}(1).
 $$
 \end{theorem}
 
 \begin{proof}
+By definition, the exponential distribution with rate $\lambda$ has the cumulative distribution function:
+$$
+F(y) = 1 - \exp(-\lambda y),
+$$
+for any real $y\geq 0$.
+With $\lambda=1$ we must prove that:
+$$
+F(y) = 1 - \exp(-y),
+$$
+for any real $y\geq 0$. 
+Let $F_n$ be the cumulative distribution function of the random variable $n(1-Y_n)$. 
+By definition of the cumulative distribution function, 
+\begin{align*}
+F_n(z) 
+&= P(n(1-Y_n)\leq z) \\
+&= P(1-Y_n\leq z/n) \\
+&= P(1-z/n\leq Y_n) \\
+&= 1-P(Y_n\leq 1-z/n),
+\end{align*}
+for any $z\in\RR$. 
+However, the cumulative distribution function of the maximum is: 
+\begin{align*}
+P(Y_n\leq y)
+& = P(X_1\leq y, X_2\leq y,..., X_n\leq y) \\
+& = P(X_1\leq y)P(X_2\leq y) \cdots P(X_n\leq y) \textrm{ (by independence)}\\
+& = y y \cdots y \textrm{ (by definition of the C.D.F. of a uniform random variable)}\\
+& = y^n,
+\end{align*}
+for any $y\in[0,1]$. 
+Therefore, 
+\begin{align*}
+F_n(z) 
+&= 1-(1-z/n)^n
+\end{align*}
+for any $z\in\RR$. 
+But 
+\begin{align*}
+\lim_{n\rightarrow \infty} (1+z/n)^n = \exp(z)
+\end{align*}
+for any $z\in\RR$. 
+Therefore,
+\begin{align*}
+\lim_{n\rightarrow\infty} F_n(z) 
+&= 1-\exp(-z)
+\end{align*}
+for any $z\in\RR$ which concludes the proof.
 \end{proof}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Convergence in probability}
+
+\begin{definition}
+(\emph{Convergence in probability})
+Assume that $X_1,X_2,...$ is a sequence of real-valued random variables. 
+The sequence $X_n$ converges in probability to $X$ if, for any $\epsilon>0$:
+$$
+\lim_{n\rightarrow \infty} P(|X_n-X|>\epsilon)=0.
+$$
+In this case, we write:
+$$
+X_n \xrightarrow{P} X.
+$$
+\end{definition}
+
+\begin{theorem}
+\label{theo-doubleproba}
+Assume that $X$ and $Y$ are random variables. 
+Let $y\in\RR$ and let $\epsilon>0$. 
+Therefore
+$$
+P(Y\leq y) \leq P(X\leq y+\epsilon) + P(|Y-X|> \epsilon)
+$$
+\end{theorem}
+
+\begin{proof}
+\begin{align*}
+P(Y\leq y)
+& = P(Y\leq y,X\leq y+\epsilon)+P(Y\leq y,X> y+\epsilon).
+\end{align*}
+But $P(Y\leq y,X\leq y+\epsilon) \leq P(X\leq y+\epsilon)$, which implies :
+\begin{align*}
+P(Y\leq y)
+& \leq P(X\leq y+\epsilon)+P(Y\leq y,X> y+\epsilon) \\
+& \leq P(X\leq y+\epsilon)+P(Y-X\leq y-X, y+\epsilon<X) \\
+& \leq P(X\leq y+\epsilon)+P(Y-X\leq y-X, y-X <-\epsilon).
+\end{align*}
+Moreover, we have $P(Y-X\leq y-X, y-X <-\epsilon)\leq P(Y-X<-\epsilon)$ which implies : 
+\begin{align*}
+P(Y\leq y)
+& \leq P(X\leq y+\epsilon)+P(Y-X<-\epsilon).
+\end{align*}
+By definition of a probability, we have $P(Y-X>\epsilon)\geq 0$. 
+Therefore, 
+\begin{align*}
+P(Y\leq y)
+& \leq P(X\leq y+\epsilon)+P(Y-X<-\epsilon) + P(Y-X>\epsilon) \\
+& \leq P(X\leq y+\epsilon)+P(|Y-X|<\epsilon) 
+\end{align*}
+which concludes the proof.
+\end{proof}
+
+\begin{theorem}
+(\emph{Convergence in probability implies convergence in distribution})
+Assume that $X_1,X_2,...$ is a sequence of real-valued random variables. 
+If 
+$$
+X_n \xrightarrow{P} X
+$$
+then
+$$
+X_n \xrightarrow{D} X.
+$$
+\end{theorem}
+
+\begin{proof}
+TODO
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Delta method}
 
 \begin{theorem}
+(\emph{Slutky's theorem})
+Let $X_n$ and $Y_n$ be two sequences of real random variables such that:
+$$
+X_n \xrightarrow{D} X \quad \textrm{ and } \quad Y_n \xrightarrow{D} c,
+$$
+where $c$ is a non-random constant. 
+Therefore, 
+$$
+X_n Y_n \xrightarrow{D} c X.
+$$
+\end{theorem}
+
+\begin{proof}
+TODO
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}
 (\emph{Delta-method})
 Assume that $X_1,X_2,...$ is a sequence of real-valued random variables 
 so that 
-$$
+\begin{align}
+\label{eq-delmeth1}
 \sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}(0,\sigma^2).
-$$
+\end{align}
 Assume that $g$ is a real function. 
-Let $\theta\in\RR$ and suppose that $g'(\theta)$ exists and that $g'(\theta)\neq 0$. 
+Let $\theta\in\RR$. 
+Suppose that $g\in C^1(\RR)$ and that $g'(\theta)\neq 0$. 
 Therefore, 
 $$
 \sqrt{n} (g(X_n) - g(\theta)) \xrightarrow{D} \mathcal{N}(0,\sigma^2 g'(\theta)^2).
 $$
 \end{theorem}
+
+\begin{proof}
+The Taylor expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}$ between 
+$X_n$ and $\theta$ such that:
+$$
+g(X_n) = g(\theta) + g'(\tilde{\theta})(X_n-\theta) + O((X_n-\theta)^2), \quad X_n \rightarrow \theta.
+$$
+This implies:
+$$
+\sqrt{n} (g(X_n) - g(\theta)) = g'(\theta) \sqrt{n} (X_n-\theta) + O((X_n-\theta)^2), \quad X_n \rightarrow \theta.
+$$
+Let $Y_n$ and $Z_n$ be the sequences of random variables defined by the equations:
+$$
+Y_n = g'(\theta) \sqrt{n} (X_n-\theta) \textrm{ and } Z_n = O((X_n-\theta)^2).
+$$
+The properties of the gaussian distribution and the equation \ref{eq-delmeth1} imply:
+$$
+Y_n =g'(\theta) \sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}(0,\sigma^2 g'(\theta)^2).
+$$
+Furthermore, 
+$$
+Z_n = O((X_n-\theta)^2)  \xrightarrow{D} 0.
+$$
+In order to conclude the proof, we apply Slutky's theorem to $Y_n$ and $Z_n$. 
+\end{proof}
+
+\section{References}
+
+Most of the results in this document can be found in \cite{Vaart2000}.
 
 %
 % BibTeX users please use
