@@ -27,11 +27,12 @@ the Sobol' indices.
 \section{Convergence in distribution}
 
 \begin{definition}
+\label{def-convdistr}
 (\emph{Convergence in distribution})
 Assume that $X_1,X_2,...$ is a sequence of real-valued random variables 
 with cumulative distribution functions $\{F_n\}_{n\geq 0}$. 
 Assume that $X$ is a real-valued random variable 
-with cumulative distribution function $\{F\}_{n\geq 0}$. 
+with cumulative distribution function $F$. 
 The sequence $X_n$ converges in distribution to $X$ if:
 $$
 \lim_{n\rightarrow \infty} F_n(X_n)=F(x).
@@ -129,9 +130,10 @@ $$
 Assume that $X$ and $Y$ are random variables. 
 Let $y\in\RR$ and let $\epsilon>0$. 
 Therefore
-$$
+\begin{align}
+\label{eq-doubleproba}
 P(Y\leq y) \leq P(X\leq y+\epsilon) + P(|Y-X|> \epsilon)
-$$
+\end{align}
 \end{theorem}
 
 \begin{proof}
@@ -155,13 +157,17 @@ By definition of a probability, we have $P(Y-X>\epsilon)\geq 0$.
 Therefore, 
 \begin{align*}
 P(Y\leq y)
-& \leq P(X\leq y+\epsilon)+P(Y-X<-\epsilon) + P(Y-X>\epsilon) \\
-& \leq P(X\leq y+\epsilon)+P(|Y-X|<\epsilon) 
+& \leq P(X\leq y+\epsilon)+P(Y-X<-\epsilon) + P(Y-X>\epsilon)
 \end{align*}
-which concludes the proof.
+which leads to the equation \ref{eq-doubleproba} and concludes the proof.
 \end{proof}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Convergence in probability implies convergence in distribution}
+
 \begin{theorem}
+\label{theo-convprovdist}
 (\emph{Convergence in probability implies convergence in distribution})
 Assume that $X_1,X_2,...$ is a sequence of real-valued random variables. 
 If 
@@ -175,7 +181,77 @@ $$
 \end{theorem}
 
 \begin{proof}
-TODO
+Assume that $\{F_n\}_{n\geq 0}$ are the cumulative distribution functions of $X_1,X_2,...$. 
+Assume that $X$ is a real-valued random variable 
+with cumulative distribution function $F$ and that 
+$X_n \xrightarrow{P} X$. 
+Let $x\in \RR$ be a point at which $F$ is continuous.
+By the definition \ref{def-convdistr} we must prove that 
+\begin{align}
+\label{eq-convprovdist1}
+\lim_{n\rightarrow \infty} F_n(X_n)=F(x).
+\end{align}
+
+Let $\epsilon>0$. 
+
+First, we first apply the theorem \ref{theo-doubleproba} to the random variables $X_n$ and $X$. 
+The equation \ref{eq-doubleproba} implies:
+\begin{align*}
+P(X_n\leq x) \leq P(X\leq x+\epsilon) + P(|X_n-X|> \epsilon).
+\end{align*}
+By hypothesis, the sequence $X_1,X_2,...$ converges in probability to $X$, which 
+implies:
+\begin{align*}
+\lim_{n\rightarrow \infty} P(X_n\leq x) \leq P(X\leq x+\epsilon).
+\end{align*}
+since 
+$\lim_{n\rightarrow \infty} P(|X_n-X|> \epsilon) = 0$. 
+By definition of the cumulatif distribution function $F$, this implies:
+\begin{align}
+\label{eq-convprovdist2}
+\lim_{n\rightarrow \infty} P(X_n\leq x) \leq F(x+\epsilon).
+\end{align}
+
+Secondly, we consider the theorem \ref{theo-doubleproba} and derive a similar  
+inequality. 
+In the equation \ref{eq-doubleproba}, we exchange the random variables $X$ and $Y$:
+\begin{align*}
+P(X\leq y) \leq P(Y\leq y+\epsilon) + P(|X-Y|> \epsilon)
+\end{align*}
+and we apply the inequality to the real $y-\epsilon$; this leads to:
+\begin{align*}
+P(X\leq y-\epsilon) \leq P(Y\leq y) + P(|X-Y|> \epsilon).
+\end{align*}
+
+Back to the theorem \ref{theo-convprovdist}, we apply the previous inequality 
+to the random variables $X$ and $X_n$, at the point $x$. 
+We obtain:
+\begin{align*}
+P(X\leq x-\epsilon) \leq P(X_n\leq x) + P(|X-X_n|> \epsilon).
+\end{align*}
+By hypothesis, the sequence $X_1,X_2,...$ converges in probability to $X$, which 
+implies:
+\begin{align*}
+P(X\leq x-\epsilon) \leq \lim_{n\rightarrow \infty} P(X_n\leq x) .
+\end{align*}
+By definition of the cumulatif distribution function $F$, this implies:
+\begin{align}
+\label{eq-convprovdist3}
+F(x-\epsilon) \leq \lim_{n\rightarrow \infty} P(X_n\leq x) .
+\end{align}
+
+Combining the inequalities \ref{eq-convprovdist2} and \ref{eq-convprovdist3}, we obtain: 
+\begin{align*}
+F(x-\epsilon) \leq \lim_{n\rightarrow \infty} P(X_n\leq x)  \leq F(x+\epsilon).
+\end{align*}
+The function $F$ is, by hypothesis, continuous at the point $x$ which implies than we can take 
+the limit of the previous inequality when $\epsilon\rightarrow 0$. 
+This implies:
+\begin{align*}
+F(x) \leq \lim_{n\rightarrow \infty} P(X_n\leq x)  \leq F(x)
+\end{align*}
+which leads to the equation \ref{eq-convprovdist1} and concludes the proof.
+
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,12 +262,31 @@ TODO
 (\emph{Slutky's theorem})
 Let $X_n$ and $Y_n$ be two sequences of real random variables such that:
 $$
-X_n \xrightarrow{D} X \quad \textrm{ and } \quad Y_n \xrightarrow{D} c,
+X_n \xrightarrow{D} X \quad \textrm{ and } \quad Y_n \xrightarrow{P} c,
 $$
 where $c$ is a non-random constant. 
 Therefore, 
 $$
 X_n Y_n \xrightarrow{D} c X.
+$$
+\end{theorem}
+
+\begin{proof}
+TODO
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}
+(\emph{Continuous mapping})
+Let $X_n$ be a sequence of real random variables such that:
+$$
+X_n \xrightarrow{D} X.
+$$
+Assume that $g$ is a continous function on $\RR$. 
+Therefore:
+$$
+g(X_n) \xrightarrow{D} g(X).
 $$
 \end{theorem}
 
@@ -219,6 +314,8 @@ $$
 \end{theorem}
 
 \begin{proof}
+*TODO : fix this proof, which is wrong.*
+
 The Taylor expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}$ between 
 $X_n$ and $\theta$ such that:
 $$
