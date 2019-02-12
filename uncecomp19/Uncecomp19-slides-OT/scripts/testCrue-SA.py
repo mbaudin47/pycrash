@@ -28,6 +28,7 @@ def functionCrue(X) :
 input_dimension = 4
 
 g = ot.PythonFunction(input_dimension, 1, functionCrue) 
+g = ot.MemoizeFunction(g)
 
 # 2. Random vector definition
 myParamQ = ot.GumbelAB(1013., 558.)
