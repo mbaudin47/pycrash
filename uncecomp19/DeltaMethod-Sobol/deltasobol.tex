@@ -46,9 +46,9 @@ $$
 
 The following theorem gives an example of such convergence. 
 
-\begin{theorem}
+\begin{example}
 (\emph{Maximum of uniform random numbers})
-Assume that $X_1,X_2,...$ are independent random numbers such that $X_n\sim U(0,1)$. 
+Assume that $X_1,X_2,...$ are independent uniform random numbers such that $X_n\sim \mathcal{U} (0,1)$. 
 Let $Y_n$ be the maximum:
 $$
 Y_n = \max_{1\leq i\leq n}  X_i.
@@ -57,7 +57,7 @@ Therefore the sequence $n(1-Y_n)$ converges in distribution to an exponential ra
 $$
 n(1-Y_n) \xrightarrow{D} \mathcal{E}(1).
 $$
-\end{theorem}
+\end{example}
 
 \begin{proof}
 By definition, the exponential distribution with rate $\lambda$ has the cumulative distribution function:
@@ -65,7 +65,7 @@ $$
 F(y) = 1 - \exp(-\lambda y),
 $$
 for any real $y\geq 0$.
-With $\lambda=1$ we must prove that:
+We apply the previous equality to $\lambda=1$ which shows that we must prove that:
 $$
 F(y) = 1 - \exp(-y),
 $$
@@ -125,6 +125,46 @@ X_n \xrightarrow{P} X.
 $$
 \end{definition}
 
+\begin{example}
+(\emph{Convergence of an exponential random variable})
+Assume that $X_1,X_2,...$ are independent random numbers such that $X_n\sim \mathcal{E}xp(n)$. 
+Therefore the sequence $X_n$ converges in probability to the zero random variable:
+$$
+X_n \xrightarrow{P} 0.
+$$
+\end{example}
+
+\begin{proof}
+By definition of the exponential cumulative distribution function, we have 
+$$
+P(X_n\leq x) = 1 - \exp(-nx),
+$$
+for any real number $x\geq 0$. 
+Let $X=0$. 
+For any $\epsilon>0$, we have:
+\begin{align*}
+P(|X_n-X|>\epsilon)
+&= P(|X_n|>\epsilon) \textrm{ (since $X=0$)} \\
+&= P(X_n>\epsilon) \textrm{ (since $X_n\geq 0$)} \\
+&= 1 - P(X_n\leq \epsilon) \\
+&= \exp(-n\epsilon)
+\end{align*}
+by definition of the exponential cumulative distribution function. 
+Since $\epsilon>0$, this implies:
+\begin{align*}
+\lim_{n\rightarrow \infty} \exp(-n\epsilon) = 0 
+\end{align*}
+which implies that 
+\begin{align*}
+\lim_{n\rightarrow \infty} P(|X_n-X|>\epsilon) = 0 
+\end{align*}
+and concludes the proof.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Convergence in probability implies convergence in distribution}
+
 \begin{theorem}
 \label{theo-doubleproba}
 Assume that $X$ and $Y$ are random variables. 
@@ -162,9 +202,6 @@ P(Y\leq y)
 which leads to the equation \ref{eq-doubleproba} and concludes the proof.
 \end{proof}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Convergence in probability implies convergence in distribution}
 
 \begin{theorem}
 \label{theo-convprovdist}
@@ -251,7 +288,6 @@ This implies:
 F(x) \leq \lim_{n\rightarrow \infty} P(X_n\leq x)  \leq F(x)
 \end{align*}
 which leads to the equation \ref{eq-convprovdist1} and concludes the proof.
-
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
