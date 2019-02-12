@@ -370,16 +370,14 @@ Finally, let $g$ be the continuous function defined by $g(x,y)=x / y$, for any $
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{theorem}
-(\emph{Delta-method})
-Assume that $X_1,X_2,...$ is a sequence of real-valued random variables 
-so that 
+(\emph{Univariate delta-method})
+Assume that $X_1,X_2,...\in\RR$ is a sequence of real-valued random variables 
+and $\theta\in\RR$ are so that 
 \begin{align}
 \label{eq-delmeth1}
 \sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}(0,\sigma^2).
 \end{align}
-Assume that $g$ is a real continously differentiable function. 
-Let $\theta\in\RR$. 
-Suppose that $g\in C^1(\RR)$ and that $g'(\theta)\neq 0$. 
+Assume that $g\in C^1(\RR)$ and that $g'(\theta)\neq 0$. 
 Therefore, 
 $$
 \sqrt{n} (g(X_n) - g(\theta)) \xrightarrow{D} \mathcal{N}(0,\sigma^2 g'(\theta)^2).
@@ -387,7 +385,8 @@ $$
 \end{theorem}
 
 \begin{proof}
-The Taylor expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}$ between 
+By hypothesis, we have $g\in C^1(\RR)$ so that we can apply Taylor's theorem. 
+Taylor's expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}$ between 
 $X_n$ and $\theta$ such that:
 $$
 g(X_n) = g(\theta) + g'\left(\tilde{\theta}\right)(X_n-\theta).
@@ -423,12 +422,43 @@ distribution.
 The equation \ref{eq-delmeth2} concludes the proof.
 \end{proof}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}
+(\emph{Multivariate delta-method})
+Assume that $X_1,X_2,... \in\RR^p$ is a sequence of real-valued random variables 
+and $\theta\in\RR^p$ are so that 
+\begin{align}
+\label{eq-delmeth3}
+\sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}\left(\bzero,\Sigma\right),
+\end{align}
+where $\Sigma\in\RR^{p\times p}$ is a positive semi-definite covariance matrix. 
+Suppose that $g:\RR^p \rightarrow \RR \in C^1(\RR^p)$. 
+Let $\nabla g(\theta)\in\RR^p$ be the gradient of $g$ and assume that $\nabla g(\theta)\neq \bzero$. 
+Therefore, 
+$$
+\sqrt{n} (g(X_n) - g(\theta)) \xrightarrow{D} \mathcal{N}\left(\bzero, \nabla g(\theta)^T \Sigma \nabla g(\theta)\right).
+$$
+\end{theorem}
+
+In the previous theorem, notice that $\bzero\in\RR^p$. 
+
+\begin{proof}
+By hypothesis, we have $g\in C^1(\RR^p)$ so that we can apply Taylor's theorem. 
+Taylor's expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}\in \RR^p$ between 
+$X_n$ and $\theta$ such that:
+$$
+g(X_n) = g(\theta) + \nabla g\left(\tilde{\theta}\right)^T (X_n-\theta).
+$$
+TODO : finish this.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{References}
 
 Most of the results in this document can be found in \cite{Vaart2000}.
 
-%
-% BibTeX users please use
 \bibliographystyle{plain}
 \bibliography{deltasobol}
 
