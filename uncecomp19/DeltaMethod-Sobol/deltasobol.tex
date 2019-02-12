@@ -294,26 +294,32 @@ which leads to the equation \ref{eq-convprovdist1} and concludes the proof.
 
 \section{Delta method}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{theorem}
-(\emph{Slutky's theorem})
+\label{theo-jointrandomvector}
+(\emph{Joint random vector convergence in distribution})
 Let $X_n$ and $Y_n$ be two sequences of real random variables such that:
 $$
 X_n \xrightarrow{D} X \quad \textrm{ and } \quad Y_n \xrightarrow{P} c,
 $$
 where $c$ is a non-random constant. 
-Therefore, 
+Therefore, the joint random vector $(X_n,Y_n)$ converges in distribution to $(X,c)$:
 $$
-X_n Y_n \xrightarrow{D} c X.
+(X_n,Y_n) \xrightarrow{D} (X, c) .
 $$
 \end{theorem}
 
 \begin{proof}
-TODO
+See \cite{Vaart2000}.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{theorem}
+\label{theo-continuousmap}
 (\emph{Continuous mapping})
 Let $X_n$ be a sequence of real random variables such that:
 $$
@@ -327,9 +333,40 @@ $$
 \end{theorem}
 
 \begin{proof}
-TODO
+See \cite{Vaart2000}.
 \end{proof}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{theorem}
+(\emph{Slutky's theorem})
+Let $X_n$ and $Y_n$ be two sequences of real random variables such that:
+$$
+X_n \xrightarrow{D} X \quad \textrm{ and } \quad Y_n \xrightarrow{P} c,
+$$
+where $c$ is a non-random constant. 
+Therefore, 
+\begin{enumerate}
+\item $X_n Y_n \xrightarrow{D} X c  $,
+\item $X_n + Y_n \xrightarrow{D} X + c$,
+\item $X_n / Y_n \xrightarrow{D} X / c$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Let us prove that  $X_n Y_n \xrightarrow{D} X c$. 
+Let $g$ be the continuous function defined by $g(x,y)=x y$, for any $x,y\in\RR$. 
+By the theorem \ref{theo-jointrandomvector}, we have $(X_n,Y_n) \xrightarrow{D} (X, c)$. 
+By the continuous mapping theorem, this implies:
+$$
+X_n Y_n = g((X_n,Y_n)) \xrightarrow{D} g((X,c)) = X  c. 
+$$
+
+In order to prove the equation $X_n + Y_n \xrightarrow{D} X + c$, we use the 
+continous fonction $g(x,y)=x + y$, which immediately leads to the required result. 
+
+Finally, let $g$ be the continuous function defined by $g(x,y)=x / y$, for any $x,y\in\RR$ such that $y\neq 0$. 
+\end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{theorem}
@@ -340,7 +377,7 @@ so that
 \label{eq-delmeth1}
 \sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}(0,\sigma^2).
 \end{align}
-Assume that $g$ is a real function. 
+Assume that $g$ is a real continously differentiable function. 
 Let $\theta\in\RR$. 
 Suppose that $g\in C^1(\RR)$ and that $g'(\theta)\neq 0$. 
 Therefore, 
@@ -350,30 +387,40 @@ $$
 \end{theorem}
 
 \begin{proof}
-*TODO : fix this proof, which is wrong.*
-
 The Taylor expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}$ between 
 $X_n$ and $\theta$ such that:
 $$
-g(X_n) = g(\theta) + g'(\tilde{\theta})(X_n-\theta) + O((X_n-\theta)^2), \quad X_n \rightarrow \theta.
+g(X_n) = g(\theta) + g'\left(\tilde{\theta}\right)(X_n-\theta).
+$$
+This implies:
+\begin{align}
+\label{eq-delmeth2}
+\sqrt{n} (g(X_n) - g(\theta)) = g'\left(\tilde{\theta}\right) \sqrt{n} (X_n-\theta).
+\end{align}
+
+Since $\tilde{\theta}$ is between $X_n$ and $\theta$, for any $\epsilon>0$, we have:
+$$
+\lim_{n\rightarrow \infty} P(|\tilde{\theta} - \theta|>\epsilon)=0.
 $$
 This implies:
 $$
-\sqrt{n} (g(X_n) - g(\theta)) = g'(\theta) \sqrt{n} (X_n-\theta) + O((X_n-\theta)^2), \quad X_n \rightarrow \theta.
+\tilde{\theta} \xrightarrow{P} \theta.
 $$
-Let $Y_n$ and $Z_n$ be the sequences of random variables defined by the equations:
+By hypothesis, the function $g$ is continously differentiable, which implies that $g'$ is a 
+continuous function. 
+Therefore, the continuous mapping theorem implies:
 $$
-Y_n = g'(\theta) \sqrt{n} (X_n-\theta) \textrm{ and } Z_n = O((X_n-\theta)^2).
+g'\left(\tilde{\theta}\right) \xrightarrow{P} g'(\theta).
 $$
-The properties of the gaussian distribution and the equation \ref{eq-delmeth1} imply:
+
+The equation \ref{eq-delmeth1} and Slutky's theorem imply:
 $$
-Y_n =g'(\theta) \sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}(0,\sigma^2 g'(\theta)^2).
+g'\left(\tilde{\theta}\right) \sqrt{n} (X_n-\theta) 
+\xrightarrow{D} g'(\theta) \mathcal{N}(0,\sigma^2) = \mathcal{N}(0,\sigma^2 g'(\theta)^2),
 $$
-Furthermore, 
-$$
-Z_n = O((X_n-\theta)^2)  \xrightarrow{D} 0.
-$$
-In order to conclude the proof, we apply Slutky's theorem to $Y_n$ and $Z_n$. 
+where the last equation is from the properties of the gaussian 
+distribution. 
+The equation \ref{eq-delmeth2} concludes the proof.
 \end{proof}
 
 \section{References}
