@@ -7,7 +7,6 @@
 
 \begin{document}
 
-
 \title{The Delta-Method applied to Sobol' indices}
 
 \author{Michaël Baudin}
@@ -425,31 +424,57 @@ The equation \ref{eq-delmeth2} concludes the proof.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{theorem}
+\label{eq-multivdelmeth1}
 (\emph{Multivariate delta-method})
-Assume that $X_1,X_2,... \in\RR^p$ is a sequence of real-valued random variables 
-and $\theta\in\RR^p$ are so that 
+Assume that $\bX_1,\bX_2,... \in\RR^p$ is a sequence of random variables 
+and $\btheta\in\RR^p$ are so that 
 \begin{align}
-\label{eq-delmeth3}
-\sqrt{n} (X_n - \theta) \xrightarrow{D} \mathcal{N}\left(\bzero,\Sigma\right),
+\label{eq-multivdelmeth1}
+\sqrt{n} (\bX_n - \btheta) \xrightarrow{D} \mathcal{N}\left(\bzero,\Sigma\right),
 \end{align}
 where $\Sigma\in\RR^{p\times p}$ is a positive semi-definite covariance matrix. 
-Suppose that $g:\RR^p \rightarrow \RR \in C^1(\RR^p)$. 
-Let $\nabla g(\theta)\in\RR^p$ be the gradient of $g$ and assume that $\nabla g(\theta)\neq \bzero$. 
+Suppose that $\bg:\RR^p \rightarrow \RR^m \in C^1(\RR^p)$. 
+For any $\btheta\in\RR^p$, let $J(\btheta)\in\RR^{m\times p}$ be the Jacobian matrix of $\bg$:
+$$
+J(\btheta) = 
+\begin{pmatrix}
+\frac{\partial g_1}{\partial \theta_1} & 
+\cdots &
+\frac{\partial g_1}{\partial \theta_p} \\
+\vdots &    & \vdots \\
+\frac{\partial g_m}{\partial \theta_1} & 
+\cdots &
+\frac{\partial g_m}{\partial \theta_p} 
+\end{pmatrix} 
+$$
+Assume that $\nabla \bg(\btheta)\neq \bzero$. 
 Therefore, 
 $$
-\sqrt{n} (g(X_n) - g(\theta)) \xrightarrow{D} \mathcal{N}\left(\bzero, \nabla g(\theta)^T \Sigma \nabla g(\theta)\right).
+\sqrt{n} (\bg(\bX_n) - \bg(\btheta)) \xrightarrow{D} \mathcal{N}\left(\bzero, J(\btheta)^T \Sigma J(\btheta)\right).
 $$
 \end{theorem}
 
 In the previous theorem, notice that $\bzero\in\RR^p$. 
 
 \begin{proof}
-By hypothesis, we have $g\in C^1(\RR^p)$ so that we can apply Taylor's theorem. 
-Taylor's expansion of $g$ at the point $\theta$ implies that there exists a $\tilde{\theta}\in \RR^p$ between 
-$X_n$ and $\theta$ such that:
+By hypothesis, we have $\bg\in C^1(\RR^p)$ so that we can apply Taylor's theorem. 
+Taylor's expansion of the function $\bg$ at the point $\btheta$ implies that there exists a $\tilde{\btheta}\in \RR^p$ between 
+$\bX_n$ and $\btheta$ such that:
 $$
-g(X_n) = g(\theta) + \nabla g\left(\tilde{\theta}\right)^T (X_n-\theta).
+\bg(\bX_n) = \bg(\btheta) + J\left(\tilde{\btheta}\right) (\bX_n-\btheta).
 $$
+This implies:
+\begin{align}
+\label{eq-multivdelmeth2}
+\sqrt{n} (\bg(\bX_n) - \bg(\btheta)) = J\left(\tilde{\btheta}\right) \sqrt{n} (\bX_n-\btheta).
+\end{align}
+
+By definition of the variance, 
+\begin{align*}
+V\left(\sqrt{n} (g(X_n) - g(\theta))\right) 
+&= V\left(J\left(\tilde{\theta}\right) \sqrt{n} (X_n-\theta) \right) \\
+\end{align*}
+
 TODO : finish this.
 \end{proof}
 
