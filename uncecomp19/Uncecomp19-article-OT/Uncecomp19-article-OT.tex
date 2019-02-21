@@ -264,12 +264,14 @@ have defined the random variables involved in the problem
 \subsection{Theory}
 
 In this section, we present the principles that are used in a new incremental 
-algorithm in OpenTURNS 1.12 ; the goal of this algorithm is to estimate the mean of a random variable. 
+algorithm in OpenTURNS 1.12; the goal of this algorithm is to estimate the mean of a random variable. 
+Moreover, we would like to let the user as free as possible from the internal details of the algorithm 
+and get the best possible performance on a supercomputer.
 
 Assume that the output $Y\in\mathbb{R}^{n_Y}$ is a random vector and that we want to estimate the 
 mean $E(Y_i)$ for $i=1,...,n_Y$. 
 
-The Monte Carlo algorithm is based on the the sample mean: 
+The Monte Carlo method is based on the the sample mean: 
 $$
 \mu_i = \frac{1}{n} \sum_{j=1}^n Y_j^{(i)}
 $$
@@ -300,14 +302,16 @@ Instead, suppose that we set the absolute precision in advance and wish to deter
 size $n$ that achieves this precision. 
 If the variance $V(Y_i)$ is known (which rarely happens in practice), we can set the value of $n$ 
 so that the standard deviation $\sqrt{V(Y_i)}$ is small enough. 
-If we want to set the relative precision, we can consider the coefficient of variation 
+In the case where we want to set the relative precision, we can consider the coefficient of variation 
 of the estimator $\frac{\sqrt{V(Y_i)}}{E(Y_i)\sqrt{n}}$ as a criterion (if $E(Y_i)\neq 0$). 
 However, we generally do not know the values of neither $E(Y_i)$ nor $V(Y_i)$. 
+This is why setting the sample size $n$ in advance is not an easy task for the 
+user in general. 
 
 The purpose of the algorithm is to increase the 
 sample size $n$ incrementally until a stopping criteria is met. 
-At each iteration, we approximate the values of $E(Y_i)$ and $V(Y_i)$ by their 
-empirical estimators. 
+At each iteration, we approximate the values of $E(Y_i)$ and $V(Y_i)$ 
+by their empirical estimators, which allows to evaluate the stopping criteria. 
 
 In order to get the best possible performance on distributed supercomputers and 
 multi-core workstations, the size of the sample increases by block. 
@@ -315,14 +319,15 @@ For exemple, if the block size is equal to 100, then the sample size will be equ
 200, etc... 
 On each block, the evaluation of the outputs can be parallelized, which allows to improve the 
 performance of the algorithm.
+More details on this topic are presented in the section \ref{sec-hpceasy}. 
 
 Since there are in general several outputs, i.e. $n_Y\geq 1$, we use 
 a stopping criteria which is based on a operator. 
 There are three mathematical stopping criteria available:
 \begin{itemize} 
-\item through an operator on the coefficient of variation $\frac{\sigma_i}{\mu_i}$ (a relative criterion)
-\item through an operator on the standard deviation $\sigma_i$ (absolute criterion)
-\item on the maximum standard deviation per component: $\sigma_i \leq \max_{i=1,...,n_Y} \sigma_i$ (absolute criterion)
+\item through an operator on the coefficient of variation $\frac{\sigma_i}{\mu_i}$ (a relative criterion),
+\item through an operator on the standard deviation $\sigma_i$ (absolute criterion),
+\item on the maximum standard deviation per component: $\sigma_i \leq \max_{i=1,...,n_Y} \sigma_i$ (absolute criterion).
 \end{itemize} 
 
 By default, the maximum coefficient of variation is used, i.e. the operator is the \emph{maximum} 
@@ -642,9 +647,10 @@ The qualitative sensitivity analysis based on Morris's method \cite{Morris1991} 
 selecting the significant input variables in a costly computer code which may have 
 a large number of inputs. 
 The GUI performs the screening analysis based on the OpenTURNS \pyobj{otmorris} module \cite{otmorris}. 
-If we note $e_i^k$ the k-th computed elementary effects associated to the i-th input marginal, 
-we get $\mu_i^*$ and $\sigma_i$ respectively the absolute mean and the standard deviation of the elementary effects. 
-The goal of this method is to spread the inputs variables into three classes, based on $\mu_i^*$ 
+
+Let $e_i^k$ be the k-th computed elementary effects associated to the i-th input marginal, 
+the method computes $\mu_i^*$ and $\sigma_i$ respectively the absolute mean and the standard deviation of the elementary effects. 
+The goal of this method is to set the inputs variables into three classes, based on $\mu_i^*$ 
 and the $\rho_i = \frac{\mu_i^*}{\sigma_i}$ factors:
 \begin{enumerate}
 \item if $\mu_i^*$ is close to zero, the i-th variable has no effect,
@@ -660,12 +666,13 @@ it in the bottom of the dialog box.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\textwidth]{figures/otgui-criblage-parameters.png}
+\includegraphics[width=0.7\textwidth]{figures/morris_wizard_3rd_page.png}
 \caption{Performing screening with Morris's method in the GUI.}
 \label{fig-morris}
 \end{figure}
 
-Once the simulations are performed, the figure \ref{fig-morrisresultats} presents the results. 
+Once the simulations are performed, the figure \ref{fig-morrisresultats} presents the results 
+associated with a physical model which has 20 input variables. 
 The main figure presents the mean and standard deviations of the elementary effects. 
 A table (not shown in the figure) containing the list of input variables allows 
 to see in which category fall each variable. 
@@ -673,10 +680,72 @@ A default classification is done by the GUI, but can be modified by the user.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{figures/otgui-criblage-resultat-focus.png}
+\includegraphics[width=\textwidth]{figures/morrisResultWindow-up.png}
 \caption{Results of the screening with Morris's method in the GUI.}
 \label{fig-morrisresultats}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Easy high performance computing}
+\label{sec-hpceasy}
+
+Within SALOME, users can access to the remote high performance computing 
+resources available at EDF R\&D. 
+Based on 16 100 cores, the Porthos supercomputer (2014) for example, can perform as high as 600Tflops (peak) \cite{Top500Porthos}. 
+The latest supercomputer at EDF R\&D, Gaïa (2019), can perform as high as 3 052 Tflops (peak) \cite{Top500Gaia} 
+thanks to its 41 000 cores. 
+
+Within the GUI, the user can run simulations which are executed on a remote supercomputer with 
+a minimum amount of configuration. 
+The figure \ref{fig-hpcsalome} presents the dialog box which is displayed in the 
+context of a central tendency study based on a Monte-Carlo simulation. 
+Enabling the \emph{Parallelize status} checkbutton allows to select the 
+computing resource available in the users environment. 
+The number of processes can be chosen by the user according to the hardware available 
+and the amount of computing required by the simulation. 
+Each job is associated with a time limit which defines the maximum 
+duration of one job. 
+In most practical situations extra input files are used by the computer code (e.g. the mesh), 
+which can be configured in the dialog box as well. 
+The job submission is based on SLURM, but the user does not have to configure these 
+low-level parameters which are handled automatically by the algorithms, with the principles 
+which we now present. 
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{figures/SALOME-OpenTURNS-config-HPC-focus.png}
+\caption{Launching a parallel computation within the GUI.}
+\label{fig-hpcsalome}
+\end{figure}
+
+The key point is to exploit the maximum possible amount of parallelism in 
+the computations. 
+However, between the start of the simulation and the end (which might take minutes, hours 
+or days in the longest situations), most users want to regularily have a feedback on the 
+execution of the simulation. 
+For these reasons, the algorithms are performed based on blocks, which define a sub-sample 
+on which the parallel computation can take place. 
+At the end of each block, a progress bar is updated along with statistics which shows the 
+number of executed simulations, the elapsed time and the value of the stopping criteria 
+(e.g. the coefficient of variation of the mean estimator). 
+A \emph{Stop} button allows to interrupt the simulation. 
+
+Consider for example the situation presented in the figure \ref{fig-blockalgo}, 
+where a design of experiments involving 24 points must be evaluated. 
+The parameters configured by the user in this example is the size of the block, which is set 
+to 12, and the number of processors, which is set to 4. 
+In this case, the simulation starts with a first job involving the points with indices from 1 to 12, 
+and ends with a second job involving the points with indices 13 to 24. 
+In both jobs, each processor is in charge of the evaluation of three points. 
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{figures/SALOME-OpenTURNS-simulation-byblock.pdf}
+\caption{A block-based simulation performed on a supercomputer using two jobs.}
+\label{fig-blockalgo}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
