@@ -23,31 +23,75 @@ the Sobol' indices.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Random vector}
+
+\begin{definition}
+\label{def-randomvector}
+(\emph{Random vector})
+A random vector in $\RR^k$ is a vector $\bX = (X_1,...,X_k) \in\RR^k$  
+of random variables. 
+The cumulative distrition function of $\bX$ is $F$ is the function defined by:
+$$
+F(\bx) = P(\bX\leq \bx) 
+$$
+for any $\bx\in\RR^k$.
+\end{definition}
+
+In the remaining of this section, most results can be derived equally for the 
+real univariate case (i.e. for $k=1$) or for the general multivariate case. 
+In order to introduce multivariate definitions, a distance on $\RR^k$ must be 
+defined. 
+For any $\bx,\by\in\RR^k$, let $d(\bx,\by)$ be a distance function on $\RR^k$ that 
+generates the topology. 
+In the particular univariate case, the most common distance is the absolute value:
+$$
+d(x,y)=|x-y|,
+$$
+for any $x,y\in\RR$. 
+In the general multivariate case, the most common distance is the euclidian distance:
+$$
+d(\bx,\by)=\left(\sum_{i=1}^k (x_i-y_i)^2\right)^{1/2},
+$$
+for any $\bx,\by\in\RR^k$. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Convergence in distribution}
 
 \begin{definition}
 \label{def-convdistr}
 (\emph{Convergence in distribution})
-Assume that $X_1,X_2,...$ is a sequence of real-valued random variables 
+Assume that $\bX_1,\bX_2,...$ is a sequence of real-valued random variables 
 with cumulative distribution functions $\{F_n\}_{n\geq 0}$. 
-Assume that $X$ is a real-valued random variable 
+Assume that $\bX$ is a real-valued random variable 
 with cumulative distribution function $F$. 
-The sequence $X_n$ converges in distribution to $X$ if:
-$$
-\lim_{n\rightarrow \infty} F_n(X_n)=F(x).
-$$
-for any $x\in \RR$ at which $F$ is continuous.
+The sequence $\bX_n$ converges in distribution to $\bX$ if:
+\begin{align}
+\label{def-convdistr1}
+\lim_{n\rightarrow \infty} F_n(\bx)=F(\bx).
+\end{align}
+for any $\bx\in \RR^k$ at which $F$ is continuous.
 In this case, we write:
-$$
-X_n \xrightarrow{D} X.
-$$
+\begin{align}
+\label{def-convdistr2}
+\bX_n \xrightarrow{D} \bX.
+\end{align}
 \end{definition}
+
+By definition of the cumulative distribution function, the equation \ref{def-convdistr1} can be written:
+\begin{align}
+\label{def-convdistr3}
+\lim_{n\rightarrow \infty} P(\bX_n\leq \bx)=P(\bX\leq \bx).
+\end{align}
+for any $\bx\in \RR^k$ at which $F$ is continuous.
 
 The following theorem gives an example of such convergence. 
 
 \begin{example}
 (\emph{Maximum of uniform random numbers})
-Assume that $X_1,X_2,...$ are independent uniform random numbers such that $X_n\sim \mathcal{U} (0,1)$. 
+Assume that $X_1,X_2,...\in\RR$ are independent uniform random numbers such that $X_n\sim \mathcal{U} (0,1)$. 
 Let $Y_n$ be the maximum:
 $$
 Y_n = \max_{1\leq i\leq n}  X_i.
@@ -112,21 +156,32 @@ for any $z\in\RR$ which concludes the proof.
 \section{Convergence in probability}
 
 \begin{definition}
+\label{def-defconvproba}
 (\emph{Convergence in probability})
-Assume that $X_1,X_2,...$ is a sequence of real-valued random variables. 
-The sequence $X_n$ converges in probability to $X$ if, for any $\epsilon>0$:
-$$
-\lim_{n\rightarrow \infty} P(|X_n-X|>\epsilon)=0.
-$$
+Assume that $\bX_1,\bX_2,...\in\RR^k$ is a sequence of random vector variables. 
+The sequence $\bX_n$ converges in probability to $\bX\in\RR^k$ if, for any $\epsilon>0$:
+\begin{align}
+\label{eq-defconvproba1}
+\lim_{n\rightarrow \infty} P(d(\bX_n,\bX)>\epsilon)=0.
+\end{align}
 In this case, we write:
-$$
-X_n \xrightarrow{P} X.
-$$
+\begin{align}
+\label{eq-defconvproba2}
+\bX_n \xrightarrow{P} \bX.
+\end{align}
 \end{definition}
+
+In the particular univariate case, the equation \ref{eq-defconvproba1} is generally written:
+\begin{align}
+\label{eq-defconvproba1}
+\lim_{n\rightarrow \infty} P(|X_n-X|>\epsilon)=0.
+\end{align}
+
 
 \begin{example}
 (\emph{Convergence of an exponential random variable})
-Assume that $X_1,X_2,...$ are independent random numbers such that $X_n\sim \mathcal{E}xp(n)$. 
+Assume that $X_1,X_2,...\in\RR$ are independent exponential random numbers, i.e. 
+such that $X_n\sim \mathcal{E}xp(n)$. 
 Therefore the sequence $X_n$ converges in probability to the zero random variable:
 $$
 X_n \xrightarrow{P} 0.
@@ -293,8 +348,6 @@ which leads to the equation \ref{eq-convprovdist1} and concludes the proof.
 
 \section{Delta method}
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{theorem}
@@ -312,7 +365,7 @@ $$
 \end{theorem}
 
 \begin{proof}
-See \cite{Vaart2000}.
+See \cite{Vaart2000}, chapter 2, Stochastic convergence, theorem 2.7, page 10.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -424,7 +477,7 @@ The equation \ref{eq-delmeth2} concludes the proof.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{theorem}
-\label{eq-multivdelmeth1}
+\label{theo-multivdelmeth1}
 (\emph{Multivariate delta-method})
 Assume that $\bX_1,\bX_2,... \in\RR^p$ is a sequence of random variables 
 and $\btheta\in\RR^p$ are so that 
@@ -482,7 +535,7 @@ TODO : finish this.
 
 \section{References}
 
-Most of the results in this document can be found in \cite{Vaart2000}.
+Most of the results in this document can be found in \cite{Vaart2000}, chapter 2, Stochastic convergence.
 
 \bibliographystyle{plain}
 \bibliography{deltasobol}
