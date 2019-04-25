@@ -51,7 +51,7 @@ def progress(percent):
     print('-- progress=%.2f %%' % (percent))
 
 alpha = 0.05
-epsilon = 0.2
+epsilon = 0.1
 blocksize = 50
 batchsize = 16
 
@@ -75,6 +75,8 @@ algo.run()
 result = algo.getResult()
 fo = result.getFirstOrderIndicesEstimate()
 to = result.getTotalOrderIndicesEstimate()
+print(fo)
+print(to)
 
 outerSampling = result.getOuterSampling()
 print("OuterSampling = %d" % (outerSampling))
@@ -83,11 +85,11 @@ dist_fo = result.getFirstOrderIndicesDistribution()
 dist_to = result.getTotalOrderIndicesDistribution()
 
 pl.plot(range(input_dimension),fo,"ro",label="First Order")
-pl.plot(range(input_dimension),to,"bo",label="Total Order")
+pl.plot(range(input_dimension),to,"bx",label="Total Order")
 pl.xlabel("Inputs")
 pl.ylabel("Sensitivity indices")
 size = g.getEvaluationCallsNumber()
-pl.title("Sobol' indices - n=%d - 1-alpha=%.2f %%" % (size,(1-2*alpha)*100))
+pl.title("Sobol' indices - n=%d - 1-2 alpha=%.2f %%" % (size,(1-2*alpha)*100))
 pl.axis([-0.5,input_dimension-0.5,-0.1,1.1])
 print("Level alpha=%.4f" % (alpha))
 for i in range(input_dimension):
