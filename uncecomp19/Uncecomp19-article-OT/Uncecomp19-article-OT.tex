@@ -1,27 +1,29 @@
 % Michael Baudin, 2017 - 2019
-\documentclass{article}
+\documentclass{uncecomp2019}
+% Loads class "uncecomp2019.cls".
 
 \include{macros}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{document}
-
-
 \title{OpenTURNS and its graphical interface}
 
-\author[1]{Michaël Baudin}
-\author[1]{Anne Dutfoy}
-\author[1]{Anthony Geay}
-\author[1]{Thibault Delage}
-\author[2]{Aurélie Ladier}
-\author[2]{Julien Schueller}
-\author[2]{Thierry Yalamas}
-\affil[1]{Phimeca Engineering. 18/20 boulevard de Reuilly, 75012 Paris - France, yalamas@phimeca.com}
-\affil[2]{EDF R\&D. 6, quai Watier, 78401, Chatou Cedex - France, michael.baudin@edf.fr}
+\author{Michaël Baudin$^1$, Anne Dutfoy$^1$, Anthony Geay$^1$, Ovidiu Mircescu$^1$, 
+Thibault Delage$^2$, Aurélie Ladier$^2$, Julien Schueller$^2$, 
+and Thierry Yalamas$^2$}
 
-\maketitle
+%\heading{Michaël Baudin, Anne Dutfoy, Anthony Geay, Ovidiu Mircescu, 
+%Thibault Delage, Aurélie Ladier, Julien Schueller, 
+%and Thierry Yalamas}
+\heading{M. Baudin, A. Dutfoy, A. Geay, O. Mircescu, 
+T. Delage, A. Ladier, J. Schueller, and T. Yalamas}
 
+\address{$^1$ EDF R\&D \\
+  6, quai Watier, 78401, Chatou Cedex - France, \\
+  michael.baudin@edf.fr \and
+  $^2$ Phimeca Engineering \\
+  18/20 boulevard de Reuilly, 75012 Paris - France, \\
+  yalamas@phimeca.com}
+
+\keywords{Uncertainty Quantification.}
 
 \abstract{
 OpenTURNS is an open source library for uncertainty propagation by 
@@ -45,10 +47,12 @@ In this paper, we present a basic tutorial of OpenTURNS in Python
 and will review the new features in the library, which include 
 new incremental statistical estimators. 
 In the second part, we review the new features in the open source GUI will be 
-presented, including the management of stochastic processes. 
+presented. 
 }
 
-\tableofcontents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -77,8 +81,8 @@ The key features of OpenTURNS are the following:
 \item open source initiative to secure the transparency of the approach,
 \item generic to the physical or industrial domains for treating of multi-physical problems,
 \item high performance computing,
-\item includes a variety of qualified algorithms in order to manage uncertainties in several situations,
-\item contains complete documentation (Reference Guide, Use Cases Guide, User manual, Examples Guide, and Developers' Guide).
+\item includes a variety of algorithms in order to manage uncertainties in several situations,
+\item contains complete documentation.
 \end{itemize}
 OpenTURNS is available under the LGPL license. 
 
@@ -87,10 +91,11 @@ sensitivity analysis and metamodeling.
 
 Moreover generic wrappers allows to link OpenTURNS to any external code G.
 
-OpenTURNS can be downloaded from its dedicated website www.openturns.org which offers different 
-pre-compiled packages specific to several Windows and Linux environments. It is also possible to 
-download the source files from the SourceForge server and to compile them within another 
-environment: the OpenTURNS Developer's Guide provides advices to help compiling the source files.
+OpenTURNS can be downloaded from \url{www.openturns.org} which offers different 
+pre-compiled packages specific to several Windows and Linux environments. 
+It is also possible to download the source files from the Github server and to compile them within another 
+environment: the OpenTURNS Developer's Guide provides advices to help compiling the source files. 
+Finally, most Python users use \pyobj{conda} or \pyobj{pip} to install OpenTURNS.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -107,14 +112,14 @@ The model is based on a crude simplification of the 1D hydro-dynamical equations
 under the assumptions of uniform and constant flowrate and large rectangular sections. 
 It consists of an equation that involves the characteristics of the river stretch:
 \begin{equation}\label{eq:cruesS}
-S = Z_v + H \quad \mbox{with} \quad 
+Y = Z_v + H \quad \mbox{with} \quad 
 H = \left(\frac{Q}{B K_s \sqrt{\frac{Z_m-Z_v}{L} }} \right)^{0.6},
 \end{equation}
-where $S$ is the maximal annual overflow, $H$ is the maximal annual height of the river, 
+where $Y$ is the maximal annual overflow, $H$ is the maximal annual height of the river, 
 $B$ is the river width and $L$ is the length of the river stretch. 
 In this paper, we set the values of $L$ and $B$ parameters :
 $$
-L = 5000 \quad B = 300.
+L = 5000, \quad B = 300.
 $$
 The other four input variables $Q$, $K_s$, $Z_v$ and $Z_m$ are defined in Table \ref{tab:factors} 
 with their  probability distribution.
@@ -124,14 +129,15 @@ We make the hypothesis that the input variables are independent.
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=9cm]{figures/river_section_large_adjusted} 
+    \includegraphics[width=0.4\textwidth]{figures/river_section_large_adjusted} 
 \end{center}
 \caption{The flood example: simplified model of a river.}\label{fig:crues}
 \end{figure}
 
-\begin{table}[!ht]
+\begin{table}
   \begin{center}
    \begin{tabular}{lccc}
+   \hline
 Input & Description & Unit & Probability distribution \\
    \hline
  $Q$ & Maximal annual flowrate & m$^3$/s & Gumbel ${\mathcal G}(scale = 558, mode = 1013)$ \\
@@ -147,10 +153,10 @@ Input & Description & Unit & Probability distribution \\
 
 The goal of this study is twofold:
 \begin{itemize}
-\item we want to estimate the mean river height $E(S)$, 
+\item we want to estimate the mean river height $E(Y)$, 
 \item we want to perform the sensitivity analysis of the model, i.e. 
 we want to rank the inputs $Q$, $K_s$, $Z_v$ and $Z_m$ with respect to their contributions 
-to the variability of the output $S$.
+to the variability of the output $Y$.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,8 +190,8 @@ def functionFlood(X) :
     Q, Ks, Zv, Zm = X
     alpha = (Zm - Zv)/L
     H = (Q/(Ks*B*sqrt(alpha)))**(3.0/5.0)
-    S = H + Zv
-    return [S]
+    Y = H + Zv
+    return [Y]
 \end{lstlisting}
 
 Then we convert this Python function into an OpenTURNS function with the 
@@ -205,7 +211,7 @@ Here the parameters are defined with the scale and mode parameters, which corres
 \item The $Q$ and $K_s$ variables must remain positive (a negative value is not compatible with the 
 physical model). 
 For this reason, we must truncate the distribution with 
-\pyobj{TruncatedDistribution}.
+\pyobj{Truncated\-Distribution}.
 \end{itemize}
 
 \begin{lstlisting}
@@ -244,11 +250,11 @@ truncation of the distribution.
 \end{figure}
 
 Then we create the input random vector \pyobj{inputvector}: by default, the copula is independent. 
-Finally, we create the output random vector \pyobj{S}.
+Finally, we create the output random vector \pyobj{Y}.
 \begin{lstlisting}
 X = ot.ComposedDistribution([Q, Ks, Zv, Zm])
 inputRV = ot.RandomVector(X)
-S = ot.RandomVector(g, inputRV)
+Y = ot.RandomVector(g, inputRV)
 \end{lstlisting}
 
 These steps are typical of \emph{probabilistic programming}: we 
@@ -273,35 +279,36 @@ mean $E(Y_i)$ for $i=1,...,n_Y$.
 
 The Monte Carlo method is based on the the sample mean: 
 $$
-\mu_i = \frac{1}{n} \sum_{j=1}^n Y_j^{(i)}
+\mu_i = \frac{1}{n} \sum_{j=1}^n y_i^{(j)}
 $$
 for $i=1,...,n_Y$ where $n$ is the sample size and $Y_j^{(i)}$ are i.i.d. outcomes of the random output. 
 
 The algorithm is based on the fact that the sample mean is asymptotically gaussian:
 $$
-\mu_i \sim \mathcal{N}\left(E(Y_i),\frac{V(Y_i)}{n}\right).
+\mu_i \rightarrow \mathcal{N}\left(E(Y_i),\frac{V(Y_i)}{n}\right).
 $$
 for $i=1,...,n_Y$ where $V(Y_i)$ is the variance of the i-th output and $n$ is the sample size.
 
 In general, most users set the sample size $n$ in advance and estimate the precision afterwards. 
 Let $s_i$ be the (unbiased) sample standard deviation of the output $Y_i$:
 $$
-s_i = \sqrt{\frac{1}{n-1} \sum_{j=1}^N (y_j^{(i)}-\mu_i)^2}
+s_i = \sqrt{\frac{1}{n-1} \sum_{j=1}^N \left(y_i^{(j)}-\mu_i\right)^2}
 $$
 for $i=1,...,n_Y$. 
-The absolute precision of the estimate $\mu_i$ can be estimated based on the sample standard deviation of the estimator:
+The absolute precision of the estimate $\mu_i$ can be evaluated based 
+on the sample standard deviation of the estimator:
 $$
 \sigma_i = \frac{s_i}{\sqrt{n}}
 $$
 for $i=1,...,n_Y$. 
-If $\mu_i\neq 0$ and if $E(Y_i)\neq 0$, the relative precision can 
+If $\mu_i\neq 0$ and $E(Y_i)\neq 0$, the relative precision can 
 be estimated based on the coefficient of variation $\sigma_i/\mu_i$ 
 for $i=1,...,n_Y$. 
  
 Instead, suppose that we set the absolute precision in advance and wish to determine the smallest sample 
 size $n$ that achieves this precision. 
 If the variance $V(Y_i)$ is known (which rarely happens in practice), we can set the value of $n$ 
-so that the standard deviation $\sqrt{V(Y_i)}$ is small enough. 
+so that the standard deviation $\sqrt{V(Y_i)}/\sqrt{n}$ is small enough. 
 In the case where we want to set the relative precision, we can consider the coefficient of variation 
 of the estimator $\frac{\sqrt{V(Y_i)}}{E(Y_i)\sqrt{n}}$ as a criterion (if $E(Y_i)\neq 0$). 
 However, we generally do not know the values of neither $E(Y_i)$ nor $V(Y_i)$. 
@@ -315,7 +322,7 @@ by their empirical estimators, which allows to evaluate the stopping criteria.
 
 In order to get the best possible performance on distributed supercomputers and 
 multi-core workstations, the size of the sample increases by block. 
-For exemple, if the block size is equal to 100, then the sample size will be equal to 0, 100, 
+For exemple, if the block size is equal to 100, then the sample size is equal to 100, 
 200, etc... 
 On each block, the evaluation of the outputs can be parallelized, which allows to improve the 
 performance of the algorithm.
@@ -325,7 +332,7 @@ Since there are in general several outputs, i.e. $n_Y\geq 1$, we use
 a stopping criteria which is based on a operator. 
 There are three mathematical stopping criteria available:
 \begin{itemize} 
-\item through an operator on the coefficient of variation $\frac{\sigma_i}{\mu_i}$ (a relative criterion),
+\item through an operator on the coefficient of variation $\frac{\sigma_i}{\mu_i}$ (relative criterion),
 \item through an operator on the standard deviation $\sigma_i$ (absolute criterion),
 \item on the maximum standard deviation per component: $\sigma_i \leq \max_{i=1,...,n_Y} \sigma_i$ (absolute criterion).
 \end{itemize} 
@@ -341,13 +348,14 @@ $$
 
 In this section, we present how to use the \pyobj{ExpectationSimulationAlgorithm} class 
 in the tutorial flooding example. 
+
 We set the maximum number of iterations with the \pyobj{setMaximum\-OuterSampling} so that 
 we use at most 1000 iterations. 
-In order to evaluate the function with blocks of size 10, we use the \pyobj{setBlockSize}. 
+In order to evaluate the function with blocks of size 10, we use the \pyobj{setBlockSize} method. 
 In this simulation, we use a relative stopping criteria and configure the 
 maximum coefficient of variation to be equal to 0.001.
 \begin{lstlisting}
-algo = ot.ExpectationSimulationAlgorithm(S)
+algo = ot.ExpectationSimulationAlgorithm(Y)
 algo.setMaximumOuterSampling(1000)
 algo.setBlockSize(10)
 algo.setMaximumCoefficientOfVariation(0.001)
@@ -358,12 +366,14 @@ The computationnaly intensive part of the simulation is associated with the
 algo.run()
 \end{lstlisting}
 Once the simulation is done, the \pyobj{getResult} method allows to 
-access to the results.
+access the results.
 \begin{lstlisting}
 result = algo.getResult()
 expectation = result.getExpectationEstimate()
+cv = result.getCoefficientOfVariation()[0]
 print("Mean = %f " % expectation[0])
 print("Number of calls to G = %d" % g.getCallsNumber())
+print("Coef. of var.=%.6f" % (cv))
 \end{lstlisting}
 The previous session prints the following output.
 \begin{lstlisting}
@@ -373,11 +383,6 @@ Coef. of var.=0.000994
 \end{lstlisting}
 The estimate of the mean has a known asymptotical gaussian distribution, which can be retrieved 
 with the \pyobj{getExpectation\-Distribution} method.
-\begin{lstlisting}
-expectationDistribution = result.getExpectationDistribution()
-print(expectationDistribution)
-View(expectationDistribution.drawPDF())
-\end{lstlisting}
 We emphasize that the output of the \pyobj{getExpectation\-Distribution} method is 
 a \pyobj{Distribu\-tion} in the OpenTURNS sense: the whole information is available, 
 not just a part of it, making the output as programmatically meaningful as possible. 
@@ -406,10 +411,10 @@ of the mean of the river height.}
 In this section, we present the principles that are used in a new incremental 
 algorithm in OpenTURNS 1.12 which computes the Sobol' sensitivity indices. 
 
-In \cite{Janon2014} the authors derive a new method to estimate the 
+In \cite{Janon2014} the authors derive a method to estimate the 
 Sobol' sensitivity indices ; one of the advantages of the new 
 estimator is that it is associated with an asymptotic distribution, 
-which is derived thanks to the so called "delta"-method. 
+which is derived thanks to the so called "delta"-method \cite{Vaart2000}. 
 Based on a suggestion by R.Lebrun, A. Dumas \cite{RapportSobol2018} 
 used the same theoretical method in order to derive the 
 asymptotic distribution of Sobol' sensitivity indices already available 
@@ -419,22 +424,23 @@ in OpenTURNS.
 
 \subsubsection{Overview}
 
-Let us denote by $X\in\mathbb{R}^{n_X}$ a random vector. 
-This algorithm works in the general case where the output $Y\in\mathbb{R}^{n_Y}$ is a random 
-vector: in this case it operates on aggregated indices. 
-In order to simplify the discussion, let us make the hypothesis that $n_Y=1$. 
+Let us denote by $X\in\mathbb{R}^{n_X}$ the input random vector.
+Suppose that $Y=G(X) \in\mathbb{R}^{n_Y}$ is the corresponding output random vector, 
+where $G$ is the computer code. 
+In this case the algorithm operates on aggregated indices. 
+In order to simplify the discussion, let us make the hypothesis that there is 
+only one output, i.e. $n_Y=1$. 
 
-The Sobol' first order sensitivity indices are defined by 
+The Sobol' first order $S_i$ and 
+the total order sensitivity indices $T_i$ are defined by 
 $$
-S_i = \frac{V(E(Y|X_i))}{V(Y)}
+S_k = \frac{V(E(Y|X_i))}{V(Y)}, \qquad 
+T_k = 1 - \frac{V\left(E\left(Y|X_{-i}\right)\right)}{V(Y)}, 
 $$
-for $i=1,...,n_X$. The total order sensitivity indices are defined by :
-$$
-T_i = 1 - \frac{V\left(E\left(Y|X_{-i}\right)\right)}{V(Y)}
-$$
+for $k=1,...,n_X$, 
 where $-i$ is the set of indices which are different from $i$. 
 In the remaining of this section, 
-we focus on the first order sensitivity indice and let the reader consider [1] for the total 
+we focus on the first order sensitivity indice and let the reader consider \cite{RapportSobol2018} for the total 
 order indices. 
 Moreover, the derivation is the same for all input variables so that we omit the 
 indice $i$ in order to simplify the notations. 
@@ -449,18 +455,24 @@ asymptotically have the gaussian distribution.
 This gaussian distribution can be derived from the 
 so called "delta"-method. 
 
-Assume that the Sobol' estimator is 
+Indeed, assume that the Sobol' estimator is 
 $$
 \overline{S} = \Psi\left(\overline{U}\right)
 $$
 where $\Psi$ is a multivariate function, $U$ is a multivariate sample and $\overline{U}$ is its 
 sample mean. 
-Each Sobol' estimator can be associated with a dedicated choice of function $\Psi$ 
+Each Sobol' estimator can be associated with a specific choice of function $\Psi$ 
 and vector $U$. 
-
-Let us denote by $\Phi_j^F$ (resp. $\Phi_j^T$) the cumulated distribution function of the 
-gaussian distribution of the first (resp. total) order sensitivity indice of the j-th input 
-variable.
+Therefore, the multivariate delta method implies:
+$$
+\sqrt{n} \left(\overline{U} - \mu\right) \rightarrow \mathcal{N}\left(0,\nabla \psi(\mu)^T \Gamma\nabla \psi(\mu)\right)
+$$
+where $\mu$ is the expected value of the Sobol' indice, $\nabla \psi(\mu)$ is the 
+gradient of the function $\Psi$ and $\Gamma$ is the covariance matrix of 
+$\overline{U}$. 
+An implementation of the exact gradient $\nabla \psi(\mu)$ was derived for all estimators in OpenTURNS.  
+In the algorithm, the unknown value $\mu$ is replaced by its estimator in order to 
+compute the covariance matrix. 
 
 Each available estimator in the library provides its own distribution, namely 
 the Saltelli, Mauntz-Kucherenko, Jansen and Martinez estimators.
@@ -468,30 +480,33 @@ the Saltelli, Mauntz-Kucherenko, Jansen and Martinez estimators.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Stopping criteria}
 
+Let us denote by $\Phi_k^F$ (resp. $\Phi_k^T$) the cumulated distribution function of the 
+asymptotic gaussian distribution of the first (resp. total) order sensitivity indice of the k-th input 
+variable, for $k=1,...,n_X$. 
 We set $\alpha\in[0,1]$ the level of the confidence interval and $\epsilon \in(0,1]$ the length 
 of the confidence interval. 
 The algorithms stops when, on all components, one of the two 
 following conditions are satisfied :
 \begin{itemize}
-\item first and total order indices haved been estimated with enough precision or 
+\item first and total order indices have been estimated with enough precision or 
 \item the first order indices are separable from the total order indices. 
 \end{itemize}
 
 The precision is said to be sufficient if the $1-2\alpha$ confidence interval is smaller than 
 $\epsilon$ :
 $$
-(\Phi_j^F)^{-1}(1-\alpha) - (\Phi_j^F)^{-1}(\alpha) \leq \epsilon
+(\Phi_k^F)^{-1}(1-\alpha) - (\Phi_k^F)^{-1}(\alpha) \leq \epsilon
 $$
 and 
 $$
-(\Phi_j^T)^{-1}(1-\alpha) - (\Phi_j^T)^{-1}(\alpha) \leq \epsilon
+(\Phi_k^T)^{-1}(1-\alpha) - (\Phi_k^T)^{-1}(\alpha) \leq \epsilon
 $$
-for $j=1,...,n_X$.  
+for $k=1,...,n_X$.  
 The first order indices are \emph{separable} from the total order indices if 
 $$
-\Phi_j^F(1-\alpha) \leq \Phi_j^T(\alpha)
+\Phi_k^F(1-\alpha) \leq \Phi_k^T(\alpha)
 $$
-for $j=1,...,n_X$.  
+for $k=1,...,n_X$.  
 This criteria allows to stop when the algorithm has detected an interaction 
 between input variables with sufficient precision. 
 
@@ -503,9 +518,9 @@ In this section, we present how to use the \pyobj{SaltelliSensitivityAlgorithm} 
 in the tutorial flooding example. 
 
 
-We first set the parameters of the algoritms. 
-We set the \pyobj{alpha} variable so that a 90\% confidence interval is used. 
-In order to get confidence intervals which are not greater than 0.2, we set 
+We first set the parameters of the algorithms. 
+The \pyobj{alpha} variable is set so that a 90\% confidence interval is used. 
+In order to get confidence intervals which are not greater than 0.1, we set 
 the variable \pyobj{epsilon} variable accordingly. 
 The block size corresponds to the size of the Sobol' design of experiment generated 
 at each iteration. 
@@ -513,14 +528,15 @@ Finally, the \pyobj{batchsize} variable contains the number of points evaluated 
 by the model. 
 \begin{lstlisting}
 alpha = 0.05 # 90% confidence interval
-epsilon = 0.2 # Confidence interval length
+epsilon = 0.1 # Confidence interval length
 blocksize = 50 # Size of Sobol experiment at each iteration
 batchsize = 16 # Number of points evaluated simultaneously
 \end{lstlisting}
 
-Then we create the algorithm and configure the algorithm so that it 
+Then we create the algorithm and configure it so that it 
 uses the previous variables. 
-Moreover, we configure the algorithm so that at most 100 iterations are used. 
+Moreover, we use the \pyobj{setMaximumOuterSampling} method so that 
+the algorithm uses at most 100 iterations. 
 \begin{lstlisting}
 estimator = ot.SaltelliSensitivityAlgorithm()
 estimator.setUseAsymptoticDistribution(True)
@@ -545,9 +561,10 @@ print("Total order = %s" % (str(to)))
 
 The previous script produces the following output.
 \begin{lstlisting}
-First order = [0.529059,0.205321,0.381215,0.0316592]
-Total order = [0.481355,0.130565,0.362292,0.011206]
+First order = [0.575962,0.225763,0.357743,0.0216308]
+Total order = [0.495489,0.176668,0.331708,0.00600383]
 \end{lstlisting}
+These estimates required 30 000 evaluations of the computer code.
 
 We can obtain the asymptotic distribution of the first and total 
 order indices. 
@@ -565,7 +582,7 @@ The previous script produces the figure \ref{fig:asymptQ}.
 
 \begin{figure}[!ht]
 \begin{center}
-    \includegraphics[width=9cm]{figures/S0-distribution} 
+    \includegraphics[width=0.7\textwidth]{figures/S0-distribution} 
 \end{center}
 \caption{Asymptotic distribution of the first order Sobol' indices 
 for the $Q$ variable.}
@@ -577,12 +594,12 @@ along with their confidence intervals, we often represent the 90\% confidence
 intervals with a vertical bar. 
 The figure \ref{fig:sobolindices} presents the Sobol' indices with 
 asymptotic confidence intervals. 
-We observe that the the confidence intervals are relatively small, 
+We observe that the confidence intervals are relatively small, 
 as expected. 
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=9cm]{figures/crue-Sobol-indices} 
+    \includegraphics[width=0.7\textwidth]{figures/crue-Sobol-indices} 
 \end{center}
 \caption{Sobol' indices with asymptotic confidence intervals.}
 \label{fig:sobolindices}
@@ -606,6 +623,33 @@ SALOME binaries for the Linux platform are provided at the following URL:
 \begin{center}
 \url{https://www.salome-platform.org/contributions/edf_products}
 \end{center}
+
+The figure \ref{fig:mainview} presents the main window of the graphical user interface. 
+The left pane contains the tree view which prints the opened studies and the 
+main objects in each study. 
+The right pane displays the main features of the interface, which 
+makes the whole process easier for new users who might be 
+unfamiliar with the uncertainty quantification methodology. 
+The bottom pane is a Python console which allows to program the interface. 
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figures/gui_Diagram} 
+\end{center}
+\caption{Main window of OpenTURNS' graphical user interface.}
+\label{fig:mainview}
+\end{figure}
+
+Each box in the right pane represents a single step in the global methodology ; 
+the whole process is presented as a tree. 
+Stop signs represent a method that cannot be used because a step must be fully 
+completed before. 
+When a new study is created, most boxes are greyed out, except the 
+leftmost ``Model definition'' box, which require to define either 
+a physical model (i.e. a computer code) or a data model (i.e. a CSV data file).
+Each time a step is completed, the corresponding steps which are then available 
+are activated which allows the user to progress.  
+
 Details on the main features and the internal architecture of the GUI were already presented in \cite{OpenTURNSUncecomp17}, 
 this is why this paper focuses on the new features. 
 
@@ -619,7 +663,7 @@ configured.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{figures/capture-otgui-copule-focus.png}
+\includegraphics[width=0.9\textwidth]{figures/gui_dependence_screenshot.png}
 \caption{Managing a copula in the OpenTURNS GUI.}
 \label{fig-copula}
 \end{figure}
@@ -637,7 +681,7 @@ The variable X2 remains independent from the others in this model.
 
 Moreover, any multivariate sample can be used to estimate the parameters of a 
 copula. 
-This is case, the results of an inference can be reused in a dependency model. 
+In this case, the results of an inference can be reused in a dependency model. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -648,8 +692,33 @@ selecting the significant input variables in a costly computer code which may ha
 a large number of inputs. 
 The GUI performs the screening analysis based on the OpenTURNS \pyobj{otmorris} module \cite{otmorris}. 
 
-Let $e_i^k$ be the k-th computed elementary effects associated to the i-th input marginal, 
-the method computes $\mu_i^*$ and $\sigma_i$ respectively the absolute mean and the standard deviation of the elementary effects. 
+The method makes use of a number of levels $\ell$ of levels, which is set by the user. 
+Let $\Delta_i>0$ be the step for the i-th input variable in the physical space, 
+for $i=1,...,n_X$. 
+This increment is computed from the number of levels $L$ and the range of the i-th input 
+variable.
+
+The second parameter of the method is the number $r$ of trajectories used in the 
+design of experiment. 
+
+The k-th computed elementary effect associated to the i-th input marginal is the 
+finite difference:
+$$
+e_i^k = \frac{G\left(x_i^{(k')}\right) - G\left(x_i^{(k)}\right)}{\Delta_i}
+$$
+for $i=1,...,n_X$ and $k=1,...,r$. 
+In the previous equation, the input points $x_i^{(k)}$ and $x_i^{(k')}$ are two points 
+which differ from $\Delta_i$ in the physical input space. 
+These points are computed based on a design of experiment which aims at grossly 
+sampling the input space, generally with a rather large value of $\Delta_i$. 
+
+The method computes $\mu_i$, $\mu_i^*$ and $\sigma_i$, respectively the mean, absolute mean and 
+the standard deviation of the elementary effects:
+$$
+\mu_i = \frac{1}{r} \sum_{k=1}^r e_i^k, \qquad 
+\mu_i^* = \frac{1}{r} \sum_{k=1}^r |e_i^k|, \qquad 
+\sigma_i = \sqrt{ \frac{1}{r} \sum_{k=1}^r (e_i^k - \mu_i)^2 }, 
+$$
 The goal of this method is to set the inputs variables into three classes, based on $\mu_i^*$ 
 and the $\rho_i = \frac{\mu_i^*}{\sigma_i}$ factors:
 \begin{enumerate}
@@ -690,7 +759,7 @@ A default classification is done by the GUI, but can be modified by the user.
 \subsection{Easy high performance computing}
 \label{sec-hpceasy}
 
-Within SALOME, users can access to the remote high performance computing 
+Within SALOME, users can access the remote high performance computing 
 resources available at EDF R\&D. 
 Based on 16 100 cores, the Porthos supercomputer (2014) for example, can perform as high as 600Tflops (peak) \cite{Top500Porthos}. 
 The latest supercomputer at EDF R\&D, Gaïa (2019), can perform as high as 3 052 Tflops (peak) \cite{Top500Gaia} 
@@ -701,7 +770,7 @@ a minimum amount of configuration.
 The figure \ref{fig-hpcsalome} presents the dialog box which is displayed in the 
 context of a central tendency study based on a Monte-Carlo simulation. 
 Enabling the \emph{Parallelize status} checkbutton allows to select the 
-computing resource available in the users environment. 
+computing resource available in the user's environment. 
 The number of processes can be chosen by the user according to the hardware available 
 and the amount of computing required by the simulation. 
 Each job is associated with a time limit which defines the maximum 
@@ -735,14 +804,17 @@ Consider for example the situation presented in the figure \ref{fig-blockalgo},
 where a design of experiments involving 24 points must be evaluated. 
 The parameters configured by the user in this example is the size of the block, which is set 
 to 12, and the number of processors, which is set to 4. 
-In this case, the simulation starts with a first job involving the points with indices from 1 to 12, 
+In this case, the simulation starts with a first job (e.g. a SLURM job) involving the points with indices from 1 to 12, 
 and ends with a second job involving the points with indices 13 to 24. 
 In both jobs, each processor is in charge of the evaluation of three points. 
 
 \begin{figure}
 \centering
-\includegraphics[width=0.6\textwidth]{figures/SALOME-OpenTURNS-simulation-byblock.pdf}
-\caption{A block-based simulation performed on a supercomputer using two jobs.}
+\includegraphics[width=0.6\textwidth]{figures/SALOME-OpenTURNS-simulation-byblock-shorter.pdf}
+\caption{A block-based simulation performed on a supercomputer. We assume that we want 
+to evaluate a design of experiments made of 24 points ; these points are numbered 1, 2, ..., 24. 
+We consider a block size of 12 and a number of processors equal to 4. 
+In this case, the block-based simulation uses two jobs.}
 \label{fig-blockalgo}
 \end{figure}
 
@@ -759,28 +831,28 @@ uncertainties produces a stochastic process.
 This happens for example in the case where the simulator produces a time series or 
 a one-dimensional spatial field. 
 
-The figure \ref{fig-trajectories} presents a set of trajectories in the GUI. 
+The figure \ref{fig-trajectories} presents a sample of trajectories in the GUI. 
 In general, the sample size is large and this graphics does not convey much information, 
 because the trajectories overlap and hide each other. 
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{figures/central_tendency_trajectories-focus.png}
-\caption{A sample set of trajectories in the GUI.}
+\caption{A sample of trajectories in the GUI.}
 \label{fig-trajectories}
 \end{figure}
 
 Obviously, this situation is more complex than the classical output random 
 vector that many engineers are used to and require more advanced 
 probabilistic methods. 
-The most common way of managing such situation is to use a 
-dimension reduction method such as the principal component analysis or the 
-Karhunen-Loève decomposition. 
+The most common way of managing such a situation is to use a 
+dimension reduction method such as the functional principal component analysis or the 
+Karhunen-Loève decomposition \cite{Silverman2005}. 
 
-This is why Ribes et al \cite{Ribes2014} developed a new visualization tool in \cite{PVurl}, based on a 
-work by Kitware. 
+This is why Ribes et al \cite{Ribes2014} developed a new visualization tool in Paraview \cite{PVurl}, based on a 
+work by Kitware funded by EDF. 
 This tool is the \emph{functional bag chart}, also known as the highest density region 
-plot in the bibliography. 
+plot in the bibliography \cite{Hyndman1996}. 
 The figure \ref{fig-functionnalbagchart} presents the functional bag chart of a sample 
 set of trajectories. 
 This graphics allows to plot a functional boxplot in the sense that it plots a functional 95\% confidence 
