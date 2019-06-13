@@ -12,10 +12,11 @@
 
 \author[Baudin et al.]{
 Michaël Baudin \inst{1} \and
-Anne Dutfoy \inst{1} \and
+Thibault Delage \inst{1} \and
+Anne Dutfoy \inst{1} \and \\
 Anthony Geay \inst{1} \and
-Anne-Laure Popelin \inst{1} \and
-Aurélie Ladier \inst{2} \and
+Ovidiu Mircescu \inst{1} \and
+Aurélie Ladier \inst{2} \and \\
 Julien Schueller \inst{2} \and
 Thierry Yalamas \inst{2}
 }
@@ -25,7 +26,7 @@ Thierry Yalamas \inst{2}
 \inst{2} Phimeca Engineering. 18/20 boulevard de Reuilly, 75012 Paris - France, yalamas@phimeca.com
 }
 
-\date[]{15 June 2017, UNCECOMP 2019, Rhodes, Greece}
+\date[]{25 June 2019, UNCECOMP 2019, Crete, Greece}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -112,9 +113,9 @@ program your Python scripts.
 \begin{itemize}
 \item Linux, Windows
 \item First release : 2007
-\item 4 full time developers
+\item 5 full time developers
 \item Users $\approx 1000$, mainly in France
-(10900 Conda downloads in 2016-2017)
+(208 000 Total Conda downloads)
 \item Project size (2018) : 720 classes, more than 6000 services
 \end{itemize}
 
@@ -168,140 +169,59 @@ program your Python scripts.
 
 \section{Example of incremental algorithms}
 
-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[containsverbatim]
-\frametitle{OpenTURNS: estimate the mean}
+\frametitle{OpenTURNS: estimate the mean sequentially}
 
-See the Jupyter Notebook.
+Two sequential algorithms based on asymptotic statistics: the mean 
+and Sobol' sensitivity indices.
 
-\scriptsize{
 
-\lstset{language=python}
-\begin{lstlisting}
-from openturns.viewer import View
-import openturns as ot
-from math import sqrt
+Part 1 : Estimate the mean with an sequential algorithm.
+\begin{itemize}
+\item The "classical" way of estimating the mean : set the sample size $n$, 
+then use the sample mean. 
 
-ot.RandomGenerator.SetSeed(0)
+\item The sample mean is asymptotically gaussian:
+$$
+\mu \rightarrow \mathcal{N}\left(E(Y),\frac{V(Y)}{n}\right).
+$$
 
-# 1. The function G
-def functionCrue(X) :
-    Q, Ks, Zv, Zm = X
-    alpha = (Zm - Zv)/5.0e3
-    H = (Q/(Ks*300.0*sqrt(alpha)))**(3.0/5.0)
-    S = [H + Zv - (55.5 + 3.0)]
-    return S
+\item The absolute precision of the estimate $\mu$ can be evaluated based on the sample
+standard deviation of the estimator $\sigma_i = \frac{s_i}{\sqrt{n}}$ 
+where $s$ is the unbiased sample standard deviation of the output.
 
-# Creation of the problem function
-g = ot.PythonFunction(4, 1, functionCrue) 
-g = ot.MemoizeFunction(g)
-\end{lstlisting}
+\item To set the relative precision, we can consider the coefficient of variation 
+of the estimator $\frac{\sqrt{V(Y_i)}}{E(Y_i)\sqrt{n}}$ as a criterion (if $E(Y_i)\neq 0$).
 
-}
+\item To get good performances on distributed supercomputers and 
+multi-core workstations, the size of the sample increases by block.
+
+\end{itemize}
 
 \end{frame}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[containsverbatim]
-\frametitle{OpenTURNS: estimate the mean}
-
-\begin{columns}
-    \column{0.65\textwidth}
+\frametitle{OpenTURNS: estimate the mean sequentially}
 
 \scriptsize{
 
 \lstset{language=python}
 \begin{lstlisting}
-# 2. Random vector definition
-myParamQ = ot.GumbelAB(1013., 558.)
-Q = ot.ParametrizedDistribution(myParamQ)
-otLOW = ot.TruncatedDistribution.LOWER
-Q = ot.TruncatedDistribution(Q, 0, otLOW)
-Ks = ot.Normal(30.0, 7.5)
-Ks = ot.TruncatedDistribution(Ks, 0, otLOW)
-Zv = ot.Uniform(49.0, 51.0)
-Zm = ot.Uniform(54.0, 56.0)
-
-# 3. View the PDF
-Q.setDescription(["Q (m3/s)"])
-View(Q.drawPDF()).show()
-\end{lstlisting}
-
-}
-
-\column{0.35\textwidth}
-	\begin{center}
-	\includegraphics[width=0.95\textwidth]{figures/Q.pdf}
-	\end{center}
-
-
-\end{columns}
-
-\end{frame}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[containsverbatim]
-\frametitle{OpenTURNS: estimate the mean}
-
-\begin{columns}
-    \column{0.65\textwidth}
-
-\scriptsize{
-
-\lstset{language=python}
-\begin{lstlisting}
-# 4. Create the joint distribution function, 
-#    the output and the event. 
-X = ot.ComposedDistribution([Q, Ks, Zv, Zm])
-Y = ot.RandomVector(g, ot.RandomVector(X))
-
-# 5. Estimate expectation with simple Monte-Carlo
-sampleSize = 10000
-sampleX = X.getSample(sampleSize)
-sampleY = g(sampleX)
-sampleMean = sampleY.computeMean()
-print("Mean=%f" % (sampleMean[0]))
-\end{lstlisting}
-
-Output: 
-\begin{lstlisting}
-Mean by MC =-5.937845
-\end{lstlisting}
-
-}
-
-\column{0.35\textwidth}
-
-\end{columns}
-
-\end{frame}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame}[containsverbatim]
-\frametitle{OpenTURNS: estimate the mean}
-
-\begin{columns}
-    \column{0.65\textwidth}
-
-\scriptsize{
-
-\lstset{language=python}
-\begin{lstlisting}
-# 6. Estimate expectation with algorithm
+[... Define the Y RandomVector ...]
 algo = ot.ExpectationSimulationAlgorithm(Y)
 algo.setMaximumOuterSampling(1000)
-algo.setBlockSize(1)
-algo.setCoefficientOfVariationCriterionType('NONE')
+algo.setBlockSize(10)
+algo.setMaximumCoefficientOfVariation(0.001)
 algo.run()
 result = algo.getResult()
 expectation = result.getExpectationEstimate()
-print("Mean by ESA = %f " % expectation[0])
-expectationDistribution = result.getExpectationDistribution()
-View(expectationDistribution.drawPDF())
+print("Mean = %f " % expectation[0])
+meanDistr = result.getExpectationDistribution()
+View(meanDistr.drawPDF())
 \end{lstlisting}
 
 Output: 
@@ -311,16 +231,110 @@ Mean by ESA = -5.972516
 
 }
 
-\column{0.35\textwidth}
-
 	\begin{center}
-	\includegraphics[width=0.95\textwidth]{figures/MeanDistribution.pdf}
+	\includegraphics[width=0.3\textwidth]{figures/MeanDistribution.pdf}
 	\end{center}
 
-\end{columns}
+\end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[containsverbatim]
+\frametitle{OpenTURNS: estimate Sobol' indices sequentially}
+
+Part 2 : Estimate Sobol' sensitivity indices with an incremental algorithm.
+\begin{itemize}
+\item Assume that the Sobol' estimator is 
+$$
+\overline{S} = \Psi\left(\overline{U}\right)
+$$
+where $\Psi$ is a multivariate function, $U$ is a multivariate sample and $\overline{U}$ is its 
+sample mean. 
+
+\item Each Sobol' estimator (e.g. Saltelli, Jansen, etc...) 
+can be associated with a specific choice of function $\Psi$ and vector $U$. 
+
+\item Therefore, the multivariate delta method implies:
+$$
+\sqrt{n} \left(\overline{U} - \mu\right) \rightarrow \mathcal{N}\left(0,\nabla \psi(\mu)^T \Gamma\nabla \psi(\mu)\right)
+$$
+where $\mu$ is the expected value of the Sobol' indice, $\nabla \psi(\mu)$ is the 
+gradient of the function $\Psi$ and $\Gamma$ is the covariance matrix of 
+$\overline{U}$. 
+
+\item An implementation of the exact gradient $\nabla \psi(\mu)$ was 
+derived for all estimators in OpenTURNS.  
+
+\end{itemize}
 
 \end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[containsverbatim]
+\frametitle{OpenTURNS: estimate Sobol' indices sequentially}
+
+Part 2 : Estimate Sobol' sensitivity indices with an incremental algorithm.
+\begin{itemize}
+\item Let us denote by $\Phi_j^F$ (resp. $\Phi_j^T$) the cumulated 
+distribution function of the gaussian distribution of the first (resp. total) 
+order sensitivity indice of the j-th input variable.
+
+\item We set $\alpha\in[0,1]$ a quantile level and $\epsilon \in(0,1]$ a quantile precision. 
+
+\item The algorithms stops when, on all components, first and total order 
+indices haved been estimated with enough precision or the first order indices 
+are separable from the total order indices. 
+The precision is said to be sufficient if 
+$$
+\Phi_j^F(1-\alpha) - \Phi_j^F(\alpha) \leq \epsilon
+$$
+and 
+$$
+\Phi_j^T(1-\alpha) - \Phi_j^T(\alpha) \leq \epsilon
+$$
+for $j=1,...,n_X$. 
+
+\end{itemize}
+
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[containsverbatim]
+\frametitle{OpenTURNS: estimate Sobol' indices sequentially}
+
+\scriptsize{
+
+\lstset{language=python}
+\begin{lstlisting}
+[... Define the X Distribution, define the g Function...]
+estimator = ot.SaltelliSensitivityAlgorithm()
+estimator.setUseAsymptoticDistribution(True)
+algo = ot.SobolSimulationAlgorithm(X, g, estimator)
+algo.setMaximumOuterSampling(100) # number of iterations
+# size of Sobol experiment at each iteration
+algo.setBlockSize(50) 
+algo.setBatchSize(16) # number of points evaluated simultaneously
+# alpha, the confidence interval level
+algo.setIndexQuantileLevel(0.1) 
+# epsilon, a quantile precision
+algo.setIndexQuantileEpsilon(0.2) 
+algo.run()
+\end{lstlisting}
+
+}
+
+	\begin{center}
+	\includegraphics[width=0.3\textwidth]{figures/S0-Distribution.pdf}
+	\end{center}
+Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
+
+\end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
 \frametitle{SALOME}
@@ -340,7 +354,7 @@ Mean by ESA = -5.972516
 
     \column{0.5\textwidth}
 
-	\begin{center}
+\begin{center}
 \includegraphics[width=0.95\textwidth]{figures/Salome-hydro-platform}
 \end{center}
 
@@ -350,7 +364,7 @@ Mean by ESA = -5.972516
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-\frametitle{The graphical user interface of \ot{}}
+\frametitle{PERSALYS, the graphical user interface of \ot{}}
 	
 \begin{itemize}
 \item Main goal : provide a graphical interface of 
@@ -370,7 +384,10 @@ Mean by ESA = -5.972516
 \item Schedule : 
 	\begin{itemize}
 	\item Since summer 2016, one EDF release per year
-	\item On the internet : 2018
+	\item On the internet : SALOME\_EDF since 2018 on 
+	
+	\url{https://www.salome-platform.org}
+	
 	\end{itemize}
 
 \end{itemize}
@@ -379,117 +396,157 @@ Mean by ESA = -5.972516
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Demo}
-
 \begin{frame}
-\frametitle{GUI : the demo}
+\frametitle{PERSALYS: define the dependence}
+	
+
+  \begin{columns}
+    \column{0.4\textwidth}
+	
+\begin{itemize}
+\item Dependence is defined using copulas
+\item Define arbitrary groups of dependent variables
+\item Available copulas (same as in OT): gaussian, Ali-Mikhail-Haq, 
+    Clayton, Farlie-Gumbel-Morgenstern, Frank, Gumbel
+\end{itemize}
+
+    \column{0.6\textwidth}
 
 \begin{center}
-Demo time.
+\includegraphics[width=0.95\textwidth]{figures/persalys-dependence-extract.png}
+\end{center}
+
+	\end{columns}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{PERSALYS: estimate the parameters of the copulas}
+	
+
+  \begin{columns}
+    \column{0.4\textwidth}
+	
+\begin{itemize}
+\item Inference of the dependence of the sample 
+\item Guided choice according to the BIC and Kendall plot
+\end{itemize}
+
+    \column{0.6\textwidth}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{figures/persalys-copula-inference.png}
+\end{center}
+
+	\end{columns}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{PERSALYS: 1D fields}
+	
+
+\begin{itemize}
+\item Mesh definition and visualization
+\item Import from text or csv file
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-define-mesh.png}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-visualize-mesh-extract.png}
 \end{center}
 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \begin{frame}
-\frametitle{GUI : outline}
-
+\frametitle{PERSALYS: 1D fields}
+	
 \begin{itemize}
-\item From scratch : 3 inputs, 2 outputs, sum, central dispersion study with default parameters
-\item Open axialStressedBeam-python.xml : central dispersion with sample size 1000, Threshold P(G<0) with CV=0.05
-\item Import crue-4vars-analytique.py : S.A. with sample size 1000, sort by size
+\item Functional model definition and probabilistic model
+\item Python or symbolic
 \end{itemize}
 
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Background}
-
-\begin{frame}
-\frametitle{UQ, the easy way}
-
-Main goal : make UQ easy to use
-\begin{itemize}
-\item classical user-friendly algorithms with a 
-state-of-the-art implementation,
-\item default parameters of the algorithms whenever possible,
-\item an easy access to the HPC resources,
-\item an automated connection to the computer code.
-\end{itemize}
-
-Produce standard results :
-\begin{itemize}
-\item numerical results e.g. tables,
-\item classical graphics.
-\end{itemize}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-define-python-model-extract.png}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-evaluation.png}
+\end{center}
 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-\frametitle{Overview (1/2)}
-
-Inputs from the user :
+\frametitle{PERSALYS: 1D fields}
+	
 \begin{itemize}
-\item Physical model : symbolic, Python code or SALOME component
-\item Probabilistic model : joint probability distribution function of the input.
+\item Probabilistic model
+\item Uncertainty propagation with simple Monte-Carlo sampling
 \end{itemize}
 
-Then :
-\begin{itemize}
-\item Central dispersion: estimates the central dispersion of the output Y (e.g. mean).
-\item Threshold probability: estimates the probability that the output exceeds a given
-threshold S.
-\item Sensitivity analysis: estimates the importance of the inputs to the variability of the output.
-\end{itemize}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-probabilistic-model.png}
+\includegraphics[width=0.9\textwidth]{figures/persalys-field-montecarlo-trajectories-extract.png}
+\end{center}
 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-\frametitle{Overview (2/2)}
-
-Probabilistic modeling :
+\frametitle{PERSALYS: 1D fields}
+	
 \begin{itemize}
-\item Distribution fitting from a sample
-\item Dependence modeling (Gaussian copula)
+\item BagChart and Functional Bagchart (from Paraview) 
+based on High Density Regions
+\item Linked selections in the views
 \end{itemize}
 
-Meta-modeling :
-\begin{itemize}
-\item Polynomial chaos (full or sparse)
-\item Kriging
-\end{itemize}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-bagchart.png}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-functional-bagchart.png}
+\end{center}
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{PERSALYS: 1D fields}
+	
+\begin{itemize}
+\item Karhunen Loeve decomposition
+\item Show modes, eigenvalues and projection coefficients
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-modes.png}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-plotmatrix-extract.png}
+\end{center}
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{What's next ?}
 
 
 \begin{frame}
-\frametitle{Fields}
+\frametitle{What's next ?}
   \begin{columns}
     \column{0.5\textwidth}
 
-Field example : 
+PERSALYS Roadmap : 
 \begin{itemize}
-\item Input : 4 independent random variables
-\item Output : height of the river Garonne on a 100 km segment
-\item Computer code : TELEMAC2D
-\item Quantity of interest : pointwise average over 70 000 random simulations
-\end{itemize}
-
-Roadmap : 
-\begin{itemize}
-\item Now : massive Python/\ot{} scripting
-\item 2017-2018 : in the gui
+\item 2D Fields, 3D Fields
+\item Calibration
+\item In-Situ fields with MELISSA (with INRIA)
 \end{itemize}
 
     \column{0.5\textwidth}
@@ -497,7 +554,6 @@ Roadmap :
 \begin{center}
 \includegraphics[height=0.5\textheight]{figures/image034.png}
 \end{center}
-
 
 	\end{columns}
 
@@ -699,5 +755,203 @@ Advantages of the Python programming of the GUI:
 \end{center}
 
 \end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[containsverbatim]
+\frametitle{OpenTURNS: estimate the mean}
+
+See the Jupyter Notebook.
+
+\scriptsize{
+
+\lstset{language=python}
+\begin{lstlisting}
+from openturns.viewer import View
+import openturns as ot
+from math import sqrt
+
+ot.RandomGenerator.SetSeed(0)
+
+# 1. The function G
+def functionCrue(X) :
+    Q, Ks, Zv, Zm = X
+    alpha = (Zm - Zv)/5.0e3
+    H = (Q/(Ks*300.0*sqrt(alpha)))**(3.0/5.0)
+    S = [H + Zv - (55.5 + 3.0)]
+    return S
+
+# Creation of the problem function
+g = ot.PythonFunction(4, 1, functionCrue) 
+g = ot.MemoizeFunction(g)
+\end{lstlisting}
+
+}
+
+\end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[containsverbatim]
+\frametitle{OpenTURNS: estimate the mean}
+
+\begin{columns}
+    \column{0.65\textwidth}
+
+\scriptsize{
+
+\lstset{language=python}
+\begin{lstlisting}
+# 2. Random vector definition
+myParamQ = ot.GumbelAB(1013., 558.)
+Q = ot.ParametrizedDistribution(myParamQ)
+otLOW = ot.TruncatedDistribution.LOWER
+Q = ot.TruncatedDistribution(Q, 0, otLOW)
+Ks = ot.Normal(30.0, 7.5)
+Ks = ot.TruncatedDistribution(Ks, 0, otLOW)
+Zv = ot.Uniform(49.0, 51.0)
+Zm = ot.Uniform(54.0, 56.0)
+
+# 3. View the PDF
+Q.setDescription(["Q (m3/s)"])
+View(Q.drawPDF()).show()
+\end{lstlisting}
+
+}
+
+\column{0.35\textwidth}
+	\begin{center}
+	\includegraphics[width=0.95\textwidth]{figures/Q.pdf}
+	\end{center}
+
+
+\end{columns}
+
+\end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[containsverbatim]
+\frametitle{OpenTURNS: estimate the mean}
+
+
+\scriptsize{
+
+\lstset{language=python}
+\begin{lstlisting}
+# 4. Create the joint distribution function, 
+#    the output and the event. 
+X = ot.ComposedDistribution([Q, Ks, Zv, Zm])
+Y = ot.RandomVector(g, ot.RandomVector(X))
+
+# 5. Estimate expectation with simple Monte-Carlo
+sampleSize = 10000
+sampleX = X.getSample(sampleSize)
+sampleY = g(sampleX)
+sampleMean = sampleY.computeMean()
+print("Mean=%f" % (sampleMean[0]))
+\end{lstlisting}
+
+Output: 
+\begin{lstlisting}
+Mean by MC =-5.937845
+\end{lstlisting}
+
+}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Demo}
+
+\begin{frame}
+\frametitle{GUI : the demo}
+
+\begin{center}
+Demo time.
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}
+\frametitle{GUI : outline}
+
+\begin{itemize}
+\item From scratch : 3 inputs, 2 outputs, sum, central dispersion study with default parameters
+\item Open axialStressedBeam-python.xml : central dispersion with sample size 1000, Threshold P(G<0) with CV=0.05
+\item Import crue-4vars-analytique.py : S.A. with sample size 1000, sort by size
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Background}
+
+\begin{frame}
+\frametitle{UQ, the easy way}
+
+Main goal : make UQ easy to use
+\begin{itemize}
+\item classical user-friendly algorithms with a 
+state-of-the-art implementation,
+\item default parameters of the algorithms whenever possible,
+\item an easy access to the HPC resources,
+\item an automated connection to the computer code.
+\end{itemize}
+
+Produce standard results :
+\begin{itemize}
+\item numerical results e.g. tables,
+\item classical graphics.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Overview (1/2)}
+
+Inputs from the user :
+\begin{itemize}
+\item Physical model : symbolic, Python code or SALOME component
+\item Probabilistic model : joint probability distribution function of the input.
+\end{itemize}
+
+Then :
+\begin{itemize}
+\item Central dispersion: estimates the central dispersion of the output Y (e.g. mean).
+\item Threshold probability: estimates the probability that the output exceeds a given
+threshold S.
+\item Sensitivity analysis: estimates the importance of the inputs to the variability of the output.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Overview (2/2)}
+
+Probabilistic modeling :
+\begin{itemize}
+\item Distribution fitting from a sample
+\item Dependence modeling (Gaussian copula)
+\end{itemize}
+
+Meta-modeling :
+\begin{itemize}
+\item Polynomial chaos (full or sparse)
+\item Kriging
+\end{itemize}
+
+\end{frame}
+
+
 
 \end{document}
