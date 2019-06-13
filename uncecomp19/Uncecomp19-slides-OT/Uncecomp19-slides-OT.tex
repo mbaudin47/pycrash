@@ -371,9 +371,11 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 \ot{} in SALOME
 \item Features
 	\begin{itemize}
-	\item Uncertainty quantification (distribution fitting), 
-	central tendency, sensitivity analysis, probability estimate, 
-	meta-modeling
+	\item Uncertainty quantification : definition of the 
+	probabilistic model (including dependence), distribution fitting (including 
+	copulas), central tendency, sensitivity analysis, probability estimate, 
+	meta-modeling (polynomial chaos, kriging), screening with Morris, 
+	optimization, design of experiments
 	\item Generic (not dedicated to a specific application)
 	\item GUI language : English, French
 	\end{itemize}
@@ -431,7 +433,7 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
     \column{0.4\textwidth}
 	
 \begin{itemize}
-\item Inference of the dependence of the sample 
+\item Inference of the dependence of the multivariate sample 
 \item Guided choice according to the BIC and Kendall plot
 \end{itemize}
 
@@ -493,7 +495,7 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 
 \begin{center}
 \includegraphics[width=0.45\textwidth]{figures/persalys-field-probabilistic-model.png}
-\includegraphics[width=0.9\textwidth]{figures/persalys-field-montecarlo-trajectories-extract.png}
+\includegraphics[width=0.45\textwidth]{figures/persalys-field-montecarlo-trajectories-extract.png}
 \end{center}
 
 \end{frame}
@@ -546,7 +548,7 @@ PERSALYS Roadmap :
 \begin{itemize}
 \item 2D Fields, 3D Fields
 \item Calibration
-\item In-Situ fields with MELISSA (with INRIA)
+\item In-Situ fields based on the MELISSA library (with INRIA)
 \end{itemize}
 
     \column{0.5\textwidth}
