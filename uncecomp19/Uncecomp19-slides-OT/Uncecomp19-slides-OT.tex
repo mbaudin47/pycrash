@@ -3,7 +3,7 @@
   \documentclass{beamer}
 
 %\setbeameroption{hide notes}
-%\setbeameroption{show notes}
+\setbeameroption{show notes}
 %\setbeameroption{show only notes}
 
   \include{macros}
@@ -52,6 +52,10 @@ Thierry Yalamas \inst{2}
 
   \end{frame}
 
+\note{
+I would like to thank the organizers to inviting us to present our tools. 
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
@@ -86,10 +90,7 @@ Thierry Yalamas \inst{2}
 OpenTURNS is a software for uncertainty quantification, uncertainty propagation, 
 sensitivity analysis and metamodeling. 
 
-It is developped by five parterns : EDF, Phiméca, Airbus, IMACS and ONERA.
-
 The software is available with the open source LGPL licence on Linux and Windows. 
-
 
 In order to use OpenTURNS, you can use directly the C++ library, or 
 program your Python scripts. 
@@ -121,6 +122,19 @@ program your Python scripts.
 
 \end{frame}
 
+\note{
+It is developped by five parterns : EDF, Phiméca, Airbus, IMACS and ONERA.
+
+OpenTURNS was first released in two thousands and seven. 
+
+It is developped by 5 full time developers. 
+
+There are approximately one thousand users worlwide, mainly in France. 
+
+This is a significant software project, with seven hundred classes, 
+more than 300 000 (three hundred thousands) lines of codes.
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[containsverbatim]
@@ -139,6 +153,12 @@ program your Python scripts.
    \end{tabular}
 \end{frame}
 
+
+\note{
+This is a global picture of the main features: data analysis, 
+probabilistic modeling, meta-modeling, reliability, sensitivity analysis, 
+functional modeling and numerical methods, and, of course, graphics. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -165,9 +185,18 @@ program your Python scripts.
 }
 \end{frame}
 
+\note{
+The documentation is available online with a technical documentation of the 
+programming interface, that is to say, the classes (for example the 
+LevelSetMesher class) with a description of the arguments and small examples (the 
+examples are automatically tested). 
+
+The documentation also provide larger examples and a theoretical documentation. 
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Example of incremental algorithms}
+\section{Sequential algorithms}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -181,7 +210,7 @@ and Sobol' sensitivity indices.
 Part 1 : Estimate the mean with an sequential algorithm.
 \begin{itemize}
 \item The "classical" way of estimating the mean : set the sample size $n$, 
-then use the sample mean. 
+then use the sample mean $\mu = (1/n) \sum_{j=1}^n y^{(j)}$.
 
 \item The sample mean is asymptotically gaussian:
 $$
@@ -189,11 +218,11 @@ $$
 $$
 
 \item The absolute precision of the estimate $\mu$ can be evaluated based on the sample
-standard deviation of the estimator $\sigma_i = \frac{s_i}{\sqrt{n}}$ 
-where $s$ is the unbiased sample standard deviation of the output.
+standard deviation of the estimator $\frac{s}{\sqrt{n}}$ 
+%where $s$ is the unbiased sample standard deviation of the output.
 
 \item To set the relative precision, we can consider the coefficient of variation 
-of the estimator $\frac{\sqrt{V(Y_i)}}{E(Y_i)\sqrt{n}}$ as a criterion (if $E(Y_i)\neq 0$).
+of the estimator (if $E(Y)\neq 0$).
 
 \item To get good performances on distributed supercomputers and 
 multi-core workstations, the size of the sample increases by block.
@@ -201,6 +230,21 @@ multi-core workstations, the size of the sample increases by block.
 \end{itemize}
 
 \end{frame}
+
+
+\note{
+I would now like to introduce two new sequential algorithms which are new in OT 1.12. 
+
+These algorithms are based on asymptotic statistics. 
+
+Part 1 is on estimating the mean and part 2 is on sensitivity indices. 
+
+Suppose that you want to estimate the mean of a random variable $Y$, where 
+$Y$ is the output of a computer code. 
+
+Assume that there is only one single output (it is easy to generalize this 
+to multiple outputs).
+}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -224,9 +268,8 @@ meanDistr = result.getExpectationDistribution()
 View(meanDistr.drawPDF())
 \end{lstlisting}
 
-Output: 
 \begin{lstlisting}
-Mean by ESA = -5.972516 
+Mean = -5.972516 
 \end{lstlisting}
 
 }
@@ -234,9 +277,33 @@ Mean by ESA = -5.972516
 	\begin{center}
 	\includegraphics[width=0.3\textwidth]{figures/MeanDistribution.pdf}
 	\end{center}
+Asymptotic distribution of the sample mean.
+
 
 \end{frame}
 
+\note{
+We use the ExpectationSimulationAlgorithm class. 
+
+We set the setMaximumOuterSampling to 1000 (one thousands). This is the 
+number of outer iterations. 
+
+We set the setBlockSize to 10 (ten). This is the 
+block size (i.e. the number of inner iterations). 
+
+To define the stopping criteria, we set the setMaximumCoefficientOfVariation 
+to 0.001 (point zero zero one). 
+
+And we run. 
+
+The getResult method returns an object that contains the result of the 
+algorithm. 
+The getExpectationEstimate returns the estimated mean. 
+
+Most importantly, the getExpectationDistribution method returns the gaussian 
+distribution, that we can plot. 
+We can, if required, derive a 95\% confidence interval. 
+}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[containsverbatim]
@@ -269,6 +336,16 @@ derived for all estimators in OpenTURNS.
 
 \end{frame}
 
+\note{
+We did the same to estimate the sensitivity indices. 
+
+The trick is to define the Sobol' estimator as follows ... 
+where $\Psi$ is a multivariate function, 
+$U$ is a multivariate sample and $\overline{U}$ is its 
+sample mean. 
+
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[containsverbatim]
@@ -276,28 +353,33 @@ derived for all estimators in OpenTURNS.
 
 Part 2 : Estimate Sobol' sensitivity indices with an incremental algorithm.
 \begin{itemize}
-\item Let us denote by $\Phi_j^F$ (resp. $\Phi_j^T$) the cumulated 
+\item Let us denote by $\Phi_k^F$ (resp. $\Phi_k^T$) the cumulated 
 distribution function of the gaussian distribution of the first (resp. total) 
-order sensitivity indice of the j-th input variable.
+order sensitivity indice of the k-th input variable.
 
 \item We set $\alpha\in[0,1]$ a quantile level and $\epsilon \in(0,1]$ a quantile precision. 
 
 \item The algorithms stops when, on all components, first and total order 
-indices haved been estimated with enough precision or the first order indices 
-are separable from the total order indices. 
+indices haved been estimated with enough precision.
+ 
 The precision is said to be sufficient if 
 $$
-\Phi_j^F(1-\alpha) - \Phi_j^F(\alpha) \leq \epsilon
+\Phi_k^F(1-\alpha) - \Phi_k^F(\alpha) \leq \epsilon
 $$
 and 
 $$
-\Phi_j^T(1-\alpha) - \Phi_j^T(\alpha) \leq \epsilon
+\Phi_k^T(1-\alpha) - \Phi_k^T(\alpha) \leq \epsilon
 $$
-for $j=1,...,n_X$. 
+for $k=1,...,n_X$. 
 
 \end{itemize}
 
 \end{frame}
+
+\note{
+We now define the stopping criteria. 
+}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -315,8 +397,7 @@ estimator = ot.SaltelliSensitivityAlgorithm()
 estimator.setUseAsymptoticDistribution(True)
 algo = ot.SobolSimulationAlgorithm(X, g, estimator)
 algo.setMaximumOuterSampling(100) # number of iterations
-# size of Sobol experiment at each iteration
-algo.setBlockSize(50) 
+algo.setBlockSize(50)  # size of Sobol experiment at each iteration
 algo.setBatchSize(16) # number of points evaluated simultaneously
 # alpha, the confidence interval level
 algo.setIndexQuantileLevel(0.1) 
@@ -330,11 +411,30 @@ algo.run()
 	\begin{center}
 	\includegraphics[width=0.3\textwidth]{figures/S0-Distribution.pdf}
 	\end{center}
-Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
+Asymptotic distribution of the first order Sobol' indices for the first variable.
 
 \end{frame}
 
+
+\note{
+We use the SaltelliSensitivityAlgorithm class to define the 
+sensitivity estimator. 
+
+The sequential algorithm is provided by the SobolSimulationAlgorithm class. 
+
+We set the setMaximumOuterSampling, which is the number of outer 
+iterations. 
+
+We set the block size with setBlockSize (i.e. the size of the 
+inner iterations). 
+
+Then the setIndexQuantileLevel sets the confidence interval level 
+and the setIndexQuantileEpsilon sets the confidence interval length. 
+}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{PERSALYS, the graphical user interface}
 
 \begin{frame}
 \frametitle{SALOME}
@@ -360,6 +460,11 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 
 	\end{columns}
 \end{frame}
+
+\note{
+Before presenting the graphical user interface, I would like to say some 
+words about SALOME.
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -390,11 +495,16 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 	
 	\url{https://www.salome-platform.org}
 	
+	(as free as a free beer)
 	\end{itemize}
 
 \end{itemize}
 
 \end{frame}
+
+\note{
+We created a new tool within SALOME, called PERSALYS. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -420,8 +530,14 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 
 	\end{columns}
 
-
 \end{frame}
+
+\note{
+To define the dependence in PERSALYS, we use the copula tools available in OpenTURNS. 
+
+The Dependence tab shows the list of input variables: you can create a group 
+of dependent variables using the checkbutton and add it to the group. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -448,6 +564,11 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 
 \end{frame}
 
+\note{
+To estimate the parameters of a copula, you can perform the inference of a 
+multivariate sample. 
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
@@ -466,6 +587,12 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 
 \end{frame}
 
+\note{
+The most important new feature is the management of 1D stochastic processes. 
+
+
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
@@ -482,6 +609,15 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 \end{center}
 
 \end{frame}
+
+\note{
+The Python function has 4 (four) inputs named z0, v0, m and c. 
+
+Moreover, the Python function depends on the index parameter which name is "t". 
+
+On the right figure, this is what appears when we click on the "Evaluate" button: 
+one evaluation of the function is then a trajectory which depends on the time. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -500,6 +636,14 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 
 \end{frame}
 
+\note{
+Then we can perform the central dispersion analysis of the model. 
+
+On the left, we define the distribution of the input random vector. 
+
+On the right, this is the result of the simulation: a sample made 
+of 100 (one hundred) trajectories. 
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
@@ -507,7 +651,9 @@ Asymptotic distribution of the first order Sobol' indices for the $Q$ variable.
 	
 \begin{itemize}
 \item BagChart and Functional Bagchart (from Paraview) 
-based on High Density Regions
+based on High Density Regions.
+\item To do this, Paraview uses OpenTURNS to perform the Karhunen-Loève 
+decomposition. 
 \item Linked selections in the views
 \end{itemize}
 
@@ -517,6 +663,15 @@ based on High Density Regions
 \end{center}
 
 \end{frame}
+
+\note{
+To analyze these trajectories requires more advanced tools than with 
+classical multivariate samples, so that we can take into account for the 
+time dependence. 
+
+We use the BagChart and Functional Bagchart (from Paraview) tools, 
+which uses the High Density Regions algorithm (Hyndman, 1996). 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -546,8 +701,8 @@ based on High Density Regions
 
 PERSALYS Roadmap : 
 \begin{itemize}
-\item 2D Fields, 3D Fields
 \item Calibration
+\item 2D Fields, 3D Fields
 \item In-Situ fields based on the MELISSA library (with INRIA)
 \end{itemize}
 
@@ -560,6 +715,21 @@ PERSALYS Roadmap :
 	\end{columns}
 
 \end{frame}
+
+\note{
+We are currently working on adding features to perform 
+the calibration of a computer code (almost done). 
+
+The next features we plan to add to PERSALYS are the management 
+of 2D and 3D stochastic fields. 
+
+We also work on the use of the MELISSA software which performs 
+in-situ studies. 
+
+This library allows to perform UQ studies in situations 
+where we cannot store more than a couple of multidimensional fields 
+in memory or on the hard drive. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -576,8 +746,15 @@ Questions ?
 
 \end{frame}
 
+\note{
+Thank you for your attention. 
+
+If you have any question, it would be a pleasure to answer them. 
+
+If you want a live demo of PERSALYS, I can show you during the coffee break.
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Extra slides}
+%\section{Extra slides}
 
 \begin{frame}
 \frametitle{Interactive uncertainty visualization with Paraview}
@@ -634,7 +811,7 @@ Advantages of the Python programming of the GUI:
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Demo backup}
+%\section{Demo backup}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -865,7 +1042,7 @@ Mean by MC =-5.937845
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Demo}
+%\section{Demo}
 
 \begin{frame}
 \frametitle{GUI : the demo}
