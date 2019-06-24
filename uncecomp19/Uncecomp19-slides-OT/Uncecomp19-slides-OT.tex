@@ -217,19 +217,19 @@ and Sobol' sensitivity indices.
 
 Part 1 : Estimate the mean with an sequential algorithm.
 \begin{itemize}
+\item Goal of the algorithm: use the smallest possible sample which achieves 
+a given accuracy. 
+
 \item The "classical" way of estimating the mean : set the sample size $n$, 
-then use the sample mean $\mu = (1/n) \sum_{j=1}^n y^{(j)}$.
+then use the sample mean $\bar{\mu} = (1/n) \sum_{j=1}^n y^{(j)}$.
 
 \item The sample mean is asymptotically gaussian:
 $$
-\mu \rightarrow \mathcal{N}\left(E(Y),\frac{V(Y)}{n}\right).
+\bar{\mu} \xrightarrow{D} \mathcal{N}\left(E(Y),\frac{V(Y)}{n}\right).
 $$
 
-\item The absolute accuracy of the estimate $\mu$ can be evaluated based on the sample
-standard deviation of the estimator $\frac{s}{\sqrt{n}}$ 
-
-\item Goal of the algorithm: use the smallest possible sample which achieves 
-a given accuracy. 
+\item The absolute accuracy of the estimate $\bar{\mu}$ can be evaluated based on the sample
+standard deviation of the estimator $\hat{s} / \sqrt{n}$ 
 
 \item To get good performances on distributed supercomputers and 
 multi-core workstations, the size of the sample increases by block.
@@ -328,9 +328,9 @@ We can, if required, derive a 95\% confidence interval.
 
 Part 2 : Estimate Sobol' sensitivity indices with an incremental algorithm.
 \begin{itemize}
-\item Assume that the Sobol' estimator is 
+\item Assume that the Sobol' estimator is:
 $$
-\overline{S} = \Psi\left(\overline{U}\right)
+\bar{S} = \Psi\left(\overline{U}\right)
 $$
 where $\Psi$ is a multivariate function, $U$ is a multivariate sample and $\overline{U}$ is its 
 sample mean. 
@@ -340,14 +340,14 @@ can be associated with a specific choice of function $\Psi$ and vector $U$.
 
 \item Therefore, the multivariate delta method implies:
 $$
-\sqrt{n} \left(\overline{U} - \mu\right) \rightarrow \mathcal{N}\left(0,\nabla \psi(\mu)^T \Gamma\nabla \psi(\mu)\right)
+\sqrt{n} \left(\overline{U} - \mu\right) \xrightarrow{D} \mathcal{N}\left(0,\nabla \psi(\mu)^T \Gamma\nabla \psi(\mu)\right)
 $$
 where $\mu$ is the expected value of the Sobol' indice, $\nabla \psi(\mu)$ is the 
 gradient of the function $\Psi$ and $\Gamma$ is the covariance matrix of 
 $\overline{U}$. 
 
 \item An implementation of the exact gradient $\nabla \psi(\mu)$ was 
-derived for all estimators in OpenTURNS.  
+derived for all estimators in OpenTURNS (Dumas, 2018).  
 
 \end{itemize}
 
@@ -596,9 +596,9 @@ of 100 (one hundred) trajectories.
 \begin{itemize}
 \item BagChart and Functional Bagchart (from Paraview) 
 based on High Density Regions (Hyndman, 1996).
-\item To do this, Paraview uses OpenTURNS to perform the Karhunen-Loève 
+\item To do this, Paraview uses a principal component analysis  
 decomposition. 
-\item Linked selections in the views
+\item Linked and interactive selections in the views. 
 \end{itemize}
 
 \begin{center}
