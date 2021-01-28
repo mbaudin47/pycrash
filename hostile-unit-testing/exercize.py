@@ -22,7 +22,7 @@ import numpy as np
 
 x = TODO  # Find the critical value ...
 expected_output = TODO  # ... and the expected output ...
-computed_output = square_root.sqrt1(x)
+computed_output = sqrt1(x)
 # ... such that this fails!
 np.testing.assert_allclose(computed_output, expected_output)
 
@@ -55,6 +55,11 @@ computation software (e.g. www.wolframalpha.com)
 or a numerical scientific software (e.g. www.scilab.org).
 
 * Test the output value at an extreme floating point number.
+
+* We may want to test a larger number of input values.
+What is the maximum number of floating point numbers that we may use?
+How to select the floats we may want to check?
+How to set the expected output?
 
 * Test the speed.
 
