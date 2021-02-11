@@ -39,10 +39,6 @@ How to set the relative tolerance?
 How to set the absolute tolerance?
 What are the points x for which the relative tolerance should be used?
 What are the points x for which the absolute tolerance should be used?
-What should be the value of the relative tolerance that we should
-use?
-What should be the value of the absolute tolerance that we should
-use?
 
 * Test the output value at x = 0.
 
