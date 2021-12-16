@@ -6,8 +6,132 @@ Create a polynomial chaos.
 
 import openturns as ot
 
+def BuildBasis(distribution_collection, quasi_norm = 1.0):
+    input_dimension = len(distribution_collection)
+    if quasi_norm == 1.0:
+        multivariateBasis = ot.OrthogonalProductPolynomialFactory(distribution_collection)
+    else:
+        polynomial_collection = ot.PolynomialFamilyCollection(input_dimension)
+        for i in range(input_dimension):
+            polynomial_collection[i] = ot.StandardDistributionPolynomialFactory(distribution_collection[i])
+        enumerate_function = ot.HyperbolicAnisotropicEnumerateFunction(input_dimension, quasi_norm)
+        multivariateBasis = ot.OrthogonalProductPolynomialFactory(polynomial_collection, enumerate_function)
+    return multivariateBasis
+
 
 class PolynomialChaosFactory:
+
+    def BuildBasisFromDistributionCollection(distribution_collection, quasi_norm = 1.0):
+        """
+        Build multivariate basis from a collection of distributions
+
+        Parameters
+        ----------
+        distribution_collection : list(ot.Distribution)
+            The list of input marginal distributions.
+        quasi_norm : float, in [0.0, 1.0]
+            If not equal to 1, the quasi-norm of the Hyperbolic rule.
+            Default is 1, which corresponds to the linear enumeration rule.
+
+        Returns
+        -------
+        distribution : ot.Distribution(input_dimension)
+            The input distribution.
+        multivariateBasis : ot.OrthogonalProductPolynomialFactory()
+            The multivariate polynomial basis.
+
+        """
+        distribution = ot.ComposedDistribution(distribution_collection)
+        multivariateBasis = BuildBasis(distribution_collection, quasi_norm)
+        return distribution, multivariateBasis
+
+    def BuildBasisFromData(input_sample, quasi_norm = 1.0):
+        """
+        Build multivariate basis from an input sample
+        
+        This method may produce a Distribution with dependency, 
+        if the sample has any.
+
+        Parameters
+        ----------
+        input_sample : ot.Sample(size, input_dimension)
+            The input sample.
+        quasi_norm : float, in [0.0, 1.0]
+            If not equal to 1, the quasi-norm of the Hyperbolic rule.
+            Default is 1, which corresponds to the linear enumeration rule.
+
+        Returns
+        -------
+        distribution : ot.Distribution(input_dimension)
+            The input distribution.
+        multivariateBasis : ot.OrthogonalProductPolynomialFactory()
+            The multivariate polynomial basis.
+
+        """
+        input_dimension = input_sample.getDimension()
+        distribution = ot.FunctionalChaosAlgorithm.BuildDistribution(input_sample)
+        distribution_collection = [distribution.getMarginal(i) for i in range(input_dimension)]
+        multivariateBasis = BuildBasis(distribution_collection, quasi_norm)
+        return distribution, multivariateBasis
+
+    def BuildBasisFromKernelSmoothing(input_sample, quasi_norm = 1.0):
+        """
+        Build multivariate basis from an input sample using KDE
+
+        Parameters
+        ----------
+        input_sample : ot.Sample(size, input_dimension)
+            The input sample.
+        quasi_norm : float, in [0.0, 1.0]
+            If not equal to 1, the quasi-norm of the Hyperbolic rule.
+            Default is 1, which corresponds to the linear enumeration rule.
+
+        Returns
+        -------
+        distribution : ot.Distribution(input_dimension)
+            The input distribution.
+        multivariateBasis : ot.OrthogonalProductPolynomialFactory()
+            The multivariate polynomial basis.
+
+        """
+        input_dimension = input_sample.getDimension()
+        distribution = ot.KernelSmoothing().build(input_sample)
+        distribution_collection = [distribution.getMarginal(i) for i in range(input_dimension)]
+        multivariateBasis = BuildBasis(distribution_collection, quasi_norm)
+        return distribution, multivariateBasis
+    
+    def BuildBasisFromHistogram(input_sample, quasi_norm = 1.0):
+        """
+        Build multivariate basis from an input sample using histogram.
+        
+        The created distribution has independent marginals. 
+
+        Parameters
+        ----------
+        input_sample : ot.Sample(size, input_dimension)
+            The input sample.
+        quasi_norm : float, in [0.0, 1.0]
+            If not equal to 1, the quasi-norm of the Hyperbolic rule.
+            Default is 1, which corresponds to the linear enumeration rule.
+
+        Returns
+        -------
+        distribution : ot.Distribution(input_dimension)
+            The input distribution.
+        multivariateBasis : ot.OrthogonalProductPolynomialFactory()
+            The multivariate polynomial basis.
+
+        """
+        input_dimension = input_sample.getDimension()
+        distribution_collection = []
+        for i in range(input_dimension):
+            marginal = ot.HistogramFactory().build(input_sample[:, i])
+            distribution_collection.append(marginal)
+        distribution = ot.ComposedDistribution(distribution_collection)
+        multivariateBasis = BuildBasis(distribution_collection, quasi_norm)
+        return distribution, multivariateBasis
+
+
     def __init__(self, totalDegree, multivariateBasis, distribution):
         """
         Create a polynomial chaos.
@@ -115,3 +239,4 @@ class PolynomialChaosFactory:
             g_function, self.distribution, adaptiveStrategy, projectionStrategy
         )
         return chaosalgo
+
