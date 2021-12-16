@@ -7,7 +7,8 @@ import openturns as ot
 import scipy.spatial
 import numpy as np
 
-class KrigingFactory():
+
+class KrigingFactory:
     def __init__(self, X_train, Y_train, covarianceModel, basis):
         """
         Create a kriging algorithm. 
@@ -34,8 +35,9 @@ class KrigingFactory():
         self.basis = basis
         return
 
-    def buildFromBounds(self, minimum_scale_bounds, maximum_scale_bounds,
-                        number_of_multistart_points = 20):
+    def buildFromBounds(
+        self, minimum_scale_bounds, maximum_scale_bounds, number_of_multistart_points=20
+    ):
         """
         Create a KrigingAlgorithm using correlation bounds.
 
@@ -73,16 +75,16 @@ class KrigingFactory():
         (2021)
         """
         self.covarianceModel.setScale(minimum_scale_bounds)  # Trick A
-        algorithm = ot.KrigingAlgorithm(self.X_train, self.Y_train, self.covarianceModel,
-                                        self.basis)
+        algorithm = ot.KrigingAlgorithm(
+            self.X_train, self.Y_train, self.covarianceModel, self.basis
+        )
         print("Set bounds of scale optimization.")
-        scaleOptimizationBounds = ot.Interval(minimum_scale_bounds, maximum_scale_bounds)
+        scaleOptimizationBounds = ot.Interval(
+            minimum_scale_bounds, maximum_scale_bounds
+        )
         algorithm.setOptimizationBounds(scaleOptimizationBounds)  # Trick B
         # Configure Multistart
         solver = algorithm.getOptimizationAlgorithm()
-        solverImplementation = solver.getImplementation()
-        local_solver = solverImplementation.getClassName()
-        print("Local solver=", local_solver)
         sequence = ot.SobolSequence()
         restart = True
         # Create distribution
@@ -92,17 +94,17 @@ class KrigingFactory():
             marginal = ot.Uniform(minimum_scale_bounds[i], maximum_scale_bounds[i])
             distribution_collection.append(marginal)
         resample_distribution = ot.ComposedDistribution(distribution_collection)
-        experiment = ot.LowDiscrepancyExperiment(sequence, resample_distribution,
-                                                 number_of_multistart_points, restart)
+        experiment = ot.LowDiscrepancyExperiment(
+            sequence, resample_distribution, number_of_multistart_points, restart
+        )
         starting_points = experiment.generate()
-        print("starting_points")
-        print(starting_points)
         multiStartSolver = ot.MultiStart(solver, starting_points)
         algorithm.setOptimizationAlgorithm(multiStartSolver)
         return algorithm
 
-    def buildFromQuantiles(self, distribution, alphaLower,
-                        number_of_multistart_points = 20):
+    def buildFromQuantiles(
+        self, distribution, alphaLower, number_of_multistart_points=20
+    ):
         """
         Create a KrigingAlgorithm using quantiles of the distribution as bounds.
 
@@ -143,14 +145,17 @@ class KrigingFactory():
             marginal = distribution.getMarginal(i)
             minimum_scale_bounds[i] = marginal.computeQuantile(alphaLower)[0]
             maximum_scale_bounds[i] = marginal.computeQuantile(alphaUpper)[0]
-        print("minimum_scale_bounds=", minimum_scale_bounds)
-        print("maximum_scale_bounds=", maximum_scale_bounds)
-        algorithm = self.buildFromBounds(minimum_scale_bounds, maximum_scale_bounds,
-                                number_of_multistart_points = 20)
+        algorithm = self.buildFromBounds(
+            minimum_scale_bounds, maximum_scale_bounds, number_of_multistart_points=20
+        )
         return algorithm
-    
-    def buildFromSample(self, scale_min_factor = 0.1, scale_max_factor = 10.0, 
-                        number_of_multistart_points = 20):
+
+    def buildFromSample(
+        self,
+        scale_min_factor=0.1,
+        scale_max_factor=10.0,
+        number_of_multistart_points=20,
+    ):
         """
         Create a KrigingAlgorithm using the input sample.
 
@@ -187,11 +192,10 @@ class KrigingFactory():
         minimum_scale_bounds = ot.Point(input_dimension)
         maximum_scale_bounds = ot.Point(input_dimension)
         for i in range(input_dimension):
-            dist = scipy.spatial.distance.pdist(self.X_train[:,i])
-            print("dist", dist)
+            dist = scipy.spatial.distance.pdist(self.X_train[:, i])
             minimum_scale_bounds[i] = scale_min_factor * np.min(dist)
             maximum_scale_bounds[i] = scale_max_factor * np.max(dist)
-        algorithm = self.buildFromBounds(minimum_scale_bounds, maximum_scale_bounds, 
-                                         number_of_multistart_points)
+        algorithm = self.buildFromBounds(
+            minimum_scale_bounds, maximum_scale_bounds, number_of_multistart_points
+        )
         return algorithm
-

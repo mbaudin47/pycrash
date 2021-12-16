@@ -7,6 +7,24 @@ References
 * http://openturns.github.io/openturns/master/auto_meta_modeling/kriging_metamodel/plot_kriging_cantilever_beam.html#sphx-glr-auto-meta-modeling-kriging-metamodel-plot-kriging-cantilever-beam-py
 * https://openturns.discourse.group/t/normalization-of-the-input-sample-in-krigingalgorithm-in-ot1-16/101
 
+Output
+------
+
++ Case #1: set bounds from the input sample
+Lower and upper bounds of X_train:
+Minimum: [3.82533e+08,6.04343,0.0081952,1.77756e-09]
+Maximum: [3.82533e+10,604.343,0.81952,1.77756e-07]
+Set bounds of scale optimization.
+Optimized covariance=
+SquaredExponential(scale=[1.93179e+10,305.193,0.413857,8.97666e-08], amplitude=[0.0801215])
++ Case #2: set bounds from quantiles of the input distribution
+Set bounds of scale optimization.
+Optimized covariance=
+SquaredExponential(scale=[6.92678e+10,372.111,2.53469,1.59419e-07], amplitude=[0.255773])
++ Case #3: set bounds from the input sample
+Set bounds of scale optimization.
+Optimized covariance=
+SquaredExponential(scale=[1.9127e+10,302.192,0.409818,8.88797e-08], amplitude=[0.0791811])
 """
 import openturns as ot
 import openturns.viewer as viewer
@@ -14,13 +32,15 @@ import openturns.viewer as viewer
 from openturns.usecases import cantilever_beam as cantilever_beam
 import KrigingFactory as kg
 
+ot.Log.Show(ot.Log.NONE)
+
 
 def validate(kriging_result):
     optimized_covariance = kriging_result.getCovarianceModel()
     print("Optimized covariance=")
     print(optimized_covariance)
     krigingMetamodel = kriging_result.getMetaModel()
-    
+
     # Validation
     sampleSize_test = 100
     X_test = cb.distribution.getSample(sampleSize_test)
@@ -28,9 +48,10 @@ def validate(kriging_result):
     val = ot.MetaModelValidation(X_test, Y_test, krigingMetamodel)
     Q2 = val.computePredictivityFactor()[0]
     graph = val.drawValidation()
-    graph.setTitle("Q2 = %.2f%%" % (100*Q2))
+    graph.setTitle("Q2 = %.2f%%" % (100 * Q2))
     view = viewer.View(graph)
     return view
+
 
 cb = cantilever_beam.CantileverBeam()
 
