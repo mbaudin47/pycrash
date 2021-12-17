@@ -22,8 +22,8 @@ Case #1: sparse chaos from regression
     Q2 = 100.00%
 Size of basis = 126, Nb. coeff = 67, sparse rate = 0.47
 Case #1-bis: sparse chaos from regression, with hyperbolic rule
-    Q2 = 100.00%
-Size of basis = 27, Nb. coeff = 67, sparse rate = -1.48
+    Q2 = 99.96%
+Size of basis = 27, Nb. coeff = 13, sparse rate = 0.52
 Case #2: full chaos from regression
     Q2 = 99.92%
 Size of basis = 27, Nb. coeff = 27, sparse rate = 0.00
@@ -149,6 +149,7 @@ print("Case #1-bis: sparse chaos from regression, with hyperbolic rule")
 distribution_collection = [dist_E, dist_F, dist_L, dist_I]
 quasi_norm = 0.5
 multivariateBasis = pcf.BuildBasis(distribution_collection, quasi_norm)
+factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo.run()
