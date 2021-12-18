@@ -18,43 +18,45 @@ Ce notebook est adapté de :
 
 Output
 ------
+
 Case #1: sparse chaos from regression
     Q2 = 100.00%
-Size of basis = 126, Nb. coeff = 67, sparse rate = 0.47
+    Size of basis = 1001, Nb. coeff = 68, sparse rate = 0.93
 Case #1-bis: sparse chaos from regression, with hyperbolic rule
-    Q2 = 99.96%
-Size of basis = 27, Nb. coeff = 13, sparse rate = 0.52
+    Q2 = 99.99%
+    Size of basis = 69, Nb. coeff = 26, sparse rate = 0.62
 Case #2: full chaos from regression
-    Q2 = 99.92%
-Size of basis = 27, Nb. coeff = 27, sparse rate = 0.00
+    Q2 = -291.92%
+    Size of basis = 1001, Nb. coeff = 1001, sparse rate = 0.00
 Case #3: chaos from integration
-    Q2 = 99.97%
-Size of basis = 27, Nb. coeff = 27, sparse rate = 0.00
-Case #4: data-given polynomial chaos
-Build distribution from : BuildAdaptiveBasisFromDistributionCollection
-quasi-norm =  0.5
-    Q2 = 99.96%
-Build distribution from : BuildAdaptiveBasisFromData
-quasi-norm =  0.5
-    Q2 = 99.93%
-Build distribution from : BuildAdaptiveBasisFromHistogram
-quasi-norm =  0.5
-    Q2 = 99.97%
-Build distribution from : BuildAdaptiveBasisFromKernelSmoothing
-quasi-norm =  0.5
-    Q2 = 97.71%
-Build distribution from : BuildAdaptiveBasisFromDistributionCollection
-quasi-norm =  1.0
     Q2 = 100.00%
-Build distribution from : BuildAdaptiveBasisFromData
-quasi-norm =  1.0
-    Q2 = 99.96%
-Build distribution from : BuildAdaptiveBasisFromHistogram
-quasi-norm =  1.0
+    Size of basis = 1001, Nb. coeff = 1001, sparse rate = 0.00
+Case #4: data-given polynomial chaos (regression)
+Build distribution from : ComposedDistribution  quasi-norm =  0.5
+    Q2 = 99.98%
+    Size of basis = 69, Nb. coeff = 26, sparse rate = 0.62
+Build distribution from : BuildDistribution  quasi-norm =  0.5
+    Q2 = 99.98%
+    Size of basis = 69, Nb. coeff = 33, sparse rate = 0.52
+Build distribution from : Histogram  quasi-norm =  0.5
+    Q2 = 99.99%
+    Size of basis = 69, Nb. coeff = 26, sparse rate = 0.62
+Build distribution from : KernelSmoothing  quasi-norm =  0.5
+    Q2 = 99.99%
+    Size of basis = 69, Nb. coeff = 26, sparse rate = 0.62
+Build distribution from : ComposedDistribution  quasi-norm =  1.0
     Q2 = 100.00%
-Build distribution from : BuildAdaptiveBasisFromKernelSmoothing
-quasi-norm =  1.0
-    Q2 = 97.54%
+    Size of basis = 1001, Nb. coeff = 68, sparse rate = 0.93
+Build distribution from : BuildDistribution  quasi-norm =  1.0
+    Q2 = 99.97%
+    Size of basis = 1001, Nb. coeff = 35, sparse rate = 0.97
+Build distribution from : Histogram  quasi-norm =  1.0
+    Q2 = 100.00%
+    Size of basis = 1001, Nb. coeff = 54, sparse rate = 0.95
+Build distribution from : KernelSmoothing  quasi-norm =  1.0
+    Q2 = 100.00%
+    Size of basis = 1001, Nb. coeff = 54, sparse rate = 0.95
+
 """
 
 import openturns as ot
@@ -64,24 +66,23 @@ import openturns.viewer as otv
 
 def printSparsityRate(multivariateBasis, totalDegree, chaosResult):
     """Compute the sparsity rate, assuming a FixedStrategy."""
-    # TODO : this does not work with Hyperbolic rule: why?
     # Get P, the maximum possible number of coefficients
     enumfunc = multivariateBasis.getEnumerateFunction()
-    P = enumfunc.getStrataCumulatedCardinal(totalDegree)
+    number_of_terms_in_basis = enumfunc.getStrataCumulatedCardinal(totalDegree)
     # Get number of coefficients in the selection
     indices = chaosResult.getIndices()
     nbcoeffs = indices.getSize()
     # Compute rate
-    sparsityRate = 1.0 - nbcoeffs / P
+    sparsityRate = 1.0 - nbcoeffs / number_of_terms_in_basis
     print(
-        "Size of basis = %d, Nb. coeff = %d, sparse rate = %.2f"
-        % (P, nbcoeffs, sparsityRate)
+        "    Size of basis = %d, Nb. coeff = %d, sparse rate = %.2f"
+        % (number_of_terms_in_basis, nbcoeffs, sparsityRate)
     )
     return sparsityRate
 
 
 # Validate the metamodel
-def validate_polynomial_chaos(myDistribution, g, result, test_sample_size = 1000):
+def validate_polynomial_chaos(myDistribution, g, result, test_sample_size=1000):
     metamodel = result.getMetaModel()
     inputTest = myDistribution.getSample(test_sample_size)
     outputTest = g(inputTest)
@@ -113,7 +114,6 @@ myDistribution = ot.ComposedDistribution(distribution_collection)
 input_dimension = 4  # dimension of the input
 output_dimension = 1  # dimension of the output
 
-
 def function_beam(X):
     E, F, L, I = X
     Y = F * (L ** 3) / (3 * E * I)
@@ -123,21 +123,17 @@ def function_beam(X):
 g = ot.PythonFunction(input_dimension, output_dimension, function_beam)
 g.setInputDescription(myDistribution.getDescription())
 
-
 # Generate an training sample of size N with MC simulation (or retrieve the
 # design from experimental data).
-
 training_sample_size = 200  # Size of the training design of experiments
-
 inputTrain = myDistribution.getSample(training_sample_size)
 outputTrain = g(inputTrain)
 
-totalDegree = 5  # Maximum total polynomial degree
+totalDegree = 10  # Maximum total polynomial degree
 
 print("Case #1: sparse chaos from regression")
-multivariateBasis = ot.OrthogonalProductPolynomialFactory(
-    distribution_collection
-)
+basis_factory = pcf.MultivariateBasisFactory(myDistribution)
+multivariateBasis = basis_factory.build()
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
 chaosalgo.run()
@@ -147,7 +143,8 @@ printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #1-bis: sparse chaos from regression, with hyperbolic rule")
 quasi_norm = 0.5
-multivariateBasis = pcf.BuildAdaptiveBasis(distribution_collection, quasi_norm)
+basis_factory = pcf.MultivariateBasisFactory(myDistribution)
+multivariateBasis = basis_factory.buildAdaptive(quasi_norm)
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
 chaosalgo.run()
@@ -156,7 +153,8 @@ validate_polynomial_chaos(myDistribution, g, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #2: full chaos from regression")
-multivariateBasis = ot.OrthogonalProductPolynomialFactory(distribution_collection)
+basis_factory = pcf.MultivariateBasisFactory(myDistribution)
+multivariateBasis = basis_factory.build()
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain, False)
 chaosalgo.run()
@@ -166,7 +164,8 @@ printSparsityRate(multivariateBasis, totalDegree, result)
 
 # Create a sparse polynomial chaos decomposition from integration
 print("Case #3: chaos from integration")
-multivariateBasis = ot.OrthogonalProductPolynomialFactory(distribution_collection)
+basis_factory = pcf.MultivariateBasisFactory(myDistribution)
+multivariateBasis = basis_factory.build()
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFullChaosFromIntegration(g)
 chaosalgo.run()
@@ -174,30 +173,44 @@ result = chaosalgo.getResult()
 validate_polynomial_chaos(myDistribution, g, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
-print("Case #4: data-given polynomial chaos")
+print("Case #4: data-given polynomial chaos (regression)")
 for quasi_norm in [0.5, 1.0]:
-    for select_given_data_method in ["BuildAdaptiveBasisFromDistributionCollection", 
-                                     "BuildAdaptiveBasisFromData", 
-                                     "BuildAdaptiveBasisFromHistogram",
-                                     "BuildAdaptiveBasisFromKernelSmoothing"]:
-        if select_given_data_method == "BuildAdaptiveBasisFromDistributionCollection":
+    for select_given_data_method in [
+        "ComposedDistribution",
+        "BuildDistribution",
+        "Histogram",
+        "KernelSmoothing",
+    ]:
+        if select_given_data_method == "ComposedDistribution":
             # Given data 1 : BuildAdaptiveBasisFromDistributionCollection (best case scenario)
-            myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromDistributionCollection(distribution_collection, quasi_norm)
-        elif select_given_data_method == "BuildAdaptiveBasisFromData":
+            myDistribution = ot.ComposedDistribution(distribution_collection)
+        elif select_given_data_method == "BuildDistribution":
             # Given data 2 : FromData
-            myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromData(inputTrain, quasi_norm)
-        elif select_given_data_method == "BuildAdaptiveBasisFromHistogram":
+            myDistribution = ot.FunctionalChaosAlgorithm.BuildDistribution(inputTrain)
+        elif select_given_data_method == "Histogram":
             # Given data 3 : use Histograms, assuming independent marginals
-            myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromHistogram(inputTrain, quasi_norm)
-        elif select_given_data_method == "BuildAdaptiveBasisFromKernelSmoothing":
+            histogram_factory = pcf.SuperHistogramFactory()
+            myDistribution = histogram_factory.build(inputTrain)
+        elif select_given_data_method == "KernelSmoothing":
             # Given data 4 : Kernel Smoothing
-            myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromKernelSmoothing(inputTrain, quasi_norm)
+            distribution = ot.KernelSmoothing().build(inputTrain)
         else:
-            raise ValueError("Unknown given data method %s" % (select_given_data_method))
-        print("Build distribution from :", select_given_data_method)
-        print("quasi-norm = ", quasi_norm)
-        factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
+            raise ValueError(
+                "Unknown given data method %s" % (select_given_data_method)
+            )
+        print(
+            "Build distribution from :",
+            select_given_data_method,
+            " quasi-norm = ",
+            quasi_norm,
+        )
+        basis_factory = pcf.MultivariateBasisFactory(myDistribution)
+        multivariateBasis = basis_factory.buildAdaptive(quasi_norm)
+        factory = pcf.PolynomialChaosFactory(
+            totalDegree, multivariateBasis, myDistribution
+        )
         chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
         chaosalgo.run()
         result = chaosalgo.getResult()
         validate_polynomial_chaos(myDistribution, g, result)
+        printSparsityRate(multivariateBasis, totalDegree, result)
