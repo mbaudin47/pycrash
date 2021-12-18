@@ -31,28 +31,28 @@ Case #3: chaos from integration
     Q2 = 99.97%
 Size of basis = 27, Nb. coeff = 27, sparse rate = 0.00
 Case #4: data-given polynomial chaos
-Build distribution from : BuildBasisFromDistributionCollection
+Build distribution from : BuildAdaptiveBasisFromDistributionCollection
 quasi-norm =  0.5
     Q2 = 99.96%
-Build distribution from : BuildBasisFromData
+Build distribution from : BuildAdaptiveBasisFromData
 quasi-norm =  0.5
     Q2 = 99.93%
-Build distribution from : BuildBasisFromHistogram
+Build distribution from : BuildAdaptiveBasisFromHistogram
 quasi-norm =  0.5
     Q2 = 99.97%
-Build distribution from : BuildBasisFromKernelSmoothing
+Build distribution from : BuildAdaptiveBasisFromKernelSmoothing
 quasi-norm =  0.5
     Q2 = 97.71%
-Build distribution from : BuildBasisFromDistributionCollection
+Build distribution from : BuildAdaptiveBasisFromDistributionCollection
 quasi-norm =  1.0
     Q2 = 100.00%
-Build distribution from : BuildBasisFromData
+Build distribution from : BuildAdaptiveBasisFromData
 quasi-norm =  1.0
     Q2 = 99.96%
-Build distribution from : BuildBasisFromHistogram
+Build distribution from : BuildAdaptiveBasisFromHistogram
 quasi-norm =  1.0
     Q2 = 100.00%
-Build distribution from : BuildBasisFromKernelSmoothing
+Build distribution from : BuildAdaptiveBasisFromKernelSmoothing
 quasi-norm =  1.0
     Q2 = 97.54%
 """
@@ -94,6 +94,7 @@ def validate_polynomial_chaos(myDistribution, g, result, test_sample_size = 1000
     return view
 
 
+ot.Log.Show(ot.Log.NONE)
 ot.RandomGenerator.SetSeed(1976)
 
 dist_E = ot.Beta(0.9, 2.2, 2.8e7, 4.8e7)
@@ -106,7 +107,8 @@ dist_L.setDescription(["L"])
 dist_I = ot.Beta(2.5, 1.5, 310.0, 450.0)  # in cm^4
 dist_I.setDescription(["I"])
 
-myDistribution = ot.ComposedDistribution([dist_E, dist_F, dist_L, dist_I])
+distribution_collection = [dist_E, dist_F, dist_L, dist_I]
+myDistribution = ot.ComposedDistribution(distribution_collection)
 
 input_dimension = 4  # dimension of the input
 output_dimension = 1  # dimension of the output
@@ -121,11 +123,6 @@ def function_beam(X):
 g = ot.PythonFunction(input_dimension, output_dimension, function_beam)
 g.setInputDescription(myDistribution.getDescription())
 
-# On crée la base polynomiale multivariée par tensorisation de polynômes univariés avec
-# la règle d'énumération linéaire par défaut.
-multivariateBasis = ot.OrthogonalProductPolynomialFactory(
-    [dist_E, dist_F, dist_L, dist_I]
-)
 
 # Generate an training sample of size N with MC simulation (or retrieve the
 # design from experimental data).
@@ -138,6 +135,9 @@ outputTrain = g(inputTrain)
 totalDegree = 5  # Maximum total polynomial degree
 
 print("Case #1: sparse chaos from regression")
+multivariateBasis = ot.OrthogonalProductPolynomialFactory(
+    distribution_collection
+)
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
 chaosalgo.run()
@@ -146,18 +146,17 @@ validate_polynomial_chaos(myDistribution, g, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #1-bis: sparse chaos from regression, with hyperbolic rule")
-distribution_collection = [dist_E, dist_F, dist_L, dist_I]
 quasi_norm = 0.5
-multivariateBasis = pcf.BuildBasis(distribution_collection, quasi_norm)
+multivariateBasis = pcf.BuildAdaptiveBasis(distribution_collection, quasi_norm)
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
-factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo.run()
 result = chaosalgo.getResult()
 validate_polynomial_chaos(myDistribution, g, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #2: full chaos from regression")
+multivariateBasis = ot.OrthogonalProductPolynomialFactory(distribution_collection)
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain, False)
 chaosalgo.run()
@@ -167,6 +166,7 @@ printSparsityRate(multivariateBasis, totalDegree, result)
 
 # Create a sparse polynomial chaos decomposition from integration
 print("Case #3: chaos from integration")
+multivariateBasis = ot.OrthogonalProductPolynomialFactory(distribution_collection)
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
 chaosalgo = factory.buildFullChaosFromIntegration(g)
 chaosalgo.run()
@@ -176,21 +176,20 @@ printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #4: data-given polynomial chaos")
 for quasi_norm in [0.5, 1.0]:
-    for select_given_data_method in ["BuildBasisFromDistributionCollection", 
-                                     "BuildBasisFromData", 
-                                     "BuildBasisFromHistogram",
-                                     "BuildBasisFromKernelSmoothing"]:
-        if select_given_data_method == "BuildBasisFromDistributionCollection":
-            # Given data 1 : BuildBasisFromDistributionCollection (best case scenario)
-            distribution_collection = [dist_E, dist_F, dist_L, dist_I]
+    for select_given_data_method in ["BuildAdaptiveBasisFromDistributionCollection", 
+                                     "BuildAdaptiveBasisFromData", 
+                                     "BuildAdaptiveBasisFromHistogram",
+                                     "BuildAdaptiveBasisFromKernelSmoothing"]:
+        if select_given_data_method == "BuildAdaptiveBasisFromDistributionCollection":
+            # Given data 1 : BuildAdaptiveBasisFromDistributionCollection (best case scenario)
             myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromDistributionCollection(distribution_collection, quasi_norm)
-        elif select_given_data_method == "BuildBasisFromData":
+        elif select_given_data_method == "BuildAdaptiveBasisFromData":
             # Given data 2 : FromData
             myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromData(inputTrain, quasi_norm)
-        elif select_given_data_method == "BuildBasisFromHistogram":
+        elif select_given_data_method == "BuildAdaptiveBasisFromHistogram":
             # Given data 3 : use Histograms, assuming independent marginals
             myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromHistogram(inputTrain, quasi_norm)
-        elif select_given_data_method == "BuildBasisFromKernelSmoothing":
+        elif select_given_data_method == "BuildAdaptiveBasisFromKernelSmoothing":
             # Given data 4 : Kernel Smoothing
             myDistribution, multivariateBasis = pcf.PolynomialChaosFactory.BuildBasisFromKernelSmoothing(inputTrain, quasi_norm)
         else:
