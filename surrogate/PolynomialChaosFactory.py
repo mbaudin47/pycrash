@@ -287,7 +287,7 @@ class PolynomialChaosFactory:
         )
         return chaosalgo
 
-    def buildFullChaosFromIntegration(self, g_function):
+    def buildFullChaosFromIntegration(self, g_function, experiment=None):
         """
         Create a full polynomial chaos with integration based on Gaussian quadrature.
     
@@ -315,13 +315,17 @@ class PolynomialChaosFactory:
 
         # 1. Create the adaptive basis
         adaptiveStrategy = self._createAdaptiveStrategy()
-        # 2. Create the projection strategy
-        distribution_measure = self.multivariateBasis.getMeasure()
-        dim_input = g_function.getInputDimension()
-        totalDegreeList = [self.totalDegree] * dim_input
-        experiment = ot.GaussProductExperiment(distribution_measure, totalDegreeList)
+        # 2. Create the experiment
+        if experiment is None:
+            distribution_measure = self.multivariateBasis.getMeasure()
+            dim_input = g_function.getInputDimension()
+            totalDegreeList = [self.totalDegree] * dim_input
+            experiment = ot.GaussProductExperiment(
+                distribution_measure, totalDegreeList
+            )
+        # 3. Create the projection strategy
         projectionStrategy = ot.IntegrationStrategy(experiment)
-        # 3. Create the polynomial chaos
+        # 4. Create the polynomial chaos
         chaosalgo = ot.FunctionalChaosAlgorithm(
             g_function, self.distribution, adaptiveStrategy, projectionStrategy
         )

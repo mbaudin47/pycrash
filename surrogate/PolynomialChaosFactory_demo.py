@@ -82,10 +82,12 @@ def printSparsityRate(multivariateBasis, totalDegree, chaosResult):
 
 
 # Validate the metamodel
-def validate_polynomial_chaos(myDistribution, g, result, test_sample_size=1000):
+def validate_polynomial_chaos(
+    myDistribution, g_function, result, test_sample_size=1000
+):
     metamodel = result.getMetaModel()
     inputTest = myDistribution.getSample(test_sample_size)
-    outputTest = g(inputTest)
+    outputTest = g_function(inputTest)
     val = ot.MetaModelValidation(inputTest, outputTest, metamodel)
     Q2 = val.computePredictivityFactor()[0]
     graph = val.drawValidation()
@@ -114,20 +116,21 @@ myDistribution = ot.ComposedDistribution(distribution_collection)
 input_dimension = 4  # dimension of the input
 output_dimension = 1  # dimension of the output
 
+
 def function_beam(X):
     E, F, L, I = X
     Y = F * (L ** 3) / (3 * E * I)
     return [Y]
 
 
-g = ot.PythonFunction(input_dimension, output_dimension, function_beam)
-g.setInputDescription(myDistribution.getDescription())
+g_function = ot.PythonFunction(input_dimension, output_dimension, function_beam)
+g_function.setInputDescription(myDistribution.getDescription())
 
 # Generate an training sample of size N with MC simulation (or retrieve the
 # design from experimental data).
 training_sample_size = 200  # Size of the training design of experiments
 inputTrain = myDistribution.getSample(training_sample_size)
-outputTrain = g(inputTrain)
+outputTrain = g_function(inputTrain)
 
 totalDegree = 10  # Maximum total polynomial degree
 
@@ -138,7 +141,7 @@ factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribut
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
 chaosalgo.run()
 result = chaosalgo.getResult()
-validate_polynomial_chaos(myDistribution, g, result)
+validate_polynomial_chaos(myDistribution, g_function, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #1-bis: sparse chaos from regression, with hyperbolic rule")
@@ -149,7 +152,7 @@ factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribut
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
 chaosalgo.run()
 result = chaosalgo.getResult()
-validate_polynomial_chaos(myDistribution, g, result)
+validate_polynomial_chaos(myDistribution, g_function, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #2: full chaos from regression")
@@ -159,19 +162,39 @@ factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribut
 chaosalgo = factory.buildFromRegression(inputTrain, outputTrain, False)
 chaosalgo.run()
 result = chaosalgo.getResult()
-validate_polynomial_chaos(myDistribution, g, result)
+validate_polynomial_chaos(myDistribution, g_function, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
 
-# Create a sparse polynomial chaos decomposition from integration
-print("Case #3: chaos from integration")
+# Create a polynomial chaos decomposition from integration with Gauss rule
+print("Case #3: chaos from integration (Gauss rule)")
 basis_factory = pcf.MultivariateBasisFactory(myDistribution)
 multivariateBasis = basis_factory.build()
 factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
-chaosalgo = factory.buildFullChaosFromIntegration(g)
+chaosalgo = factory.buildFullChaosFromIntegration(g_function)
 chaosalgo.run()
 result = chaosalgo.getResult()
-validate_polynomial_chaos(myDistribution, g, result)
+validate_polynomial_chaos(myDistribution, g_function, result)
 printSparsityRate(multivariateBasis, totalDegree, result)
+
+# Create a polynomial chaos decomposition from integration with sampling
+print("Case #3-bis: chaos from integration (sampling)")
+basis_factory = pcf.MultivariateBasisFactory(myDistribution)
+multivariateBasis = basis_factory.build()
+sequence = ot.SobolSequence()
+dimension = myDistribution.getDimension()
+factory = pcf.PolynomialChaosFactory(totalDegree, multivariateBasis, myDistribution)
+for experiment in [
+    ot.MonteCarloExperiment(myDistribution, training_sample_size),
+    ot.LHSExperiment(myDistribution, training_sample_size),
+    ot.LowDiscrepancyExperiment(sequence, myDistribution, dimension),
+]:
+    name = experiment.getClassName()
+    print("Experiment : ", name)
+    chaosalgo = factory.buildFullChaosFromIntegration(g_function, experiment)
+    chaosalgo.run()
+    result = chaosalgo.getResult()
+    validate_polynomial_chaos(myDistribution, g_function, result)
+    printSparsityRate(multivariateBasis, totalDegree, result)
 
 print("Case #4: data-given polynomial chaos (regression)")
 for quasi_norm in [0.5, 1.0]:
@@ -212,5 +235,5 @@ for quasi_norm in [0.5, 1.0]:
         chaosalgo = factory.buildFromRegression(inputTrain, outputTrain)
         chaosalgo.run()
         result = chaosalgo.getResult()
-        validate_polynomial_chaos(myDistribution, g, result)
+        validate_polynomial_chaos(myDistribution, g_function, result)
         printSparsityRate(multivariateBasis, totalDegree, result)
