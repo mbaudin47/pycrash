@@ -16,5 +16,5 @@ fi
 #
 ar rcv libsmolpack.a *.o
 
-gcc -o smolpack_interactive smolpack_interactive.c libsmolpack.a -lm
+gcc -o smolpack_interactive -g smolpack_interactive.c libsmolpack.a -lm
 

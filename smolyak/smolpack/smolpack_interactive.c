@@ -101,7 +101,7 @@ int main ( int argc, char *argv[] )
   printf ( "SMOLPACK_INTERACTIVE\n" );
   printf ( "  C version\n" );
 
-  if ( argc < 1 )
+  if ( argc == 1 )
   {
     printf ( "\n" );
     printf ( "Enter the number of the function to be integrated:\n"); 
