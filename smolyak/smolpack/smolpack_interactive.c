@@ -71,6 +71,13 @@ int main ( int argc, char *argv[] )
     Commandline parameter, int BS, chooses the basic sequence.
     1 = delayed Clenshaw Curtis, (fewer function evaluations),
     2 = standard Clenshaw Curtis. 
+    
+  Example
+  Use the first test function, in dimension 3. 
+  Uses K = 5 integration stages.
+  Set seed to 123456789
+  Uses standard Clenshaw Curtis.
+    smolpack_interactive 1 3 5 123456789 2
 */
 {
   int bs;

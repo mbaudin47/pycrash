@@ -1,10 +1,10 @@
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     1
   Number of states K =        5
   Random number SEED =        123456789
@@ -13,21 +13,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  33
   Weight evaluations =        17
 
-  Exact:    2.1547367724e-01
-  Estimate: 2.1547367724e-01 
-  Error:    1.6653345369e-16 
+  Exact:    1.7182818285e+00
+  Estimate: 1.7182818285e+00 
+  Error:    4.4408920985e-16 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     2
   Number of states K =        5
   Random number SEED =        123456789
@@ -36,21 +36,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  145
   Weight evaluations =        53
 
-  Exact:    1.0794577844e-01
-  Estimate: 1.0794360277e-01 
-  Error:    2.1756766364e-06 
+  Exact:    2.9524924420e+00
+  Estimate: 2.9524924420e+00 
+  Error:    1.1635137298e-13 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     3
   Number of states K =        5
   Random number SEED =        123456789
@@ -59,21 +59,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  441
   Weight evaluations =        100
 
-  Exact:    -1.7266322056e-01
-  Estimate: -1.7267178819e-01 
-  Error:    8.5676344444e-06 
+  Exact:    5.0732141118e+00
+  Estimate: 5.0732141121e+00 
+  Error:    2.7738611408e-10 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     4
   Number of states K =        5
   Random number SEED =        123456789
@@ -82,21 +82,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  1105
   Weight evaluations =        120
 
-  Exact:    -1.4624716085e-03
-  Estimate: -1.4624566416e-03 
-  Error:    1.4966939443e-08 
+  Exact:    8.7172116201e+00
+  Estimate: 8.7172116116e+00 
+  Error:    8.4936786493e-09 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     5
   Number of states K =        5
   Random number SEED =        123456789
@@ -105,21 +105,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  2433
   Weight evaluations =        126
 
-  Exact:    -1.8438739495e-03
-  Estimate: -1.8438575057e-03 
-  Error:    1.6443804551e-08 
+  Exact:    1.4978626322e+01
+  Estimate: 1.4978626313e+01 
+  Error:    8.6071310079e-09 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     6
   Number of states K =        5
   Random number SEED =        123456789
@@ -128,21 +128,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  4865
   Weight evaluations =        127
 
-  Exact:    1.4415625344e-01
-  Estimate: 1.4415538317e-01 
-  Error:    8.7026412954e-07 
+  Exact:    2.5737501424e+01
+  Estimate: 2.5737501597e+01 
+  Error:    1.7276826014e-07 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     7
   Number of states K =        5
   Random number SEED =        123456789
@@ -151,21 +151,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  9017
   Weight evaluations =        127
 
-  Exact:    3.0032920570e-01
-  Estimate: 3.0032906547e-01 
-  Error:    1.4023175721e-07 
+  Exact:    4.4224281007e+01
+  Estimate: 4.4224282080e+01 
+  Error:    1.0732974616e-06 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     8
   Number of states K =        5
   Random number SEED =        123456789
@@ -174,21 +174,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  15713
   Weight evaluations =        127
 
-  Exact:    5.0188788385e-01
-  Estimate: 5.0188808939e-01 
-  Error:    2.0553758950e-07 
+  Exact:    7.5989778430e+01
+  Estimate: 7.5989781859e+01 
+  Error:    3.4286345425e-06 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     9
   Number of states K =        5
   Random number SEED =        123456789
@@ -197,21 +197,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  26017
   Weight evaluations =        127
 
-  Exact:    5.6303295402e-01
-  Estimate: 5.6303315111e-01 
-  Error:    1.9709054799e-07 
+  Exact:    1.3057185543e+02
+  Estimate: 1.3057186082e+02 
+  Error:    5.3929981050e-06 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        1
   Random number SEED =        123456789
@@ -220,21 +220,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  21
   Weight evaluations =        2
 
-  Exact:    4.3877241795e-01
-  Estimate: 3.9157917390e-01 
-  Error:    4.7193244052e-02 
+  Exact:    2.2435924649e+02
+  Estimate: 2.1102883589e+02 
+  Error:    1.3330410591e+01 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        2
   Random number SEED =        123456789
@@ -243,21 +243,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  201
   Weight evaluations =        3
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.4339647163e-01 
-  Error:    4.6240536771e-03 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2291676653e+02 
+  Error:    1.4424799538e+00 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        3
   Random number SEED =        123456789
@@ -266,21 +266,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  1201
   Weight evaluations =        6
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3850789046e-01 
-  Error:    2.6452749591e-04 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2425498332e+02 
+  Error:    1.0426316146e-01 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        4
   Random number SEED =        123456789
@@ -289,21 +289,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  5281
   Weight evaluations =        9
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3878188836e-01 
-  Error:    9.4704045736e-06 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435401438e+02 
+  Error:    5.2321034779e-03 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        5
   Random number SEED =        123456789
@@ -312,21 +312,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  19105
   Weight evaluations =        12
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877219215e-01 
-  Error:    2.2580614961e-07 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435906142e+02 
+  Error:    1.8507072522e-04 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        6
   Random number SEED =        123456789
@@ -335,21 +335,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  60225
   Weight evaluations =        22
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877242186e-01 
-  Error:    3.9120430784e-09 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435924187e+02 
+  Error:    4.6150059063e-06 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        7
   Random number SEED =        123456789
@@ -358,21 +358,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  169185
   Weight evaluations =        32
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877241790e-01 
-  Error:    5.4575177710e-11 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435924641e+02 
+  Error:    8.0614654507e-08 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        8
   Random number SEED =        123456789
@@ -381,21 +381,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  434145
   Weight evaluations =        42
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877241795e-01 
-  Error:    6.5220051582e-13 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435924648e+02 
+  Error:    9.8967234408e-10 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        1
   Random number SEED =        123456789
@@ -404,21 +404,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  21
   Weight evaluations =        3
 
-  Exact:    4.3877241795e-01
-  Estimate: 3.9625072565e-01 
-  Error:    4.2521692302e-02 
+  Exact:    2.2435924649e+02
+  Estimate: 2.1155106804e+02 
+  Error:    1.2808178451e+01 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        2
   Random number SEED =        123456789
@@ -427,21 +427,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  221
   Weight evaluations =        7
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.4183322795e-01 
-  Error:    3.0608099976e-03 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2311632423e+02 
+  Error:    1.2429222598e+00 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        3
   Random number SEED =        123456789
@@ -450,21 +450,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  1581
   Weight evaluations =        19
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3870528529e-01 
-  Error:    6.7132663566e-05 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2428806699e+02 
+  Error:    7.1179499742e-02 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        4
   Random number SEED =        123456789
@@ -473,21 +473,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  8801
   Weight evaluations =        49
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877013183e-01 
-  Error:    2.2861259124e-06 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435709878e+02 
+  Error:    2.1477079691e-03 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        5
   Random number SEED =        123456789
@@ -496,21 +496,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  41265
   Weight evaluations =        127
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877252314e-01 
-  Error:    1.0518925830e-07 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435923564e+02 
+  Error:    1.0841874115e-05 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        6
   Random number SEED =        123456789
@@ -519,21 +519,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  171425
   Weight evaluations =        341
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877241846e-01 
-  Error:    5.1053233863e-10 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435924777e+02 
+  Error:    1.2875638333e-06 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:50 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        7
   Random number SEED =        123456789
@@ -542,21 +542,21 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  652065
   Weight evaluations =        893
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877241790e-01 
-  Error:    5.2235826775e-11 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435924651e+02 
+  Error:    2.5806627946e-08 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:51 PM
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:51 PM
 
 SMOLPACK_INTERACTIVE
   C version
 
-  Test function number FNUM = 1
+  Test function number FNUM = 7
   Spatial dimension DIM =     10
   Number of states K =        8
   Random number SEED =        123456789
@@ -565,11 +565,11 @@ SMOLPACK_INTERACTIVE
   Number of function calls =  2320385
   Weight evaluations =        2323
 
-  Exact:    4.3877241795e-01
-  Estimate: 4.3877241795e-01 
-  Error:    1.3250511799e-13 
+  Exact:    2.2435924649e+02
+  Estimate: 2.2435924649e+02 
+  Error:    4.2038550419e-10 
 
 SMOLPACK_INTERACTIVE
   Normal end of execution.
 
-08 January 2022 10:59:43 PM
+08 January 2022 10:59:51 PM
