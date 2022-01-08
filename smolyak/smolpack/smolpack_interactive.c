@@ -1,9 +1,9 @@
-# include <math.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <time.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-# include "smolpack.h"
+#include "smolpack.h"
 /*
   Some global data.
 */
@@ -13,25 +13,25 @@ double derf[8][20];
 double w[maxdim];
 double wp;
 
-int main ( int argc, char *argv[] );
-double (*f)(int, double x[]);  
-double f1 ( int dim, double x[] );
-double f2 ( int dim, double x[] );
-double f3 ( int dim, double x[] );
-double f4 ( int dim, double x[] );
-double f5 ( int dim, double x[] );
-double f6 ( int dim, double x[] );
-double f7 ( int dim, double x[] );
-void init_erf ( void );
-double integral ( int fnum, int dim );
-double my_erfc ( double x );
-void timestamp ( );
-void tuple_next ( int m1, int m2, int n, int *rank, int x[] );
+int main (int argc, char *argv[]);
+double (*f) (int, double x[]);
+double f1 (int dim, double x[]);
+double f2 (int dim, double x[]);
+double f3 (int dim, double x[]);
+double f4 (int dim, double x[]);
+double f5 (int dim, double x[]);
+double f6 (int dim, double x[]);
+double f7 (int dim, double x[]);
+void init_erf (void);
+double integral (int fnum, int dim);
+double my_erfc (double x);
+void timestamp ();
+void tuple_next (int m1, int m2, int n, int *rank, int x[]);
 
 /******************************************************************************/
 
-int main ( int argc, char *argv[] )
-
+int
+main (int argc, char *argv[])
 /******************************************************************************/
 /*
   Purpose:
@@ -94,179 +94,179 @@ int main ( int argc, char *argv[] )
   int seed;
   double sum;
 
-  printf ( "\n" );
-  timestamp ( );
+  printf ("\n");
+  timestamp ();
 
-  printf ( "\n" );
-  printf ( "SMOLPACK_INTERACTIVE\n" );
-  printf ( "  C version\n" );
+  printf ("\n");
+  printf ("SMOLPACK_INTERACTIVE\n");
+  printf ("  C version\n");
 
-  if ( argc == 1 )
-  {
-    printf ( "\n" );
-    printf ( "Enter the number of the function to be integrated:\n"); 
+  if (argc == 1)
+    {
+      printf ("\n");
+      printf ("Enter the number of the function to be integrated:\n");
 
-    printf ( "1: Oscillatory\n" ); 
-    printf ( "2: Product peak\n" ); 
-    printf ( "3: Corner peak\n" ); 
-    printf ( "4: Gaussian\n" ); 
-    printf ( "5: Continuous\n" ); 
-    printf ( "6: Discontinuous\n" ); 
-    printf ( "7: exp(sum(x[i]))\n" );
+      printf ("1: Oscillatory\n");
+      printf ("2: Product peak\n");
+      printf ("3: Corner peak\n");
+      printf ("4: Gaussian\n");
+      printf ("5: Continuous\n");
+      printf ("6: Discontinuous\n");
+      printf ("7: exp(sum(x[i]))\n");
 
-    scanf ( "%i", &fnum ); 
-  }
+      scanf ("%i", &fnum);
+    }
   else
-  {
-    argv++;
-    fnum = atoi ( *argv );
-  }
-    
-  if ( fnum == 1 )
-  {
-    f = f1;
-  }
-  else if ( fnum == 2 )
-  {
-    f = f2;
-  }
-  else if ( fnum == 3 )
-  {
-    f = f3;
-  }
-  else if ( fnum == 4 )
-  {
-    f = f4;
-  }
-  else if ( fnum == 5 )
-  {
-    f = f5;
-  }
-  else if ( fnum == 6 )
-  {
-    f = f6;
-  }
-  else if ( fnum == 7 )
-  {
-    f = f7;
-  }
+    {
+      argv++;
+      fnum = atoi (*argv);
+    }
+
+  if (fnum == 1)
+    {
+      f = f1;
+    }
+  else if (fnum == 2)
+    {
+      f = f2;
+    }
+  else if (fnum == 3)
+    {
+      f = f3;
+    }
+  else if (fnum == 4)
+    {
+      f = f4;
+    }
+  else if (fnum == 5)
+    {
+      f = f5;
+    }
+  else if (fnum == 6)
+    {
+      f = f6;
+    }
+  else if (fnum == 7)
+    {
+      f = f7;
+    }
   else
-  {
-    printf ( "\n" );
-    printf ( "SMOLPACK_INTERACTIVE - Fatal error!\n" );
-    printf ( "  Illegal value of FNUM = %d\n", fnum );
-    printf ( "  1 <= FNUM <= 7 is required.\n" );
-    exit ( 1 );
-  }
+    {
+      printf ("\n");
+      printf ("SMOLPACK_INTERACTIVE - Fatal error!\n");
+      printf ("  Illegal value of FNUM = %d\n", fnum);
+      printf ("  1 <= FNUM <= 7 is required.\n");
+      exit (1);
+    }
 
-  if ( argc < 2 )
-  {
-    printf ( "\n" );
-    printf ( "Enter DIM, the spatial dimension.\n"); 
-    scanf ( "%i", &dim ); 
-  }
+  if (argc < 2)
+    {
+      printf ("\n");
+      printf ("Enter DIM, the spatial dimension.\n");
+      scanf ("%i", &dim);
+    }
   else
-  {
-    argv++;
-    dim = atoi ( *argv );
-  }
+    {
+      argv++;
+      dim = atoi (*argv);
+    }
 
-  if ( dim < 0 )
-  {
-    printf ( "\n" );
-    printf ( "SMOLPACK_INTERACTIVE - Fatal error!\n" );
-    printf ( "  Illegal value of DIM = %d\n", dim );
-    printf ( "  DIM must be 1 or greater.\n" );
-    exit ( 1 );
-  }
+  if (dim < 0)
+    {
+      printf ("\n");
+      printf ("SMOLPACK_INTERACTIVE - Fatal error!\n");
+      printf ("  Illegal value of DIM = %d\n", dim);
+      printf ("  DIM must be 1 or greater.\n");
+      exit (1);
+    }
 
-  if ( argc < 3 )
-  {
-    printf ( "\n" );
-    printf ( "Enter K, the number of stages.\n"); 
-    scanf ( "%i", &k ); 
-  }
+  if (argc < 3)
+    {
+      printf ("\n");
+      printf ("Enter K, the number of stages.\n");
+      scanf ("%i", &k);
+    }
   else
-  {
-    argv++;
-    k = atoi ( *argv );
-  }
+    {
+      argv++;
+      k = atoi (*argv);
+    }
 
-  if ( k < 0 )
-  {
-    printf ( "\n" );
-    printf ( "SMOLPACK_INTERACTIVE - Fatal error!\n" );
-    printf ( "  Illegal value of K = %d\n", k );
-    printf ( "  K must be 0 or greater.\n" );
-    exit ( 1 );
-  }
+  if (k < 0)
+    {
+      printf ("\n");
+      printf ("SMOLPACK_INTERACTIVE - Fatal error!\n");
+      printf ("  Illegal value of K = %d\n", k);
+      printf ("  K must be 0 or greater.\n");
+      exit (1);
+    }
 
-  if ( argc < 4 )
-  {
-    printf ( "\n" );
-    printf ( "Enter a seed for the random number generator:\n"); 
-    scanf ( "%i", &seed ); 
-  }
+  if (argc < 4)
+    {
+      printf ("\n");
+      printf ("Enter a seed for the random number generator:\n");
+      scanf ("%i", &seed);
+    }
   else
-  {
-    argv++;
-    seed = atoi ( *argv );
-  }
+    {
+      argv++;
+      seed = atoi (*argv);
+    }
 
-  if ( argc < 5 )
-  {
-    printf ( "\n" );
-    printf ( "Choose the basic sequence:\n"); 
-    printf ( " 1 : delayed Clenshaw-Curtis rule (fewer evaluations)\n"); 
-    printf ( " 2 : standard Clenshaw-Curtis rule\n"); 
-    scanf ( "%i", &bs ); 
-  }
+  if (argc < 5)
+    {
+      printf ("\n");
+      printf ("Choose the basic sequence:\n");
+      printf (" 1 : delayed Clenshaw-Curtis rule (fewer evaluations)\n");
+      printf (" 2 : standard Clenshaw-Curtis rule\n");
+      scanf ("%i", &bs);
+    }
   else
-  {
-    argv++;
-    bs = atoi ( *argv );
-  }
+    {
+      argv++;
+      bs = atoi (*argv);
+    }
 
-  if ( bs != 1 && bs != 2 )
-  {
-    printf ( "\n" );
-    printf ( "SMOLPACK_INTERACTIVE - Fatal error!\n" );
-    printf ( "  Illegal value of BS = %d\n", bs );
-    printf ( "  BS = 1 or BS = 2 are the legal choices.\n" );
-    exit ( 1 );
-  }
+  if (bs != 1 && bs != 2)
+    {
+      printf ("\n");
+      printf ("SMOLPACK_INTERACTIVE - Fatal error!\n");
+      printf ("  Illegal value of BS = %d\n", bs);
+      printf ("  BS = 1 or BS = 2 are the legal choices.\n");
+      exit (1);
+    }
 
-  printf ( "\n" );
-  printf ( "  Test function number FNUM = %d\n", fnum ); 
-  printf ( "  Spatial dimension DIM =     %d\n", dim ); 
-  printf ( "  Number of states K =        %d\n", k ); 
-  printf ( "  Random number SEED =        %d\n", seed ); 
-  printf ( "  Basic sequence choice BS =  %d\n", bs ); 
+  printf ("\n");
+  printf ("  Test function number FNUM = %d\n", fnum);
+  printf ("  Spatial dimension DIM =     %d\n", dim);
+  printf ("  Number of states K =        %d\n", k);
+  printf ("  Random number SEED =        %d\n", seed);
+  printf ("  Basic sequence choice BS =  %d\n", bs);
 /*
   Set the C vector to a random value.
   This is a parameter vector for the integrand functions.
 */
-  srand ( seed );      
+  srand (seed);
 
   sum = 0.0;
 
-  for ( i = 0; i < dim; i++ )
-  {
-    c[i] = ( ( double ) rand ( ) ) / ( double ) RAND_MAX; 
-    sum = sum + c[i];
-  }
+  for (i = 0; i < dim; i++)
+    {
+      c[i] = ((double) rand ()) / (double) RAND_MAX;
+      sum = sum + c[i];
+    }
 
-  for ( i = 0; i < dim; i++ )
-  {
-    c[i] = c[i] / sum * 9.0; 
-  }
+  for (i = 0; i < dim; i++)
+    {
+      c[i] = c[i] / sum * 9.0;
+    }
 /*
   Set the W vector to a random value.
 */
-  for ( i = 0; i <= dim; i++ ) 
-  {
-    w[i] = ( ( double ) rand ( ) ) / ( double ) RAND_MAX; 
-  }  
+  for (i = 0; i <= dim; i++)
+    {
+      w[i] = ((double) rand ()) / (double) RAND_MAX;
+    }
 /*
   Call the chosen Smolyak algorithm.
   Why does this loop run from DIM+K to DIM+K?
@@ -274,37 +274,38 @@ int main ( int argc, char *argv[] )
 */
   print_stats = 1;
 
-  for ( q = dim + k; q <= dim + k; q++ )
-  {
-    if ( bs == 1 )
+  for (q = dim + k; q <= dim + k; q++)
     {
-      quad = int_smolyak ( dim, q, f, print_stats );
+      if (bs == 1)
+	{
+	  quad = int_smolyak (dim, q, f, print_stats);
+	}
+      else if (bs == 2)
+	{
+	  quad = cc_int_smolyak (dim, q, f, print_stats);
+	}
+      exact = integral (fnum, dim);
+      printf ("\n");
+      printf ("  Exact:    %15.10e\n", exact);
+
+      printf ("  Estimate: %15.10e \n", quad);
+      printf ("  Error:    %15.10e \n", fabs (quad - exact));
     }
-    else if ( bs == 2 )
-    {
-      quad = cc_int_smolyak ( dim, q, f, print_stats );
-    }
-    exact = integral ( fnum, dim );
-    printf ( "\n" );
-    printf ( "  Exact:    %15.10e\n", exact );      
 
-    printf ( "  Estimate: %15.10e \n",  quad ); 
-    printf ( "  Error:    %15.10e \n",  fabs ( quad - exact ) ); 
-  }
+  printf ("\n");
+  printf ("SMOLPACK_INTERACTIVE\n");
+  printf ("  Normal end of execution.\n");
 
-  printf ( "\n" );
-  printf ( "SMOLPACK_INTERACTIVE\n" );
-  printf ( "  Normal end of execution.\n" );
+  printf ("\n");
+  timestamp ();
 
-  printf ( "\n" );
-  timestamp ( );
+  return 0;
+}
 
-  return 0;    
-} 
 /******************************************************************************/
 
-double f1 ( int dim, double x[] )
-
+double
+f1 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -334,18 +335,19 @@ double f1 ( int dim, double x[] )
 
   count++;
   value = 2.0 * pi * w[0];
-  for ( i = 0; i < dim; i++ )
-  {
-    value = value + c[i] * x[i];
-  }
-  value = cos ( value );
+  for (i = 0; i < dim; i++)
+    {
+      value = value + c[i] * x[i];
+    }
+  value = cos (value);
 
   return value;
 }
+
 /******************************************************************************/
 
-double f2 ( int dim, double x[] )
-
+double
+f2 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -381,19 +383,20 @@ double f2 ( int dim, double x[] )
 
   count++;
   value = 1.0;
-    
-  for ( i = 0; i < dim; i++ ) 
-  {
-    value = value * ( pow ( 1.0 / c[i], 2 ) + pow ( x[i] - w[i], 2 ) );
-  }
+
+  for (i = 0; i < dim; i++)
+    {
+      value = value * (pow (1.0 / c[i], 2) + pow (x[i] - w[i], 2));
+    }
   value = 1.0 / value;
 
   return value;
 }
+
 /******************************************************************************/
 
-double f3 ( int dim, double x[] )
-
+double
+f3 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -422,18 +425,19 @@ double f3 ( int dim, double x[] )
 
   count++;
   value = 1.0;
-  for ( i = 0; i < dim; i++ )
-  {
-    value = value + c[i] * x[i];
-  }
-  value = 1.0 / pow ( value, dim + 1 );
+  for (i = 0; i < dim; i++)
+    {
+      value = value + c[i] * x[i];
+    }
+  value = 1.0 / pow (value, dim + 1);
 
   return value;
 }
+
 /******************************************************************************/
 
-double f4 ( int dim, double x[] )
-
+double
+f4 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -462,18 +466,19 @@ double f4 ( int dim, double x[] )
 
   count++;
   value = 0.0;
-  for ( i = 0; i < dim; i++ )  
-  {
-    value = value - pow ( c[i] * ( x[i] - w[i] ), 2 );
-  }
-  value = exp ( value );
+  for (i = 0; i < dim; i++)
+    {
+      value = value - pow (c[i] * (x[i] - w[i]), 2);
+    }
+  value = exp (value);
 
   return value;
 }
+
 /******************************************************************************/
 
-double f5 ( int dim, double x[] )
-
+double
+f5 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -503,19 +508,20 @@ double f5 ( int dim, double x[] )
   count++;
   value = 0.0;
 
-  for ( i = 0; i < dim; i++ )
-  {
-    value = value - c[i] * fabs ( x[i] - w[i] );
-  }
+  for (i = 0; i < dim; i++)
+    {
+      value = value - c[i] * fabs (x[i] - w[i]);
+    }
 
-  value = exp ( value );
+  value = exp (value);
 
   return value;
 }
+
 /******************************************************************************/
 
-double f6 ( int dim, double x[] )
-
+double
+f6 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -546,35 +552,36 @@ double f6 ( int dim, double x[] )
 
   value = 0.0;
 
-  if ( dim == 1 )
-  {
-    if ( x[0] <= w[0] )
+  if (dim == 1)
     {
-      for ( i = 0; i < dim; i++ )
-      {
-        value = value + c[i] * x[i];
-      }
-      value = exp ( value );
+      if (x[0] <= w[0])
+	{
+	  for (i = 0; i < dim; i++)
+	    {
+	      value = value + c[i] * x[i];
+	    }
+	  value = exp (value);
+	}
     }
-  }
   else
-  {
-    if ( x[0] <= w[0] && x[1] <= w[1] )
     {
-      for ( i = 0; i < dim; i++ )
-      {
-        value = value + c[i] * x[i];
-      }
-      value = exp ( value );
+      if (x[0] <= w[0] && x[1] <= w[1])
+	{
+	  for (i = 0; i < dim; i++)
+	    {
+	      value = value + c[i] * x[i];
+	    }
+	  value = exp (value);
+	}
     }
-  }
 
   return value;
 }
+
 /******************************************************************************/
 
-double f7 ( int dim, double x[] )
-
+double
+f7 (int dim, double x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -603,18 +610,19 @@ double f7 ( int dim, double x[] )
 
   count++;
   value = 0.0;
-  for ( i = 0; i < dim; i++ )
-  {
-    value = value + x[i];
-  }
-  value = exp ( value );
+  for (i = 0; i < dim; i++)
+    {
+      value = value + x[i];
+    }
+  value = exp (value);
 
   return value;
 }
+
 /******************************************************************************/
 
-void init_erf ( void )
-
+void
+init_erf (void)
 /******************************************************************************/
 /*
   Purpose:
@@ -636,7 +644,7 @@ void init_erf ( void )
   int j;
   double pi = 3.141592653589793;
 
-  wp = sqrt ( pi );
+  wp = sqrt (pi);
   hilf = 2.0 / wp;
 
   derf[0][0] = 1.0;
@@ -648,24 +656,25 @@ void init_erf ( void )
   derf[6][0] = 2.1519736712498913116593350399E-17;
   derf[7][0] = 4.1838256077794143986140102238E-23;
 
-  for ( i = 0; i <= 7; i++ )
-  {
-    derf[i][1] = - exp ( - pow ( ( double ) i, 2 ) ) * hilf;
-    derf[i][2] = - ( double ) i * derf[i][1]; 
-
-    for ( j = 3; j <= 19; j++ )
+  for (i = 0; i <= 7; i++)
     {
-      derf[i][j] = -2.0 * ( ( double ) i * derf[i][j-1] 
-                 + ( double ) ( j - 2 ) * derf[i][j-2] 
-                 / ( double ) ( j - 1 ) ) / ( double ) j; 
+      derf[i][1] = -exp (-pow ((double) i, 2)) * hilf;
+      derf[i][2] = -(double) i *derf[i][1];
+
+      for (j = 3; j <= 19; j++)
+	{
+	  derf[i][j] = -2.0 * ((double) i * derf[i][j - 1]
+			       + (double) (j - 2) * derf[i][j - 2]
+			       / (double) (j - 1)) / (double) j;
+	}
     }
-  }
   return;
 }
+
 /******************************************************************************/
 
-double integral ( int fnum, int dim )
-
+double
+integral (int fnum, int dim)
 /******************************************************************************/
 /*
   Purpose:
@@ -707,163 +716,163 @@ double integral ( int fnum, int dim )
 /*
   #1: Oscillatory.
 */
-  if ( fnum == 1 )
-  {
-    arg = 0.0;
-    for ( i = 0; i < dim; i++ )
+  if (fnum == 1)
     {
-      arg = arg + c[i];
-    }
+      arg = 0.0;
+      for (i = 0; i < dim; i++)
+	{
+	  arg = arg + c[i];
+	}
 
-    prod = 1.0;
-    for ( i = 0; i < dim; i++ )
-    {
-      prod = prod * sin ( 0.5 * c[i] ) / c[i];
-    }
+      prod = 1.0;
+      for (i = 0; i < dim; i++)
+	{
+	  prod = prod * sin (0.5 * c[i]) / c[i];
+	}
 
-    value = pow ( 2.0, dim ) * cos ( 2.0 * pi * w[0] + 0.5 * arg ) * prod;
-  }
+      value = pow (2.0, dim) * cos (2.0 * pi * w[0] + 0.5 * arg) * prod;
+    }
 /*
   #2: Product Peak.
 */
-  else if ( fnum == 2 )
-  {
-    value = 1.0;
-    for ( i = 0; i < dim; i++ )
+  else if (fnum == 2)
     {
-      value = value * c[i] * ( atan ( c[i] * ( 1.0 - w[i] ) ) 
-                             + atan ( c[i] *         w[i]   ) );
-    } 
-  }
+      value = 1.0;
+      for (i = 0; i < dim; i++)
+	{
+	  value = value * c[i] * (atan (c[i] * (1.0 - w[i]))
+				  + atan (c[i] * w[i]));
+	}
+    }
 /*
   #3: Corner Peak
 */
-  else if ( fnum == 3 )
-  {
-    ivec = ( int * ) malloc ( dim * sizeof ( int ) );
-
-    total = 0.0;
-    rank = 0;
-
-    for ( ; ; )
+  else if (fnum == 3)
     {
-      tuple_next ( 0, 1, dim, &rank, ivec );
+      ivec = (int *) malloc (dim * sizeof (int));
 
-      if ( rank == 0 )
-      {
-        break;
-      }
+      total = 0.0;
+      rank = 0;
 
-      ivec_sum = 0;
-      for ( i = 0; i < dim; i++ )
-      {
-        ivec_sum = ivec_sum + ivec[i];
-      }
+      for (;;)
+	{
+	  tuple_next (0, 1, dim, &rank, ivec);
 
-      bot = 1.0;
-      for ( i = 0; i < dim; i++ )
-      {
-        if ( ivec[i] == 1 )
-        {
-          bot = bot + c[i];
-        }
-      }
-      total = total + pow ( -1.0, ivec_sum ) / bot;
+	  if (rank == 0)
+	    {
+	      break;
+	    }
+
+	  ivec_sum = 0;
+	  for (i = 0; i < dim; i++)
+	    {
+	      ivec_sum = ivec_sum + ivec[i];
+	    }
+
+	  bot = 1.0;
+	  for (i = 0; i < dim; i++)
+	    {
+	      if (ivec[i] == 1)
+		{
+		  bot = bot + c[i];
+		}
+	    }
+	  total = total + pow (-1.0, ivec_sum) / bot;
+	}
+
+      a = 1;
+      for (i = 1; i <= dim; i++)
+	{
+	  a = a * i;
+	}
+
+      c_prod = 1.0;
+      for (i = 0; i < dim; i++)
+	{
+	  c_prod = c_prod * c[i];
+	}
+      value = total / ((double) a * c_prod);
+
+      free (ivec);
     }
-
-    a = 1;
-    for ( i = 1; i <= dim; i++ )
-    {
-      a = a * i;
-    }
-
-    c_prod = 1.0;
-    for ( i = 0; i < dim; i++ )
-    {
-      c_prod = c_prod * c[i];
-    }
-    value = total / ( ( double ) a * c_prod );
-
-    free ( ivec );
-  }
 /*
   #4: Gaussian.
 */
-  else if ( fnum == 4 )
-  {
-    init_erf ( ); 
-    value = 1.0;
-    for ( i = 0; i < dim; i++ )
+  else if (fnum == 4)
     {
-      value = value * sqrt ( pi ) / ( 2.0 * c[i] ) 
-            * ( my_erfc ( -c[i] *         w[i] )
-              - my_erfc (  c[i] * ( 1.0 - w[i] ) ) );
+      init_erf ();
+      value = 1.0;
+      for (i = 0; i < dim; i++)
+	{
+	  value = value * sqrt (pi) / (2.0 * c[i])
+	    * (my_erfc (-c[i] * w[i]) - my_erfc (c[i] * (1.0 - w[i])));
+	}
     }
-  }
 /*
   #5: Continuous function.
 */
-  else if ( fnum == 5 )
-  {
-    value = 1.0;
-    for ( i = 0; i < dim; i++ )
+  else if (fnum == 5)
     {
-      value = value / c[i] 
-        * ( 2.0 - exp ( -c[i] * w[i] ) - exp ( c[i] * ( w[i] - 1.0 ) ) );
+      value = 1.0;
+      for (i = 0; i < dim; i++)
+	{
+	  value = value / c[i]
+	    * (2.0 - exp (-c[i] * w[i]) - exp (c[i] * (w[i] - 1.0)));
+	}
     }
-  }
 /*
   #6  Discontinuous function.
 */
-  else if ( fnum == 6 )
-  {
-    value = 1.0;
- 
-    if ( dim < 2 )
+  else if (fnum == 6)
     {
-      for ( i = 0; i < dim; i++ )
-      {
-        value = value * ( exp ( c[i] * w[i] ) - 1.0 ) / c[i];
-      }
+      value = 1.0;
+
+      if (dim < 2)
+	{
+	  for (i = 0; i < dim; i++)
+	    {
+	      value = value * (exp (c[i] * w[i]) - 1.0) / c[i];
+	    }
+	}
+      else
+	{
+	  for (i = 0; i <= 1; i++)
+	    {
+	      value = value * (exp (c[i] * w[i]) - 1.0) / c[i];
+	    }
+	  for (i = 2; i < dim; i++)
+	    {
+	      value = value * (exp (c[i]) - 1.0) / c[i];
+	    }
+	}
     }
-    else
-    {
-      for ( i = 0; i <= 1; i++ )
-      {
-        value = value * ( exp ( c[i] * w[i] ) - 1.0 ) / c[i];
-      }
-      for ( i = 2; i < dim; i++ )
-      {
-        value = value * ( exp ( c[i] ) - 1.0 ) / c[i];
-      }
-    }
-  }
 /*
   #7: exp(sum(x(i)))
 */
-  else if ( fnum == 7 )
-  {
-    value = pow ( exp ( 1.0 ) - 1.0, dim );
-  }
+  else if (fnum == 7)
+    {
+      value = pow (exp (1.0) - 1.0, dim);
+    }
 /*
   Unexpected call!
 */
   else
-  {
-    value = 0.0;
-    printf ( "\n" );
-    printf ( "INTEGRAL - Fatal error!\n" );
-    printf ( "  Input function index FNUM must be between 1 and 7.\n" );
-    printf ( "  This value was FNUM = %d\n", fnum );
-    exit ( 1 );
-  }
+    {
+      value = 0.0;
+      printf ("\n");
+      printf ("INTEGRAL - Fatal error!\n");
+      printf ("  Input function index FNUM must be between 1 and 7.\n");
+      printf ("  This value was FNUM = %d\n", fnum);
+      exit (1);
+    }
 
   return value;
 }
+
 /******************************************************************************/
 
-double my_erfc ( double x )
-
+double
+my_erfc (double x)
 /******************************************************************************/
 /*
   Purpose:
@@ -894,42 +903,43 @@ double my_erfc ( double x )
   double smme;
   double value;
 
-  if ( x < 0 )
-  {
-    value = 2.0 - my_erfc ( - x ); 
-  }
-  else if ( x < 7.5 )
-  {
-    i = ( int ) ( x + 0.499999 ); 
-    h = x - ( double ) i;
-    value = h * derf[i][19] + derf[i][18]; 
-    for ( j = 17; 0 <= j; j-- )
+  if (x < 0)
     {
-      value = h * value + derf[i][j];    
+      value = 2.0 - my_erfc (-x);
     }
-  }
+  else if (x < 7.5)
+    {
+      i = (int) (x + 0.499999);
+      h = x - (double) i;
+      value = h * derf[i][19] + derf[i][18];
+      for (j = 17; 0 <= j; j--)
+	{
+	  value = h * value + derf[i][j];
+	}
+    }
   else
-  {
-    hilf = 0.5 / pow ( x, 2 );
-    prod[0] = 1.0;
-    i = 2 + ( int ) ( 190.0 / x );
-    for ( j = 1; j <= i; j++ )
     {
-      prod[j] = -prod[j-1] * ( 2 * j - 1 ) * hilf; 
+      hilf = 0.5 / pow (x, 2);
+      prod[0] = 1.0;
+      i = 2 + (int) (190.0 / x);
+      for (j = 1; j <= i; j++)
+	{
+	  prod[j] = -prod[j - 1] * (2 * j - 1) * hilf;
+	}
+      smme = 0.0;
+      for (j = i; 0 <= j; j--)
+	{
+	  smme = smme + prod[j];
+	}
+      value = (smme * exp (-pow (x, 2)) / (wp * x));
     }
-    smme = 0.0;
-    for ( j = i; 0 <= j; j-- )
-    {
-      smme = smme + prod[j]; 
-    }
-    value = ( smme * exp ( - pow ( x, 2 ) ) / ( wp * x ) );
-  }
   return value;
 }
+
 /******************************************************************************/
 
-void timestamp ( void )
-
+void
+timestamp (void)
 /******************************************************************************/
 /*
   Purpose:
@@ -953,27 +963,28 @@ void timestamp ( void )
     None
 */
 {
-# define TIME_SIZE 40
+#define TIME_SIZE 40
 
   static char time_buffer[TIME_SIZE];
   const struct tm *tm;
   size_t len;
   time_t now;
 
-  now = time ( NULL );
-  tm = localtime ( &now );
+  now = time (NULL);
+  tm = localtime (&now);
 
-  len = strftime ( time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm );
+  len = strftime (time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm);
 
-  printf ( "%s\n", time_buffer );
+  printf ("%s\n", time_buffer);
 
   return;
-# undef TIME_SIZE
+#undef TIME_SIZE
 }
+
 /******************************************************************************/
 
-void tuple_next ( int m1, int m2, int n, int *rank, int x[] )
-
+void
+tuple_next (int m1, int m2, int n, int *rank, int x[])
 /******************************************************************************/
 /*
   Purpose:
@@ -1037,47 +1048,47 @@ void tuple_next ( int m1, int m2, int n, int *rank, int x[] )
   int i;
   int j;
 
-  if ( m2 < m1 )
-  {
-    *rank = 0;
-    return;
-  }
-
-  if ( *rank <= 0 )
-  {
-    for ( i = 0; i < n; i++ )
+  if (m2 < m1)
     {
-      x[i] = m1;
+      *rank = 0;
+      return;
     }
-    *rank = 1;
-  }
+
+  if (*rank <= 0)
+    {
+      for (i = 0; i < n; i++)
+	{
+	  x[i] = m1;
+	}
+      *rank = 1;
+    }
   else
-  {
-    *rank = *rank + 1;
-    i = n - 1;
-
-    for ( ; ; )
     {
+      *rank = *rank + 1;
+      i = n - 1;
 
-      if ( x[i] < m2 )
-      {
-        x[i] = x[i] + 1;
-        break;
-      }
+      for (;;)
+	{
 
-      x[i] = m1;
+	  if (x[i] < m2)
+	    {
+	      x[i] = x[i] + 1;
+	      break;
+	    }
 
-      if ( i == 0 )
-      {
-        *rank = 0;
-        for ( j = 0; j < n; j++ )
-        {
-          x[j] = m1;
-        }
-        break;
-      }
-      i = i - 1;
+	  x[i] = m1;
+
+	  if (i == 0)
+	    {
+	      *rank = 0;
+	      for (j = 0; j < n; j++)
+		{
+		  x[j] = m1;
+		}
+	      break;
+	    }
+	  i = i - 1;
+	}
     }
-  }
   return;
 }
