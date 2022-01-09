@@ -4,27 +4,21 @@
 #include <time.h>
 #include <stdio.h>
 #include "smolyak.h"
-/*
-  Some global data.
-*/
 
-/******************************************************************************/
-
-int
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 /******************************************************************************/
 /*
   Purpose:
 
-    SMOLPACK_INTERACTIVE is an interactive test program for SMOLPACK.
+    SMOLPACK_DRIVE is a test program for smolyak quadrature.
 
   Modified:
 
-    30 April 2007
+    9 January 2022
 
   Author:
 
-    Knut Petras
+    Michaël Baudin, from John Burkardt and Knut Petras.
 
   Reference:
 
@@ -48,19 +42,11 @@ main (int argc, char *argv[])
     smolpack_driver 3 5
 */
 {
-  int bs;
   int dimension;
-  double exact;
-  int fnum;
+  int k_stage;
   int i;
   int j;
-  int k_stage;
-  int print_stats;
   int q;
-  int qmax = 12;
-  double quad;
-  int seed;
-  double sum;
   int size;
   double *nodes;
   double *weights;
@@ -68,11 +54,9 @@ main (int argc, char *argv[])
   FILE * f_weights;
   FILE * f_nodes;
 
-  printf ("\n");
   printf ("SMOLYAK_DRIVER\n");
 
   if (argc != 3) {
-    printf ("\n");
     printf ("Wrong number of arguments : %d\n", argc);
     printf ("smolpack_driver dimension k_stage\n");
     exit (1);
@@ -81,9 +65,8 @@ main (int argc, char *argv[])
   // Read dimension
   dimension = atoi (argv[1]);
   k_stage = atoi (argv[2]);
-  printf ("  Spatial dimension DIM =     %d\n", dimension);
-  printf ("  Number of states K =        %d\n", k_stage);
-  printf ("\n");
+  printf ("  Dimension  = %d\n", dimension);
+  printf ("  Number of stages K = %d\n", k_stage);
 
   // Compute weights and nodes
   q = k_stage + dimension;
@@ -97,13 +80,13 @@ main (int argc, char *argv[])
   f_nodes = fopen("nodes.txt", "w");
   printf ("  Write weights\n");
   for(i=0; i < size; i++) {
-    fprintf (f_weights, "  w[%d] = %.17e\n", i, weights[i]);
+    fprintf (f_weights, "w[%d] = %.17e\n", i, weights[i]);
   }
   printf ("  Write nodes\n");
   for(i = 0; i < size; i++) {
     for(j = 0; j < dimension; j++) {
       index = dimension * i + j;
-      fprintf (f_nodes, "  x[%d, %d] = %.17e\n", i, j, nodes[index]);
+      fprintf (f_nodes, "x[%d, %d] = %.17e\n", i, j, nodes[index]);
     }
   }
   printf ("  Free memory\n");
