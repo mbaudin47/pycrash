@@ -149,20 +149,33 @@ class PolynomialChaosFactory:
         self.maximum_strata_index = 100
         return
 
-    def _compute_strata_from_degree(self,):
+    def _compute_strata_from_degree(
+        self, 
+    ):
         """
         Compute the minimum index of the strata corresponding to a given total degree.
         
-        This function is used when we consider an adaptive basis such 
-        as the hyperbolic enumeration rule.
         This is the smallest index of a strata which contains a multiindex 
         having the required total degree.
         Usually, this function is used with a large maximumu strata index, so that 
         a large number of stratas are explored until the required total degree 
         is reached.
+        
+        The returned index is so that this strata contains a multi-index having 
+        a total degree equal to the required total_degree, but interaction multi-indices 
+        may be lower that this total_degree. 
+        
+        This is a Python replicate of OpenTURNS's getStrataCumulatedCardinal(), 
+        but this function works properly, while OpenTURNS's has a bug.
     
         Parameters
         ----------
+        enumerateFunction : ot.EnumerateFunction()
+            The enumerate function.
+        total_degree : int
+            The total degree to reach.
+        maximum_strata_index : int
+            The maximum number of strata to try.
     
         Returns
         -------
@@ -181,18 +194,15 @@ class PolynomialChaosFactory:
             if is_degree_reached:
                 break
             strata_cardinal = enumerateFunction.getStrataCardinal(strata_index)
-            cumulated_cardinal = enumerateFunction.getStrataCumulatedCardinal(
-                strata_index
-            )
+            cumulated_cardinal = enumerateFunction.getStrataCumulatedCardinal(strata_index)
             number_of_indices_in_strata = cumulated_cardinal - strata_cardinal
             for i in range(number_of_indices_in_strata, cumulated_cardinal):
                 multiindex = enumerateFunction(i)
                 multiindex_degree = sum(multiindex)
                 if multiindex_degree >= self.total_degree:
                     is_degree_reached = True
-                    break
-                else:
                     degree_strata_index = strata_index
+                    break
         return degree_strata_index
 
     def setMaximumStrataIndex(self, maximum_strata_index):
