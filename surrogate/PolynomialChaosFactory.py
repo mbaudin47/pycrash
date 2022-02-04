@@ -40,82 +40,6 @@ class SuperHistogramFactory:
         return distribution
 
 
-class MultivariateBasisFactory:
-    def __init__(self, distribution):
-        self.distribution = distribution
-        input_dimension = distribution.getDimension()
-        self.distribution_collection = [
-            self.distribution.getMarginal(i) for i in range(input_dimension)
-        ]
-
-    def build(self):
-        """
-        Create a multivariate basis using a collection of distributions.
-        
-        A linear enumeration rule is used. 
-    
-        Parameters
-        ----------
-    
-        Returns
-        -------
-        multivariateBasis : OrthogonalProductPolynomialFactory
-            The multivariate basis.
-    
-        """
-        multivariateBasis = ot.OrthogonalProductPolynomialFactory(
-            self.distribution_collection
-        )
-        return multivariateBasis
-
-    def buildAdaptive(self, quasi_norm=1.0):
-        """
-        Create a multivariate basis using a collection of distributions.
-        
-        If quasi_norm is equal to 1, then a linear enumeration rule is 
-        used. 
-        This rule is also called "graded reverse-lexicographic ordering".
-        
-        If quasi_norm is not equal to 1, then an hyperbolic enumeration 
-        rule is used.
-    
-        We often use values of quasi_norm in the [0.5, 1.0] range. 
-        Small values create very sparse models, with high marginal 
-        degree and very few interactions. 
-    
-        Parameters
-        ----------
-        distribution_collection : list(ot.Distribution)
-            The list of marginal, univariate, distributions.
-        quasi_norm : float, optional, in (0.0, 1.0]
-            The quasi-norm of the Hyperbolic enumeratation rule. The default is 1.0.
-    
-        Returns
-        -------
-        multivariateBasis : OrthogonalProductPolynomialFactory
-            The multivariate basis.
-    
-        """
-        input_dimension = len(self.distribution_collection)
-        if quasi_norm == 1.0:
-            multivariateBasis = ot.OrthogonalProductPolynomialFactory(
-                self.distribution_collection
-            )
-        else:
-            polynomial_collection = ot.PolynomialFamilyCollection(input_dimension)
-            for i in range(input_dimension):
-                polynomial_collection[i] = ot.StandardDistributionPolynomialFactory(
-                    self.distribution_collection[i]
-                )
-            enumerate_function = ot.HyperbolicAnisotropicEnumerateFunction(
-                input_dimension, quasi_norm
-            )
-            multivariateBasis = ot.OrthogonalProductPolynomialFactory(
-                polynomial_collection, enumerate_function
-            )
-        return multivariateBasis
-
-
 class PolynomialChaosFactory:
     def __init__(self, totalDegree, multivariateBasis, distribution):
         """
@@ -127,6 +51,8 @@ class PolynomialChaosFactory:
         - the projection strategy, which specify how to compute the 
         coefficients; We can compute them from either regression 
         of integration.
+
+        TODO: integrate that into our favorite library.
 
         Parameters
         ----------
@@ -146,103 +72,15 @@ class PolynomialChaosFactory:
         self.totalDegree = totalDegree
         self.multivariateBasis = multivariateBasis
         self.distribution = distribution
-        self.maximum_strata_index = 100
         return
 
-    def _compute_strata_from_degree(
-        self, 
-    ):
-        """
-        Compute the minimum index of the strata corresponding to a given total degree.
-        
-        This is the smallest index of a strata which contains a multiindex 
-        having the required total degree.
-        Usually, this function is used with a large maximumu strata index, so that 
-        a large number of stratas are explored until the required total degree 
-        is reached.
-        
-        The returned index is so that this strata contains a multi-index having 
-        a total degree equal to the required total_degree, but interaction multi-indices 
-        may be lower that this total_degree. 
-        
-        This is a Python replicate of OpenTURNS's getStrataCumulatedCardinal(), 
-        but this function works properly, while OpenTURNS's has a bug.
-    
-        Parameters
-        ----------
-        enumerateFunction : ot.EnumerateFunction()
-            The enumerate function.
-        total_degree : int
-            The total degree to reach.
-        maximum_strata_index : int
-            The maximum number of strata to try.
-    
-        Returns
-        -------
-        degree_strata_index : int
-            The index of the strata containing a multiindex having given total 
-            degree.
-            It is lower of equal to maximum_strata_index.
-            It may be equal to maximum_strata_index if no multiindex 
-            has reached the given total degree.
-    
-        """
-        enumerateFunction = self.multivariateBasis.getEnumerateFunction()
-        is_degree_reached = False
-        degree_strata_index = 0
-        for strata_index in range(1 + self.maximum_strata_index):
-            if is_degree_reached:
-                break
-            strata_cardinal = enumerateFunction.getStrataCardinal(strata_index)
-            cumulated_cardinal = enumerateFunction.getStrataCumulatedCardinal(strata_index)
-            number_of_indices_in_strata = cumulated_cardinal - strata_cardinal
-            for i in range(number_of_indices_in_strata, cumulated_cardinal):
-                multiindex = enumerateFunction(i)
-                multiindex_degree = sum(multiindex)
-                if multiindex_degree >= self.total_degree:
-                    is_degree_reached = True
-                    degree_strata_index = strata_index
-                    break
-        return degree_strata_index
-
-    def setMaximumStrataIndex(self, maximum_strata_index):
-        """
-        Set the maximum index of a strata when using an adaptive basis.
-        
-        This method is usually used when using an hyperbolic enumeration 
-        rule.
-        
-        The parameter is used when computing the number of terms in the 
-        basis. 
-        It is the maximum number of strata which are explored when searching
-        for the strata which achieves the required total degree, if any.
-        See _compute_strata_from_degree for further details.
-
-        Parameters
-        ----------
-        maximum_strata_index : int, greater than 1
-            The maximum index of a strata.
-
-        Returns
-        -------
-        None.
-
-        """
-        self.maximum_strata_index = maximum_strata_index
-        return None
-
     def _createAdaptiveStrategy(self):
+        # Create a FixedStrategy from the total degree
         enumerateFunction = self.multivariateBasis.getEnumerateFunction()
-        adaptive_basis_name = enumerateFunction.getClassName()
-        if adaptive_basis_name == "HyperbolicAnisotropicEnumerateFunction":
-            strata_index = self._compute_strata_from_degree()
-            number_of_terms_in_basis = enumerateFunction.getStrataCumulatedCardinal(
-                strata_index
-            )
-        else:
-            number_of_terms_in_basis = enumerateFunction.getStrataCumulatedCardinal(
-                self.totalDegree
-            )
+        strata_index = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
+        number_of_terms_in_basis = enumerateFunction.getStrataCumulatedCardinal(
+            strata_index
+        )
         adaptiveStrategy = ot.FixedStrategy(
             self.multivariateBasis, number_of_terms_in_basis
         )
@@ -254,11 +92,11 @@ class PolynomialChaosFactory:
     
         * Uses the enumeration rule from multivariateBasis.
         * Uses LeastSquaresStrategy to compute the coefficients from
-        linear least squares.
+          linear least squares.
         * Uses LeastSquaresMetaModelSelectionFactory to select the polynomials
-        in the basis using least angle regression stepwise (LARS)
+          in the basis using least angle regression stepwise (LARS)
         * Uses FixedStrategy to keep all coefficients that LARS has selected,
-        up to the given maximum total degree.
+          up to the given maximum total degree.
     
         Parameters
         ----------
@@ -297,15 +135,17 @@ class PolynomialChaosFactory:
         )
         return chaosalgo
 
-    def buildFullChaosFromIntegration(self, g_function, experiment=None):
+    def buildFullChaosFromIntegration(
+        self, g_function, experiment, adaptiveStrategy=None
+    ):
         """
         Create a full polynomial chaos with integration based on Gaussian quadrature.
     
         * Uses the enumeration rule from multivariateBasis.
         * Uses GaussProductExperiment to create a design of experiments using
-        a given total degree.
+          a given total degree.
         * Uses IntegrationStrategy to compute the coefficients using
-        integration.
+          integration.
         * Uses FixedStrategy to keep all coefficients.
     
         When the number of input variables
@@ -322,20 +162,9 @@ class PolynomialChaosFactory:
         result : ot.FunctionalChaosResult
             The polynomial chaos result
         """
-
-        # 1. Create the adaptive basis
-        adaptiveStrategy = self._createAdaptiveStrategy()
-        # 2. Create the experiment
-        if experiment is None:
-            distribution_measure = self.multivariateBasis.getMeasure()
-            dim_input = g_function.getInputDimension()
-            totalDegreeList = [self.totalDegree] * dim_input
-            experiment = ot.GaussProductExperiment(
-                distribution_measure, totalDegreeList
-            )
-        # 3. Create the projection strategy
+        if adaptiveStrategy is None:
+            adaptiveStrategy = self._createAdaptiveStrategy()
         projectionStrategy = ot.IntegrationStrategy(experiment)
-        # 4. Create the polynomial chaos
         chaosalgo = ot.FunctionalChaosAlgorithm(
             g_function, self.distribution, adaptiveStrategy, projectionStrategy
         )
