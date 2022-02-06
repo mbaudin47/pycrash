@@ -85,6 +85,7 @@ import PolynomialChaosFactory as pcf
 import openturns.viewer as otv
 import itertools
 
+
 def printSparsityRate(multivariateBasis, totalDegree, chaosResult):
     """Compute the sparsity rate, assuming a FixedStrategy."""
     # Get P, the maximum possible number of coefficients
@@ -276,18 +277,22 @@ for experiment in [
 
 #
 print("Case #5: find sparse hyperparameters by naive cross-validation and LDS")
-experiment = ot.LowDiscrepancyExperiment(sequence, distribution_standard, training_sample_size)
+experiment = ot.LowDiscrepancyExperiment(
+    sequence, distribution_standard, training_sample_size
+)
 maximumConsideredTerms = 150
 mostSignificant_list = [5, 10, 15, 20]
-significanceFactor_list = [1.0e-1, 1.e-2, 1.e-3, 1.e-4]
-for mostSignificant, significanceFactor in itertools.product(mostSignificant_list, significanceFactor_list):
+significanceFactor_list = [1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4]
+for mostSignificant, significanceFactor in itertools.product(
+    mostSignificant_list, significanceFactor_list
+):
     adaptiveStrategy = ot.CleaningStrategy(
         multivariateBasis,
         maximumConsideredTerms,
         mostSignificant,
         significanceFactor,
         True,
-    )    
+    )
     chaosalgo = factory.buildFullChaosFromIntegration(
         g_function, experiment, adaptiveStrategy
     )
@@ -295,4 +300,3 @@ for mostSignificant, significanceFactor in itertools.product(mostSignificant_lis
     result = chaosalgo.getResult()
     print(mostSignificant, significanceFactor)
     validate_polynomial_chaos(myDistribution, g_function, result)
-
