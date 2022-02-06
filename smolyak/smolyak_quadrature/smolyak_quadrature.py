@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jan 10 22:24:51 2022
-
-@author: devel
+Tests with Smolyak quadrature using Knut Petras's Smolpack.
 """
 
 import openturns as ot
@@ -11,10 +9,30 @@ import openturns.viewer as otv
 import smolyak
 import pylab as pl
 
+#
+dimension = 2
+print("dimension = ", dimension)
+for k_stage in range(1, 4):
+    print("+ k_stage = ", k_stage)
+    experiment = smolyak.SmolyakExperiment(dimension, k_stage)
+    sample, weights = experiment.generateWithWeights()
+    print("sum(weights) = ", sum(weights))
+    size = weights.getDimension()
+    for j in range(size):
+        node_str = ["%.4f" % x for x in sample[j]]
+        print("| %d | %.4f | [%s] |" % (j, weights[j], ", ".join(node_str)))
+
+# Plot in 3 dimensions
 dimension = 3
 k_stage = 5
+print("dimension = ", dimension)
+print("k_stage = ", k_stage)
 experiment = smolyak.SmolyakExperiment(dimension, k_stage)
 sample, weights = experiment.generateWithWeights()
+print("sample =")
+print(sample)
+print("weights =")
+print(weights)
 
 # Plot nodes
 graph = ot.VisualTest.DrawPairs(sample)
@@ -30,6 +48,7 @@ def draw_experiment_2D(k_stage):
     # Plot nodes
     graph = ot.Graph("k=%d" % (k_stage), r"$x_1$", r"$x_2$", True)
     cloud = ot.Cloud(sample)
+    cloud.setPointStyle("bullet")
     graph.add(cloud)
     return graph
 
@@ -57,6 +76,7 @@ view.getFigure().savefig("smokyak_quadrature_dim_2.pdf", bbox_inches="tight")
 k_stage_max = 8
 dimension_max = 8
 graph = ot.Graph("Smolyak quadrature", r"$k$", r"$n$", True, "topleft")
+palette = ot.Drawable().BuildDefaultPalette(dimension_max - 1)
 for dimension in range(1, dimension_max):
     number_of_nodes = ot.Sample(k_stage_max, 1)
     for k_stage in range(k_stage_max):
@@ -67,8 +87,13 @@ for dimension in range(1, dimension_max):
     cloud = ot.Cloud(ot.Sample.BuildFromPoint(range(k_stage_max)), number_of_nodes)
     cloud.setLegend("$d = %d$" % (dimension))
     cloud.setPointStyle("bullet")
+    cloud.setColor(palette[dimension - 1])
     graph.add(cloud)
-graph.setColors(ot.Drawable().BuildDefaultPalette(dimension_max - 1))
+    curve = ot.Curve(ot.Sample.BuildFromPoint(range(k_stage_max)), number_of_nodes)
+    curve.setLegend("")
+    curve.setLineStyle("dashed")
+    curve.setColor(palette[dimension - 1])
+    graph.add(curve)
 graph.setLogScale(ot.GraphImplementation.LOGY)
 view = otv.View(
     graph,
