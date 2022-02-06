@@ -37,8 +37,7 @@ int maxind;			/* tree parameter                */
 int wind[maxdim];		/* Parameter for slow coefficient calculation  */
 
 /*
-  Tree definitions:
-*/
+  Tree definitions: */
 
 struct tnode
 {
@@ -99,37 +98,27 @@ cc_int_smolyak (int dim, int qq, double (*ff) (int, double xx[]),
 
     Input, double ( *FF ) ( int D, double X[] ), the integrand function.
 
-    Input, int PRINT_STATS, is nonzero if this routine should print out 
-    statistics for the number of function calls and weight computations.
+    Input, int PRINT_STATS, is nonzero if this routine should print out     statistics for the number of function calls and weight computations.
 
-    Output, double CC_INT_SMOLYAK, the approximated value of the integral.
-*/
+    Output, double CC_INT_SMOLYAK, the approximated value of the integral. */
 {
-/* 
-  Make the parameters global.
-*/
+/*   Make the parameters global. */
   d = dim;
   q = qq;
   f = ff;
 /*
-  Initialisation
-*/
+  Initialisation */
   wcount = 0;
   count = 0;
   quafo = 0.0;
 
   cc_init (dim);
-/* 
-  Call the Smolyak algorithm.  Q-DIM = K, the number of stages.
-*/
+/*   Call the Smolyak algorithm.  Q-DIM = K, the number of stages. */
   cc_formula (1, q - dim);
-/* 
-  Free the allocated memory.
-*/
+/*   Free the allocated memory. */
   cc_frei (root);
 /*
-  Print statistics, if desired.
-*/
+  Print statistics, if desired. */
   if (print_stats)
     {
       printf ("\n");
@@ -152,8 +141,7 @@ cc_formula (int k, int l)
 
   Discussion:
 
-    If K == D+1: 
-      evaluation.
+    If K == D+1:       evaluation.
     Else:
       determine the required formula
 
@@ -173,8 +161,7 @@ cc_formula (int k, int l)
     Input, int K, ???
 
     Input, int L, the index sum that may be distributed
-    to the remaining dimensions.
-*/
+    to the remaining dimensions. */
 {
   int i;
 
@@ -201,8 +188,7 @@ cc_formula (int k, int l)
 double
 cc_eval (int k)
 /******************************************************************************/
-/* 
-  Purpose:
+/*   Purpose:
 
     CC_EVAL calculates the value of a product formula.
 
@@ -227,8 +213,7 @@ cc_eval (int k)
 
     Input, int K, ???
 
-    Output, double CC_EVAL, the value of the product formula.
-*/
+    Output, double CC_EVAL, the value of the product formula. */
 {
   int i;
 
@@ -237,16 +222,13 @@ cc_eval (int k)
       summe = 0.0;
       cc_eval (1);
     }
-/* 
-  Summation corresponding to one coefficient.
-*/
+/*   Summation corresponding to one coefficient. */
   else if (k == d + 1)
     {
       summe = summe + cc_coeff () * cc_fsum (0);
     }
 /*
-  Choice of the nodes.
-*/
+  Choice of the nodes. */
   else
     {
       for (i = 0; i <= n[indices[k]]; i++)
@@ -263,15 +245,13 @@ cc_eval (int k)
 double
 cc_coeff ()
 /******************************************************************************/
-/* 
-  Purpose:
+/*   Purpose:
 
     CC_COEFF returns a coefficient.
 
   Discussion:
 
-    The routine calculates the coefficient only if it determines that 
-    the value was not already computed and saved in the tree.
+    The routine calculates the coefficient only if it determines that     the value was not already computed and saved in the tree.
 
   Modified:
 
@@ -283,8 +263,7 @@ cc_coeff ()
 
   Parameters:
 
-    Output, double CC_COEFF, the value of the coefficient.
-*/
+    Output, double CC_COEFF, the value of the coefficient. */
 {
   int i;
   int j;
@@ -293,13 +272,9 @@ cc_coeff ()
   struct tnode *pt;
 
   p = root;
-/* 
-  Initialize.
-*/
+/*   Initialize. */
   num = -1;
-/* 
-  Frequency anzw[  ] of 1-dim nodes 
-*/
+/*   Frequency anzw[  ] of 1-dim nodes */
   for (i = 1; i <= d; i++)
     {
       if (++anzw[lookind[indices[i]][argind[i]]] == 1)
@@ -308,15 +283,11 @@ cc_coeff ()
 	}
     }
   qsort (nodes, num + 1, sizeof (int), less);
-/* 
-  Search in the tree according to anzw[..]
-*/
+/*   Search in the tree according to anzw[..] */
   for (j = num; 0 <= j; j--)
     {
-/* 
-  nodes[j] to the LEFT
-  Generate the node if it does not exist.
-*/
+/*   nodes[j] to the LEFT
+  Generate the node if it does not exist. */
       if (p->left == NULL)
 	{
 	  p->left = (struct tnode *) calloc (maxind, sizeof (struct tnode));
@@ -329,9 +300,7 @@ cc_coeff ()
 	{
 	  p = (p->left + nodes[j]);
 	}
-/* 
-  anzw[nodes[j]] to the RIGHT
-*/
+/*   anzw[nodes[j]] to the RIGHT */
       if (p->right == NULL)
 	{
 	  p->right = (struct tnode *) calloc (d + 1, sizeof (struct tnode));
@@ -347,8 +316,7 @@ cc_coeff ()
       anzw[nodes[j]] = 0;
     }
 /*
-  The coefficient must be calculated.
-*/
+  The coefficient must be calculated. */
   if (!(p->computed))
     {
       (p->coeff) = cc_calccoeff (q - d);
@@ -378,8 +346,7 @@ cc_frei (struct tnode *p)
 
   Parameters:
 
-    Input, struct tnode *P, a pointer to the tree structure to be freed.
-*/
+    Input, struct tnode *P, a pointer to the tree structure to be freed. */
 {
   int i;
 
@@ -428,8 +395,7 @@ cc_talloc (void)
 
   Parameters:
 
-    Output, struct tnode *CC_TALLOC, a pointer to the new tree-node space.
-*/
+    Output, struct tnode *CC_TALLOC, a pointer to the new tree-node space. */
 {
   return (struct tnode *) malloc (sizeof (struct tnode));
 }
@@ -450,8 +416,7 @@ less (void const *a, void const *b)
 
   Author:
 
-    Knut Petras
-*/
+    Knut Petras */
 {
   // M.Baudin. Updated to build.
   int const *pa = a;
@@ -465,8 +430,7 @@ less (void const *a, void const *b)
 void
 cc_sumind (int r, int s)
 /******************************************************************************/
-/* 
-  Purpose:
+/*   Purpose:
 
     CC_SUMIND sums formula indices at divisions of dimension R through S.
 
@@ -480,22 +444,18 @@ cc_sumind (int r, int s)
 
   Parameters:
 
-    Input, int R, S, the range over which the summation takes place.
-*/
+    Input, int R, S, the range over which the summation takes place. */
 {
   int q;
 /*
   R == S, one dimensional.
-  Do the calculation.
-*/
+  Do the calculation. */
   if (r == s)
     {
       indsum[r][s] = ninv[indices[r]];
     }
 /*
-  R < S, compute average Q, split to [R,Q] + [Q+1,S], 
-  and call CC_SUMIND recursively.
-*/
+  R < S, compute average Q, split to [R,Q] + [Q+1,S],   and call CC_SUMIND recursively. */
   else
     {
       q = (r + s) / 2;
@@ -528,19 +488,15 @@ cc_calccoeff (int l)
 
     Input, int L, ?
 
-    Output, double CC_CALCCOEFF, the value of the coefficient.
-*/
+    Output, double CC_CALCCOEFF, the value of the coefficient. */
 {
   double value;
 
   wcount++;
 /*
-  Calculate the subdivision parameters.
-*/
+  Calculate the subdivision parameters. */
   cc_sumind (1, d);
-/* 
-  Start the divide and conquer process.
-*/
+/*   Start the divide and conquer process. */
   value = cc_wl (1, d, l);
 
   return value;
@@ -551,11 +507,9 @@ cc_calccoeff (int l)
 double
 cc_wl (int r, int s, int l)
 /******************************************************************************/
-/* 
-  Purpose:
+/*   Purpose:
 
     CC_WL sums in dimensions S through R with sum of formula numbers <= L.    
-
   Modified:
 
     25 April 2007
@@ -568,8 +522,7 @@ cc_wl (int r, int s, int l)
 
     Input, int R, S, specify the range.
 
-    Output, double CC_WL, ?
-*/
+    Output, double CC_WL, ? */
 {
   int i;
   int p;
@@ -579,8 +532,7 @@ cc_wl (int r, int s, int l)
   total = 0.0;
 /*
   R = S, one dimensional.
-  Do the calculation.
-*/
+  Do the calculation. */
   if (r == s)
     {
       p = lookind[indices[r]][argind[r]];
@@ -608,9 +560,7 @@ cc_wl (int r, int s, int l)
 	}
     }
 /*
-  R < S, compute average Q, split to [R,Q] + [Q+1,S] 
-  and call CC_WE and CC_WL recursively.
-*/
+  R < S, compute average Q, split to [R,Q] + [Q+1,S]   and call CC_WE and CC_WL recursively. */
   else
     {
       q = (r + s) / 2;
@@ -627,8 +577,7 @@ cc_wl (int r, int s, int l)
 double
 cc_we (int r, int s, int l)
 /******************************************************************************/
-/* 
-  Purpose:
+/*   Purpose:
 
     CC_WE sums in dimension S...R with sum of formula numbers <= L.
 
@@ -644,8 +593,7 @@ cc_we (int r, int s, int l)
 
     Input, int R, S, specify the range.
 
-    Output, double CC_WE, ?
-*/
+    Output, double CC_WE, ? */
 {
   int i;
   int q;
@@ -654,8 +602,7 @@ cc_we (int r, int s, int l)
   total = 0.0;
 /*
   R = S, one dimensional.
-  Do the calculation.
-*/
+  Do the calculation. */
   if (r == s)
     {
       if (sw[l] < fn)
@@ -680,8 +627,7 @@ cc_we (int r, int s, int l)
 	}
     }
 /*
-  R < S, compute average Q, split to [R,Q] + [Q+1,S] and call CC_WE recursively.
-*/
+  R < S, compute average Q, split to [R,Q] + [Q+1,S] and call CC_WE recursively. */
   else
     {
       q = (r + s) / 2;
@@ -721,8 +667,7 @@ cc_calccoeff2 (int k, int l)
 
     Input, int L, ?
 
-    Output, double CC_CALCCOEFF2, ?
-*/
+    Output, double CC_CALCCOEFF2, ? */
 {
   int i;
   double wprod;
@@ -790,8 +735,7 @@ cc_fsum (int k)
 
     Input, int K, ?
 
-    Output, double CC_FSUM, the sum of the function at several nodes.
-*/
+    Output, double CC_FSUM, the sum of the function at several nodes. */
 {
   if (k == 0)
     {
@@ -810,8 +754,7 @@ cc_fsum (int k)
 	  cc_fsum (k + 1);
 	}
 /*
-  Use symmetry to get both X and -X.
-*/
+  Use symmetry to get both X and -X. */
       else
 	{
 	  x[k - 1] = xnu[indices[k]][2 * argind[k] + 1];
@@ -849,8 +792,7 @@ cc_init (int dim)
 
     Local, int NJ[FN], the number of nodes in the basic formulas.
 
-    Local, int FREQ[FN], the frequencies of the basis formulas.
-*/
+    Local, int FREQ[FN], the frequencies of the basis formulas. */
 {
   int formfakt;
   int freq[fn] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
@@ -858,9 +800,7 @@ cc_init (int dim)
   int j;
   int maxform;
   int nj[fn] = { 1, 3, 5, 9, 17, 33, 65, 129, 257, 513, 1025, 2049 };
-/* 
-  Some parameter calculations.
-*/
+/*   Some parameter calculations. */
   n[0] = 0;
   j = 0;
   ninv[0] = 0;
@@ -881,24 +821,17 @@ cc_init (int dim)
     {
       sw[ninv[i]] = i;
     }
-/* 
-  Number of the 'largest' used formula.
-*/
+/*   Number of the 'largest' used formula. */
   i = q - dim;
   maxform = 0;
   while (ninv[maxform + 1] <= i)
     {
       maxform = maxform + 1;
     }
-/* 
-  Total number of used 1-dimensional nodes.
-*/
+/*   Total number of used 1-dimensional nodes. */
   maxind = (nj[maxform] + 1) / 2;
-/* 
-  Table of 1-dim nodal numbers 0..MAXIND-1 corresponding 
-  to a combination formula number/nodal number
-  and inverse formula.
-*/
+/*   Table of 1-dim nodal numbers 0..MAXIND-1 corresponding   to a combination formula number/nodal number
+  and inverse formula. */
   lookind[0][0] = 0;
   for (i = 1; i <= maxform; i++)
     {
@@ -907,35 +840,24 @@ cc_init (int dim)
 	{
 	  lookind[i][j] = formfakt * (2 * j + 1);
 	}
-/* 
-  In a linear ordering of all used nodes, the (2J+1)-th 
-  node of the I-th basic formula is LOOKIND[I][J]-th node.
-*/
+/*   In a linear ordering of all used nodes, the (2J+1)-th   node of the I-th basic formula is LOOKIND[I][J]-th node. */
       for (j = 0; j < (nj[i] + 1) / 2; j++)
 	{
 	  invlook[i][formfakt * j] = j;
 	}
-/* 
-  The LOOKIND[I][2^(MAXFORM-I)]-th node in a linear 
-  ordering of all used nodes is the J-th node of the 
-  I-th basic formula. Note that MAXFORM is the number
-  of used different basic formulas.                       
-*/
+/*   The LOOKIND[I][2^(MAXFORM-I)]-th node in a linear   ordering of all used nodes is the J-th node of the   I-th basic formula. Note that MAXFORM is the number
+  of used different basic formulas.                       */
     }
 
   for (i = 0; i < maxind; i++)
     {
       anzw[i] = 0;
     }
-/* 
-  Root of the coefficient TREE.
-*/
+/*   Root of the coefficient TREE. */
   root = cc_talloc ();
   root->left = NULL;
   root->right = NULL;
-/* 
-  One dimensional formulas (Deltas).
-*/
+/*   One dimensional formulas (Deltas). */
   xnu[0][0] = 0.5;
   dnu[0][0] = 1.0;
 
