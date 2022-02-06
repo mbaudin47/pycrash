@@ -82,12 +82,12 @@ class LeastSquaresFCE:
         enumerateFunction = self.basis.getEnumerateFunction()
         strata_index = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
         maximumBasisSize = enumerateFunction.getStrataCumulatedCardinal(strata_index)
-        transformation = ot.DistributionTransformation(distribution, basis.getMeasure())
-        XTransformed = transformation(self.input_sample)
+        transformation = ot.DistributionTransformation(self.distribution, self.basis.getMeasure())
+        standard_input = transformation(self.input_sample)
         indices = ot.Indices(maximumBasisSize)
         indices.fill()
-        functions = [basis.build(i) for i in indices]
-        designProxy = ot.DesignProxy(XTransformed, functions)
+        functions = [self.basis.build(i) for i in indices]
+        designProxy = ot.DesignProxy(standard_input, functions)
         if self.wX is None:
             leastSquaresMethod = ot.LeastSquaresMethod.Build(
                 self.leastSquaresMethod, designProxy, indices
@@ -102,18 +102,25 @@ class LeastSquaresFCE:
             coeffsJ = leastSquaresMethod.solve(output_sample.getMarginal(j).asPoint())
             for i in range(maximumBasisSize):
                 coefficients[i, j] = coeffsJ[i]
+        # Create the result
+        # The physical model is unknown in this case ...
+        physicalModel = ot.Function()
+        # ... which implies that the composed model is unknown in this case
+        composedModel = ot.Function()
+        residualsPoint = [-1.0]
+        relativeErrorsPoint = [-1.0]
         self.result = ot.FunctionalChaosResult(
-            ot.Function(),
+            physicalModel,
             self.distribution,
             transformation,
             transformation.inverse(),
-            ot.Function(),
+            composedModel,
             self.basis,
             indices,
             coefficients,
             functions,
-            [-1.0],
-            [-1.0],
+            residualsPoint,
+            relativeErrorsPoint,
         )
 
     def getResult(self):
