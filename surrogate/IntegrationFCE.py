@@ -79,8 +79,8 @@ class IntegrationFCE:
 
         """
         enumerateFunction = self.basis.getEnumerateFunction()
-        strata_index = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
-        maximumBasisSize = enumerateFunction.getStrataCumulatedCardinal(strata_index)
+        strataIndex = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
+        maximumBasisSize = enumerateFunction.getStrataCumulatedCardinal(strataIndex)
         transformation = ot.DistributionTransformation(self.distribution, self.basis.getMeasure())
         standard_input = transformation(self.input_sample)
         indices = ot.Indices(maximumBasisSize)
