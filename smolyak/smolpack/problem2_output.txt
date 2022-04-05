@@ -1,0 +1,575 @@
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     1
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  33
+  Weight evaluations =        17
+
+  Exact:    2.3020089492e+01
+  Estimate: 2.3020085471e+01 
+  Error:    4.0210634751e-06 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     2
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  145
+  Weight evaluations =        53
+
+  Exact:    7.8424235836e+01
+  Estimate: 7.8567003019e+01 
+  Error:    1.4276718288e-01 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     3
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  441
+  Weight evaluations =        100
+
+  Exact:    6.2318065738e+01
+  Estimate: 6.2293773405e+01 
+  Error:    2.4292333311e-02 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     4
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  1105
+  Weight evaluations =        120
+
+  Exact:    7.7038378113e+01
+  Estimate: 7.6950904212e+01 
+  Error:    8.7473901391e-02 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     5
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  2433
+  Weight evaluations =        126
+
+  Exact:    1.0512462956e+00
+  Estimate: 1.0531071326e+00 
+  Error:    1.8608370015e-03 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     6
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  4865
+  Weight evaluations =        127
+
+  Exact:    3.0432901619e-01
+  Estimate: 3.0423053384e-01 
+  Error:    9.8482345123e-05 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     7
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  9017
+  Weight evaluations =        127
+
+  Exact:    1.0547824878e-01
+  Estimate: 1.0547967758e-01 
+  Error:    1.4287994196e-06 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     8
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  15713
+  Weight evaluations =        127
+
+  Exact:    1.3782332100e-02
+  Estimate: 1.3782657896e-02 
+  Error:    3.2579631226e-07 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:43 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     9
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  26017
+  Weight evaluations =        127
+
+  Exact:    2.3199140583e-03
+  Estimate: 2.3198960423e-03 
+  Error:    1.8015991635e-08 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:43 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        1
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  21
+  Weight evaluations =        2
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.3518370525e-04 
+  Error:    1.9931987830e-05 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        2
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  201
+  Weight evaluations =        3
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5743941781e-04 
+  Error:    2.3237247231e-06 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        3
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  1201
+  Weight evaluations =        6
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5490710430e-04 
+  Error:    2.0858878044e-07 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        4
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  5281
+  Weight evaluations =        9
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5512659880e-04 
+  Error:    1.0905712966e-08 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  19105
+  Weight evaluations =        12
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511554906e-04 
+  Error:    1.4402599146e-10 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        6
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  60225
+  Weight evaluations =        22
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511569539e-04 
+  Error:    2.3039664523e-12 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        7
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  169185
+  Weight evaluations =        32
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511569272e-04 
+  Error:    3.6566488227e-13 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        8
+  Random number SEED =        123456789
+  Basic sequence choice BS =  1
+
+  Number of function calls =  434145
+  Weight evaluations =        42
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511569355e-04 
+  Error:    4.7013906440e-13 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        1
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  21
+  Weight evaluations =        3
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.4330379543e-04 
+  Error:    1.1811897655e-05 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        2
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  221
+  Weight evaluations =        7
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5484907793e-04 
+  Error:    2.6661515725e-07 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        3
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  1581
+  Weight evaluations =        19
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5518738141e-04 
+  Error:    7.1688326521e-08 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        4
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  8801
+  Weight evaluations =        49
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5510545949e-04 
+  Error:    1.0233598644e-08 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        5
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  41265
+  Weight evaluations =        127
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511599806e-04 
+  Error:    3.0497839421e-10 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        6
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  171425
+  Weight evaluations =        341
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511581692e-04 
+  Error:    1.2383052233e-10 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:44 PM
+
+08 January 2022 10:59:44 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        7
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  652065
+  Weight evaluations =        893
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511569066e-04 
+  Error:    2.4281675574e-12 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:45 PM
+
+08 January 2022 10:59:45 PM
+
+SMOLPACK_INTERACTIVE
+  C version
+
+  Test function number FNUM = 2
+  Spatial dimension DIM =     10
+  Number of states K =        8
+  Random number SEED =        123456789
+  Basic sequence choice BS =  2
+
+  Number of function calls =  2320385
+  Weight evaluations =        2323
+
+  Exact:    1.5511569308e-04
+  Estimate: 1.5511569253e-04 
+  Error:    5.5621081200e-13 
+
+SMOLPACK_INTERACTIVE
+  Normal end of execution.
+
+08 January 2022 10:59:47 PM
