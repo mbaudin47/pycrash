@@ -39,7 +39,7 @@ def plot_smolyak_nodes(vector_distribution, rule, level, verbose=False, factor =
     epsilon = 0.1
     pyplot.xlim(-1.0 - epsilon, 1.0 + epsilon)
     pyplot.ylim(-1.0 - epsilon, 1.0 + epsilon)
-    return None
+    return size
 
 def print_smolyak_nodes(vector_distribution, rule, level, verbose=False, format_nodes="%-20s", format_markdown=True):
     if len(vector_distribution) != len(rule):
@@ -67,8 +67,8 @@ def plot_smolyak_grid(number_of_rows, number_of_columns, vector_distribution, ru
         for j in range(number_of_columns):
             index = level + 1
             pyplot.subplot(number_of_rows, number_of_columns, index)
-            plot_smolyak_nodes(vector_distribution, rule, level, verbose=False, factor=factor)
-            pyplot.title("level = %d" % (level))
+            size = plot_smolyak_nodes(vector_distribution, rule, level, verbose=False, factor=factor)
+            pyplot.title("k = %d, n = %d" % (level, size))
             level += 1
     return None
 
