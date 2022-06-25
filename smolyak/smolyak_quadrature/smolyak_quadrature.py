@@ -75,7 +75,7 @@ view.getFigure().savefig("smolpack_quadrature_dim_2.pdf", bbox_inches="tight")
 # Number of nodes
 k_stage_max = 8
 dimension_max = 8
-graph = ot.Graph("Smolyak quadrature", r"$k$", r"$n$", True, "topleft")
+graph = ot.Graph("Smolyak quadrature", r"$\ell$", r"$n$", True, "topleft")
 palette = ot.Drawable().BuildDefaultPalette(dimension_max - 1)
 for dimension in range(1, dimension_max):
     number_of_nodes = ot.Sample(k_stage_max, 1)
@@ -85,7 +85,7 @@ for dimension in range(1, dimension_max):
         size = sample.getSize()
         number_of_nodes[k_stage, 0] = size
     cloud = ot.Cloud(ot.Sample.BuildFromPoint(range(k_stage_max)), number_of_nodes)
-    cloud.setLegend("$d = %d$" % (dimension))
+    cloud.setLegend("$p = %d$" % (dimension))
     cloud.setPointStyle("bullet")
     cloud.setColor(palette[dimension - 1])
     graph.add(cloud)

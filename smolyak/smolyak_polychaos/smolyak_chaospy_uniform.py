@@ -68,7 +68,7 @@ def plot_smolyak_grid(number_of_rows, number_of_columns, vector_distribution, ru
             index = level + 1
             pyplot.subplot(number_of_rows, number_of_columns, index)
             size = plot_smolyak_nodes(vector_distribution, rule, level, verbose=False, factor=factor)
-            pyplot.title("k = %d, n = %d" % (level, size))
+            pyplot.title("$\ell = %d, n = %d$" % (level, size))
             level += 1
     return None
 
