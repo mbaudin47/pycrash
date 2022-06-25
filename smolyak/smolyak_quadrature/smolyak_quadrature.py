@@ -37,7 +37,7 @@ print(weights)
 # Plot nodes
 graph = ot.VisualTest.DrawPairs(sample)
 view = otv.View(graph, figure_kw={"figsize": (5.0, 5.0)})
-view.getFigure().savefig("smokyak_quadrature_3_5.pdf", bbox_inches="tight")
+view.getFigure().savefig("smolpack_quadrature_3_5.pdf", bbox_inches="tight")
 
 # Plot in dimension 2, at various levels
 def draw_experiment_2D(k_stage):
@@ -70,7 +70,7 @@ for i in range(nb_rows):
         k_stage += 1
 view = otv.View(grid, figure_kw={"figsize": (7.0, 6.0)})
 pl.subplots_adjust(wspace=0.5, hspace=0.6)
-view.getFigure().savefig("smokyak_quadrature_dim_2.pdf", bbox_inches="tight")
+view.getFigure().savefig("smolpack_quadrature_dim_2.pdf", bbox_inches="tight")
 
 # Number of nodes
 k_stage_max = 8
@@ -100,4 +100,4 @@ view = otv.View(
     figure_kw={"figsize": (4.0, 3.0)},
     legend_kw={"bbox_to_anchor": (1.0, 1.0), "loc": "upper left"},
 )
-view.getFigure().savefig("smokyak_quadrature_k_vs_d.pdf", bbox_inches="tight")
+view.getFigure().savefig("smolpack_quadrature_k_vs_d.pdf", bbox_inches="tight")
