@@ -100,4 +100,5 @@ pl.ylabel("$e_{abs}$")
 pl.legend(bbox_to_anchor=(1.0, 1.0))
 pl.xscale("log")
 pl.yscale("log")
+pl.savefig("smolyak_convergence_chaospy.pdf", bbox_inches="tight")
 
