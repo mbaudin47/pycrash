@@ -1,7 +1,7 @@
 # Stratégie de développement de fonctionnalités graphiques dans OpenTURNS
 
 ## Introduction
-Dans cette note sur [[OpenTURNS]], j'analyse les raisons qui poussent en faveur du développement de fonctionnalités graphiques dans la librairie OpenTURNS. En effet, on peut se demander pourquoi OpenTURNS fournit des fonctionnalités graphiques alors que d'autres librairies Python comme Matplotlib fournissent déjà des fonctionnalités similaires. L'objectif de ce document est de montrer que, spécifiquement, Matplotlib ou aucune autre librairie graphique similaire ne fournissent l'ensemble des  fonctionnalités dont nous avons besoin dans le contexte de la visualisation des incertitudes.
+Dans cette note sur OpenTURNS, j'analyse les raisons qui poussent en faveur du développement de fonctionnalités graphiques dans la librairie OpenTURNS. En effet, on peut se demander pourquoi OpenTURNS fournit des fonctionnalités graphiques alors que d'autres librairies Python comme Matplotlib fournissent déjà des fonctionnalités similaires. L'objectif de ce document est de montrer que, spécifiquement, Matplotlib ou aucune autre librairie graphique similaire ne fournissent l'ensemble des  fonctionnalités dont nous avons besoin dans le contexte de la visualisation des incertitudes.
 
 ## Motivations
 Il y a plusieurs éléments qui peuvent motiver pour l'inclusion dans OpenTURNS de fonctionnalités graphiques qui ne sont pas disponibles par ailleurs.
