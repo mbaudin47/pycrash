@@ -3,9 +3,9 @@
 Dans ce script, on recherche le meilleur degré polynomial entre 1 et 10,
 et la meilleure règle d'énumération.
 On étude 2 variables de la décomposition en polynômes du chaos : plein ou creux.
-Génère les figures intitulées "recherche_meilleur_degre_*".
-Pour quantifier l'incertitude d'estimation du score Q2, on utilise la validation croisée
-K-Fold.
+
+Montre que la méthode de sélection de modèle peut être coûteuse lorsque 
+la dimension de la base de fonctions augmente.
 """
 # %%
 import openturns as ot
