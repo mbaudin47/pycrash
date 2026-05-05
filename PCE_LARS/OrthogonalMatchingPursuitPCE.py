@@ -96,94 +96,125 @@ class OrthogonalMatchingPursuitPCE:
         )
         standard_input = transformation(self.input_sample)
         sample_size = standard_input.getSize()
+        output_dimension = self.output_sample.getDimension()
 
         # Create a list of functions
         functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
-        # Initialisation
-        list_of_active_functions = [0]  # Initialize with constant basis
-        self.selectionHistory = [0]
-
-        leastSquaresMethod = ot.LeastSquaresMethod.Build(
-            self.leastSquaresMethodName, designProxy, list_of_active_functions
-        )
-        residuals = self.output_sample.asPoint()
-
-        # Select your best fitting algorithm
         fitting = self.fittingAlgorithm
 
-        # Compute initial fitting score
-        fitting_score = fitting.run(
-            standard_input,
-            self.output_sample,
-            ot.Point(sample_size, 1) / sample_size,
-            functions,
-            list_of_active_functions,
-        )
+        coefficients_map = {}
+        self.selectionHistory = []
+        self.fittingScoreHistory = []
 
-        if self.verbose:
-            print(f"  Fitting score = {fitting_score:.4e}")
-
-        self.fittingScoreHistory = [fitting_score]
-
-        # Update residuals
-        residuals -= ot.Point(sample_size, self.output_sample.computeMean()[0])
-
-        for i in range(self.maximumBasisSize - 1):
+        for output_index in range(output_dimension):
             if self.verbose:
-                print(f"Current active indices = {list_of_active_functions}")
-            maximum_absolute_correlation = 0.0
-            best_basis_function_index = None
+                print(f"--- Output marginal {output_index} ---")
 
-            # Find candidate with maximum absolute correlation with the residual
-            for j in range(self.maximumBasisSize):
-                if j in list_of_active_functions:
-                    continue
-                current_basis_function = self.basis.build(j)
-                basis_function_value = current_basis_function(standard_input)
-                current_absolute_correlation = (
-                    abs(residuals.dot(basis_function_value.asPoint())) / sample_size
-                )
-                if current_absolute_correlation > maximum_absolute_correlation:
-                    best_basis_function_index = j
-                    maximum_absolute_correlation = current_absolute_correlation
+            marginal_output = self.output_sample.getMarginal(output_index)
 
-            if self.verbose:
-                print(
-                    f"  Best index = {best_basis_function_index} "
-                    f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
-                )
+            # Initialisation
+            list_of_active_functions = [0]
+            marginal_selection = [0]
 
-            # Update the LS method
-            leastSquaresMethod.update(
-                [best_basis_function_index], list_of_active_functions, []
+            leastSquaresMethod = ot.LeastSquaresMethod.Build(
+                self.leastSquaresMethodName, designProxy, list_of_active_functions
             )
+            residuals = marginal_output.asPoint()
 
-            # Add the best candidate to the active set
-            list_of_active_functions.append(best_basis_function_index)
-            self.selectionHistory.append(best_basis_function_index)
-
-            # Update the coefficients
-            coefficients = leastSquaresMethod.solve(self.output_sample.asPoint())
-
-            # Update the residuals
-            designMatrix = leastSquaresMethod.computeWeightedDesign()
-            residuals = self.output_sample.asPoint() - designMatrix * coefficients
-
-            # Compute corrected leave-out score
-            fitting_score = fitting.run(leastSquaresMethod, self.output_sample)
+            # Compute initial fitting score
+            fitting_score = fitting.run(
+                standard_input,
+                marginal_output,
+                ot.Point(sample_size, 1) / sample_size,
+                functions,
+                list_of_active_functions,
+            )
 
             if self.verbose:
                 print(f"  Fitting score = {fitting_score:.4e}")
 
-            self.fittingScoreHistory.append(fitting_score)
+            marginal_fitting_scores = [fitting_score]
 
-        coefficientSample = ot.Sample.BuildFromPoint(coefficients)
-        self.activeIndices = ot.Indices(list_of_active_functions)
+            # Update residuals
+            residuals -= ot.Point(sample_size, marginal_output.computeMean()[0])
+            coefficients = ot.Point([marginal_output.computeMean()[0]])
+
+            for i in range(self.maximumBasisSize - 1):
+                if self.verbose:
+                    print(f"Current active indices = {list_of_active_functions}")
+                maximum_absolute_correlation = 0.0
+                best_basis_function_index = None
+
+                # Find candidate with maximum absolute correlation with the residual
+                for j in range(self.maximumBasisSize):
+                    if j in list_of_active_functions:
+                        continue
+                    current_basis_function = self.basis.build(j)
+                    basis_function_value = current_basis_function(standard_input)
+                    current_absolute_correlation = (
+                        abs(residuals.dot(basis_function_value.asPoint())) / sample_size
+                    )
+                    if current_absolute_correlation > maximum_absolute_correlation:
+                        best_basis_function_index = j
+                        maximum_absolute_correlation = current_absolute_correlation
+
+                if self.verbose:
+                    print(
+                        f"  Best index = {best_basis_function_index} "
+                        f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
+                    )
+
+                # Update the LS method
+                leastSquaresMethod.update(
+                    [best_basis_function_index], list_of_active_functions, []
+                )
+
+                # Add the best candidate to the active set
+                list_of_active_functions.append(best_basis_function_index)
+                marginal_selection.append(best_basis_function_index)
+
+                # Update the coefficients
+                coefficients = leastSquaresMethod.solve(marginal_output.asPoint())
+
+                # Update the residuals
+                designMatrix = leastSquaresMethod.computeWeightedDesign()
+                residuals = marginal_output.asPoint() - designMatrix * coefficients
+
+                # Compute corrected leave-out score
+                fitting_score = fitting.run(leastSquaresMethod, marginal_output)
+
+                if self.verbose:
+                    print(f"  Fitting score = {fitting_score:.4e}")
+
+                marginal_fitting_scores.append(fitting_score)
+
+            # Store the coefficients for this output marginal
+            for j in range(len(list_of_active_functions)):
+                idx = list_of_active_functions[j]
+                if idx not in coefficients_map:
+                    coefficients_map[idx] = ot.Point(output_dimension, 0.0)
+                coefficients_map[idx][output_index] = coefficients[j]
+
+            self.selectionHistory.append(marginal_selection)
+            self.fittingScoreHistory.append(marginal_fitting_scores)
+
+        # Unpack histories if the output is 1D to preserve backwards compatibility
+        if output_dimension == 1:
+            self.selectionHistory = self.selectionHistory[0]
+            self.fittingScoreHistory = self.fittingScoreHistory[0]
+
+        # Merge active indices and build the final samples and functions
+        sorted_indices = sorted(coefficients_map.keys())
+        self.activeIndices = ot.Indices(sorted_indices)
+
+        coefficient_list = [coefficients_map[idx] for idx in sorted_indices]
+        coefficient_sample = ot.Sample(coefficient_list)
+
+        final_functions = [self.basis.build(idx) for idx in sorted_indices]
 
         # Create the result
-        functions = [self.basis.build(i) for i in list_of_active_functions]
         self.result = ot.FunctionalChaosResult(
             self.input_sample,
             self.output_sample,
@@ -192,8 +223,8 @@ class OrthogonalMatchingPursuitPCE:
             transformation.inverse(),
             self.basis,
             self.activeIndices,
-            coefficientSample,
-            functions,
+            coefficient_sample,
+            final_functions,
         )
 
     def getResult(self):
@@ -272,6 +303,7 @@ print("Selection History:", algo.getSelectionHistory())
 fitting_score_list = algo.getFittingScoreHistory()
 print("Fitting Score History:", fitting_score_list)
 result = algo.getResult()
+result
 
 # %%
 fitting = algo.getFittingAlgorithm()
