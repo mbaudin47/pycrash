@@ -1,3 +1,25 @@
+"""Implements the selection method of a polynomial chaos expansion algorithm in Python.
+
+This implements 2 algorithms:
+- Algorithm B.1 page 628 of (Lüthen, et al., 2021),
+- Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
+
+TODO-List
+---------
+- Extend the code to multiple output dimensions.
+
+Reference
+---------
+- Lüthen, N., Marelli, S., & Sudret, B. (2021).
+  Sparse polynomial chaos expansions: Literature survey and benchmark.
+  SIAM/ASA Journal on Uncertainty Quantification, 9(2), 593-649.
+- https://gist.github.com/mbaudin47/87a09578aef2e38b498f2f5c5cda193b
+"""
+
+# %%
+import openturns as ot
+from openturns.usecases import ishigami_function
+
 # %%
 import openturns as ot
 from openturns.usecases import ishigami_function
@@ -49,14 +71,8 @@ class OrthogonalMatchingPursuitPCE:
             If None, all basis functions are candidates.
         minAbsCorrelation : float
             Stop if the best absolute correlation is below this threshold.
-        includeConstant : bool
-            If True, start with the constant basis function.
         verbose : bool
             If True, print the progression of the algorithm.
-
-        Returns
-        -------
-        None.
         """
         self.input_sample = input_sample
         self.output_sample = output_sample
@@ -73,7 +89,6 @@ class OrthogonalMatchingPursuitPCE:
         self.minAbsCorrelation = minAbsCorrelation
         self.verbose = verbose
 
-
         self.result = None
         self.activeIndices = None
         self.selectionHistory = []
@@ -82,57 +97,62 @@ class OrthogonalMatchingPursuitPCE:
     def run(self):
         """
         Create the functional chaos metamodel by Orthogonal Matching Pursuit.
-
-        Returns
-        -------
-        None.
         """
         # Setup
         enumerateFunction = self.basis.getEnumerateFunction()
         strataIndex = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
         maximumBasisSize = enumerateFunction.getStrataCumulatedCardinal(strataIndex)
-        transformation = ot.DistributionTransformation(self.distribution, self.basis.getMeasure())
+
+        transformation = ot.DistributionTransformation(
+            self.distribution, self.basis.getMeasure()
+        )
         standard_input = transformation(self.input_sample)
-        # Compute coefficients
         sample_size = standard_input.getSize()
-        transformation = ot.DistributionTransformation(im.inputDistribution, basis.getMeasure())
-        standard_input = transformation(input_sample)
+
         # Create a list of functions
-        functions = [basis.build(i) for i in range(self.maxActiveFunctions)]
+        functions = [self.basis.build(i) for i in range(self.maxActiveFunctions)]
         designProxy = ot.DesignProxy(standard_input, functions)
+
         # Initialisation
         list_of_active_functions = [0]  # Initialize with constant basis
+        self.selectionHistory = [0]
+
         leastSquaresMethod = ot.LeastSquaresMethod.Build(
             self.leastSquaresMethodName, designProxy, list_of_active_functions
         )
-        residuals = output_sample.asPoint()
+        residuals = self.output_sample.asPoint()
+
         # Select your best fitting algorithm
-        # fitting = ot.CorrectedLeaveOneOut()
-        kParameter = 10
-        fitting = ot.KFold(kParameter)
+        fitting = self.fittingAlgorithm
+
         # Compute initial fitting score
         fitting_score = fitting.run(
             standard_input,
-            output_sample,
+            self.output_sample,
             ot.Point(sample_size, 1) / sample_size,
             functions,
             list_of_active_functions,
         )
-        print(f"  Fitting score = {fitting_score:.4e}")
-        fitting_score_list = [fitting_score]
+
+        if self.verbose:
+            print(f"  Fitting score = {fitting_score:.4e}")
+
+        self.fittingScoreHistory = [fitting_score]
+
         # Update residuals
-        residuals -= ot.Point(sample_size, output_sample.computeMean()[0])
-        # TODO: Repeat this for output each marginal
+        residuals -= ot.Point(sample_size, self.output_sample.computeMean()[0])
+
         for i in range(self.maxActiveFunctions - 1):
-            # Find candidate with maximum absolute correlation with the residual
-            print(f"Current active indices = {list_of_active_functions}")
+            if self.verbose:
+                print(f"Current active indices = {list_of_active_functions}")
             maximum_absolute_correlation = 0.0
             best_basis_function_index = None
+
+            # Find candidate with maximum absolute correlation with the residual
             for j in range(self.maxActiveFunctions):
                 if j in list_of_active_functions:
-                    # Skip this basis (already active)
                     continue
-                current_basis_function = basis.build(j)
+                current_basis_function = self.basis.build(j)
                 basis_function_value = current_basis_function(standard_input)
                 current_absolute_correlation = (
                     abs(residuals.dot(basis_function_value.asPoint())) / sample_size
@@ -140,37 +160,50 @@ class OrthogonalMatchingPursuitPCE:
                 if current_absolute_correlation > maximum_absolute_correlation:
                     best_basis_function_index = j
                     maximum_absolute_correlation = current_absolute_correlation
-            print(
-                f"  Best index = {best_basis_function_index} "
-                f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
-            )
+
+            if self.verbose:
+                print(
+                    f"  Best index = {best_basis_function_index} "
+                    f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
+                )
+
             # Update the LS method
-            leastSquaresMethod.update([best_basis_function_index], list_of_active_functions, [])
+            leastSquaresMethod.update(
+                [best_basis_function_index], list_of_active_functions, []
+            )
+
             # Add the best candidate to the active set
             list_of_active_functions.append(best_basis_function_index)
+            self.selectionHistory.append(best_basis_function_index)
+
             # Update the coefficients
             coefficients = leastSquaresMethod.solve(self.output_sample.asPoint())
+
             # Update the residuals
             designMatrix = leastSquaresMethod.computeWeightedDesign()
             residuals = self.output_sample.asPoint() - designMatrix * coefficients
+
             # Compute corrected leave-out score
-            # After https://github.com/openturns/openturns/issues/2948
             fitting_score = fitting.run(leastSquaresMethod, self.output_sample)
-            print(f"  Fitting score = {fitting_score:.4e}")
-            fitting_score_list.append(fitting_score)
+
+            if self.verbose:
+                print(f"  Fitting score = {fitting_score:.4e}")
+
+            self.fittingScoreHistory.append(fitting_score)
 
         coefficientSample = ot.Sample.BuildFromPoint(coefficients)
+        self.activeIndices = ot.Indices(list_of_active_functions)
 
         # Create the result
-        functions = [basis.build(i) for i in list_of_active_functions]
-        result = ot.FunctionalChaosResult(
-            input_sample,
-            output_sample,
-            im.inputDistribution,
+        functions = [self.basis.build(i) for i in list_of_active_functions]
+        self.result = ot.FunctionalChaosResult(
+            self.input_sample,
+            self.output_sample,
+            self.distribution,
             transformation,
             transformation.inverse(),
-            basis,
-            list_of_active_functions,
+            self.basis,
+            self.activeIndices,
             coefficientSample,
             functions,
         )
@@ -178,11 +211,6 @@ class OrthogonalMatchingPursuitPCE:
     def getResult(self):
         """
         Return the functional chaos result.
-
-        Returns
-        -------
-        result : ot.FunctionalChaosResult
-            The metamodel.
         """
         if self.result is None:
             self.run()
@@ -191,11 +219,6 @@ class OrthogonalMatchingPursuitPCE:
     def getActiveIndices(self):
         """
         Return the active basis indices.
-
-        Returns
-        -------
-        activeIndices : ot.Indices
-            The selected basis indices.
         """
         if self.result is None:
             self.run()
@@ -204,11 +227,6 @@ class OrthogonalMatchingPursuitPCE:
     def getSelectionHistory(self):
         """
         Return the OMP selection history.
-
-        Returns
-        -------
-        selectionHistory : list
-            The iteration history.
         """
         if self.result is None:
             self.run()
@@ -217,20 +235,11 @@ class OrthogonalMatchingPursuitPCE:
     def getFittingScoreHistory(self):
         """
         Return the fitting score history.
-
-        Returns
-        -------
-        fittingScoreHistory : list
-            The fitting scores.
         """
         if self.result is None:
             self.run()
         return self.fittingScoreHistory
 
-
-# %%
-# [Markdown]
-# Notice that this script does not use Numpy _at all_.
 
 # %%
 ot.RandomGenerator.SetSeed(0)
@@ -249,15 +258,19 @@ basis = ot.OrthogonalProductPolynomialFactory(
         for i in range(im.inputDistribution.getDimension())
     ]
 )
-basis
 
 # %%
 degree = 4
 algo = OrthogonalMatchingPursuitPCE(
-    input_sample, output_sample, im.inputDistribution, basis, degree
+    input_sample, output_sample, im.inputDistribution, basis, degree, verbose=True
 )
 algo.run()
-result=algo.getResult()
-result
+
+# %%
+# Display outputs
+print("Active Indices:", algo.getActiveIndices())
+print("Selection History:", algo.getSelectionHistory())
+print("Fitting Score History:", algo.getFittingScoreHistory())
+result = algo.getResult()
 
 # %%
