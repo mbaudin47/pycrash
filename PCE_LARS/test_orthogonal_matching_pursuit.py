@@ -12,17 +12,54 @@ TODO-List
 
 Reference
 ---------
-- Lüthen, N., Marelli, S., & Sudret, B. (2021). 
-  Sparse polynomial chaos expansions: Literature survey and benchmark. 
+- Lüthen, N., Marelli, S., & Sudret, B. (2021).
+  Sparse polynomial chaos expansions: Literature survey and benchmark.
   SIAM/ASA Journal on Uncertainty Quantification, 9(2), 593-649.
+- https://gist.github.com/mbaudin47/87a09578aef2e38b498f2f5c5cda193b
 
+Output
+------
+Fitting score = 1.0005e+00
+Current active indices = [0]
+  Best index = 30 with max. abs. corr. = 2.2630e+00
+  Fitting score = 7.3706e-01
+Current active indices = [0, 30]
+  Best index = 1 with max. abs. corr. = 1.7322e+00
+  Fitting score = 5.3630e-01
+Current active indices = [0, 30, 1]
+  Best index = 15 with max. abs. corr. = 1.5058e+00
+  Fitting score = 3.9255e-01
+Current active indices = [0, 30, 1, 15]
+  Best index = 77 with max. abs. corr. = 1.5628e+00
+  Fitting score = 2.6353e-01
+Current active indices = [0, 30, 1, 15, 77]
+  Best index = 10 with max. abs. corr. = 1.2747e+00
+  Fitting score = 1.4707e-01
+Current active indices = [0, 30, 1, 15, 77, 10]
+  Best index = 40 with max. abs. corr. = 1.0375e+00
+  Fitting score = 6.7582e-02
+Current active indices = [0, 30, 1, 15, 77, 10, 40]
+  Best index = 7 with max. abs. corr. = 6.7762e-01
+  Fitting score = 3.7777e-02
+
+[...]
+
+Current active indices = [0, 30, 1, 15, 77, 10, 40, 7, 98, 49, 35, 89, 18, 32, 46, 63, 26, 29, 91, 19, 41, 96, 81, 47, 72, 82, 85, 94, 8, 3, 71, 22, 74, 28, 34, 2, 48, 66, 5, 51, 17, 64, 9, 57, 97, 69, 39, 12, 24, 20, 52, 73, 58, 50, 79, 60, 25, 87, 75, 95, 45, 70, 31, 44, 61, 38, 62, 43, 86, 54, 65, 99, 33, 37, 59, 6, 16, 80, 55, 42, 78, 56, 11, 36, 76, 67, 92, 14, 93, 4, 13, 84, 83, 21, 23, 53, 90, 27]
+  Best index = 88 with max. abs. corr. = 3.0559e-03
+  Fitting score = 1.4961e-01
+Current active indices = [0, 30, 1, 15, 77, 10, 40, 7, 98, 49, 35, 89, 18, 32, 46, 63, 26, 29, 91, 19, 41, 96, 81, 47, 72, 82, 85, 94, 8, 3, 71, 22, 74, 28, 34, 2, 48, 66, 5, 51, 17, 64, 9, 57, 97, 69, 39, 12, 24, 20, 52, 73, 58, 50, 79, 60, 25, 87, 75, 95, 45, 70, 31, 44, 61, 38, 62, 43, 86, 54, 65, 99, 33, 37, 59, 6, 16, 80, 55, 42, 78, 56, 11, 36, 76, 67, 92, 14, 93, 4, 13, 84, 83, 21, 23, 53, 90, 27, 88]
+  Best index = 68 with max. abs. corr. = 1.2446e-03
+  Fitting score = 1.5592e-01
 """
 
 # %%
 import openturns as ot
 from openturns.usecases import ishigami_function
 import openturns.viewer as otv
-import numpy as np
+
+# %%
+# [Markdown]
+# Notice that this script does not use Numpy _at all_.
 
 # %%
 ot.RandomGenerator.SetSeed(0)
@@ -69,8 +106,6 @@ for j in range(outputDimension):
 physicalModel = ot.Function()
 # ... which implies that the composed model is unknown in this case
 composedModel = ot.Function()
-residualsPoint = [-1.0]
-relativeErrorsPoint = [-1.0]
 result = ot.FunctionalChaosResult(
     input_sample,
     output_sample,
@@ -81,8 +116,6 @@ result = ot.FunctionalChaosResult(
     indices,
     coefficients,
     functions,
-    residualsPoint,
-    relativeErrorsPoint,
 )
 result
 
@@ -94,7 +127,7 @@ validation = ot.MetaModelValidation(output_test, meta_model(input_test))
 print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
 
 # %%
-# 2. Compute OMP method
+# 2. Compute the coefficients using Orthogonal Matching Pursuit (OMP) method
 sample_size = standard_input.getSize()
 transformation = ot.DistributionTransformation(im.inputDistribution, basis.getMeasure())
 standard_input = transformation(input_sample)
@@ -155,32 +188,16 @@ for i in range(maximum_basis_dimension - 1):
     designMatrix = leastSquaresMethod.computeWeightedDesign()
     residuals = output_sample.asPoint() - designMatrix * coefficients
     # Compute corrected leave-out score
-    fitting_score = fitting.run(
-        standard_input,
-        output_sample,
-        ot.Point(sample_size, 1) / sample_size,
-        functions,
-        list_of_active_functions,
-    )
-    """
-    # TODO: add this. See https://github.com/openturns/openturns/issues/2948
+    # After https://github.com/openturns/openturns/issues/2948
     fitting_score = fitting.run(leastSquaresMethod, output_sample)
-    """
     print(f"  Fitting score = {fitting_score:.4e}")
     fitting_score_list.append(fitting_score)
-    # Compute KFold
 
 coefficientSample = ot.Sample.BuildFromPoint(coefficients)
 
 # Réserve
 # Create the result
 functions = [basis.build(i) for i in list_of_active_functions]
-# The physical model is unknown in this case ...
-physicalModel = ot.Function()
-# ... which implies that the composed model is unknown in this case
-composedModel = ot.Function()
-residualsPoint = [-1.0]
-relativeErrorsPoint = [-1.0]
 result = ot.FunctionalChaosResult(
     input_sample,
     output_sample,
@@ -191,8 +208,6 @@ result = ot.FunctionalChaosResult(
     list_of_active_functions,
     coefficientSample,
     functions,
-    residualsPoint,
-    relativeErrorsPoint,
 )
 result
 
@@ -202,10 +217,28 @@ validation = ot.MetaModelValidation(output_test, meta_model(input_test))
 print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
 
 # %%
+def argmin(liste):
+    # This can be avoided if using np.argmin.
+    # But we want to show that Numpy can be avoided here,
+    # and rely only on OpenTURNS for the OMP algorithm.
+    if not liste:
+        return None
+    
+    indice_min = 0
+    valeur_min = liste[0]
+    
+    for i in range(1, len(liste)):
+        if liste[i] < valeur_min:
+            valeur_min = liste[i]
+            indice_min = i
+            
+    return indice_min
+
+# %%
 threshold = ot.ResourceMap.GetAsScalar("SparseMethod-ErrorThreshold")
 error_factor = ot.ResourceMap.GetAsScalar("SparseMethod-MaximumErrorFactor")
-min_index = np.argmin(fitting_score_list)
-fitting_score_min = np.min(fitting_score_list)
+min_index = argmin(fitting_score_list)
+fitting_score_min = min(fitting_score_list)
 graph = ot.Graph(
     f"{fitting.getClassName()}", "Iteration", f"{fitting.getClassName()} score", True
 )
@@ -222,6 +255,7 @@ curve = ot.Curve([0, maximum_basis_dimension], [error_factor * fitting_score_min
 curve.setLineWidth(2.0)
 curve.setLegend("Treshold")
 graph.add(curve)
-otv.View(graph)
+view = otv.View(graph)
+view.save("test_orthogonal_matching_pursuit.png")
 
 # %%
