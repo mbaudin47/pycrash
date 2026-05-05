@@ -143,7 +143,7 @@ class OrthogonalMatchingPursuitPCE:
 
             for i in range(self.maximumBasisSize - 1):
                 if self.verbose:
-                    print(f"Current active indices = {list_of_active_functions}")
+                    print(f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}")
                 maximum_absolute_correlation = 0.0
                 best_basis_function_index = None
 
@@ -165,7 +165,12 @@ class OrthogonalMatchingPursuitPCE:
                         f"  Best index = {best_basis_function_index} "
                         f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
                     )
-
+                # Early stopping criterion ---
+                if maximum_absolute_correlation < self.minAbsCorrelation:
+                    if self.verbose:
+                        print(f"  Stopping early: maximum absolute correlation ({maximum_absolute_correlation:.4e}) "
+                              f"is below the threshold ({self.minAbsCorrelation:.4e}).")
+                    break
                 # Update the LS method
                 leastSquaresMethod.update(
                     [best_basis_function_index], list_of_active_functions, []
@@ -286,6 +291,7 @@ maximumBasisSize = 100
 print(f"Number of coefficients = {maximumBasisSize}")
 
 # %%
+# Set minAbsCorrelation to zero to see all path. 
 algo = OrthogonalMatchingPursuitPCE(
     input_sample,
     output_sample,
@@ -293,6 +299,7 @@ algo = OrthogonalMatchingPursuitPCE(
     basis,
     maximumBasisSize,
     verbose=True,
+    minAbsCorrelation = 1.0e-2  # Arbitrary early stopping
 )
 algo.run()
 
@@ -343,7 +350,8 @@ fitting_score_min = min(fitting_score_list)
 graph = ot.Graph(
     f"{fitting.getClassName()}", "Iteration", f"{fitting.getClassName()} score", True
 )
-cloud = ot.Cloud(range(maximumBasisSize), fitting_score_list)
+number_of_selected_coefficients = len(fitting_score_list)
+cloud = ot.Cloud(range(number_of_selected_coefficients), fitting_score_list)
 graph.add(cloud)
 graph.setLogScale(ot.GraphImplementation.LOGY)
 # Plot min corrected score
@@ -352,7 +360,7 @@ cloud.setPointStyle("circle")
 cloud.setLegend("Min")
 graph.add(cloud)
 # Plot error factor
-curve = ot.Curve([0, maximumBasisSize], [error_factor * fitting_score_min] * 2)
+curve = ot.Curve([0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2)
 curve.setLineWidth(2.0)
 curve.setLegend("Treshold")
 graph.add(curve)
