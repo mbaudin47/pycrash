@@ -19,10 +19,7 @@ Reference
 # %%
 import openturns as ot
 from openturns.usecases import ishigami_function
-
-# %%
-import openturns as ot
-from openturns.usecases import ishigami_function
+import openturns.viewer as otv
 
 
 # %%
@@ -33,12 +30,11 @@ class OrthogonalMatchingPursuitPCE:
         output_sample,
         distribution,
         basis,
-        totalDegree,
+        maximumBasisSize=10,
         wX=None,
         leastSquaresMethodName="SVD",
         fittingAlgorithm=None,
         kParameter=10,
-        maxActiveFunctions=10,
         minAbsCorrelation=0.0,
         verbose=False,
     ):
@@ -55,8 +51,8 @@ class OrthogonalMatchingPursuitPCE:
             The distribution of the input.
         basis : ot.OrthogonalBasis
             The orthogonal basis of functions.
-        totalDegree : int
-            The maximum total degree.
+        maximumBasisSize : int, optional
+            The maximum number of active basis functions.
         wX : ot.Point(size), optional
             The quadrature weights. The default is None.
         leastSquaresMethodName : str
@@ -66,9 +62,6 @@ class OrthogonalMatchingPursuitPCE:
             Uses KFold by default.
         kParameter : int
             The number of folds when fittingAlgorithm="KFold".
-        maxActiveFunctions : int, optional
-            The maximum number of active basis functions.
-            If None, all basis functions are candidates.
         minAbsCorrelation : float
             Stop if the best absolute correlation is below this threshold.
         verbose : bool
@@ -78,14 +71,13 @@ class OrthogonalMatchingPursuitPCE:
         self.output_sample = output_sample
         self.distribution = distribution
         self.basis = basis
-        self.totalDegree = totalDegree
         self.wX = wX
         self.leastSquaresMethodName = leastSquaresMethodName
         if fittingAlgorithm is None:
             self.fittingAlgorithm = ot.KFold(kParameter)
         else:
             self.fittingAlgorithm = fittingAlgorithm
-        self.maxActiveFunctions = maxActiveFunctions
+        self.maximumBasisSize = maximumBasisSize
         self.minAbsCorrelation = minAbsCorrelation
         self.verbose = verbose
 
@@ -99,10 +91,6 @@ class OrthogonalMatchingPursuitPCE:
         Create the functional chaos metamodel by Orthogonal Matching Pursuit.
         """
         # Setup
-        enumerateFunction = self.basis.getEnumerateFunction()
-        strataIndex = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
-        maximumBasisSize = enumerateFunction.getStrataCumulatedCardinal(strataIndex)
-
         transformation = ot.DistributionTransformation(
             self.distribution, self.basis.getMeasure()
         )
@@ -110,7 +98,7 @@ class OrthogonalMatchingPursuitPCE:
         sample_size = standard_input.getSize()
 
         # Create a list of functions
-        functions = [self.basis.build(i) for i in range(self.maxActiveFunctions)]
+        functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
         # Initialisation
@@ -142,14 +130,14 @@ class OrthogonalMatchingPursuitPCE:
         # Update residuals
         residuals -= ot.Point(sample_size, self.output_sample.computeMean()[0])
 
-        for i in range(self.maxActiveFunctions - 1):
+        for i in range(self.maximumBasisSize - 1):
             if self.verbose:
                 print(f"Current active indices = {list_of_active_functions}")
             maximum_absolute_correlation = 0.0
             best_basis_function_index = None
 
             # Find candidate with maximum absolute correlation with the residual
-            for j in range(self.maxActiveFunctions):
+            for j in range(self.maximumBasisSize):
                 if j in list_of_active_functions:
                     continue
                 current_basis_function = self.basis.build(j)
@@ -240,6 +228,9 @@ class OrthogonalMatchingPursuitPCE:
             self.run()
         return self.fittingScoreHistory
 
+    def getFittingAlgorithm(self):
+        return self.fittingAlgorithm
+
 
 # %%
 ot.RandomGenerator.SetSeed(0)
@@ -260,9 +251,17 @@ basis = ot.OrthogonalProductPolynomialFactory(
 )
 
 # %%
-degree = 4
+maximumBasisSize = 100
+print(f"Number of coefficients = {maximumBasisSize}")
+
+# %%
 algo = OrthogonalMatchingPursuitPCE(
-    input_sample, output_sample, im.inputDistribution, basis, degree, verbose=True
+    input_sample,
+    output_sample,
+    im.inputDistribution,
+    basis,
+    maximumBasisSize,
+    verbose=True,
 )
 algo.run()
 
@@ -270,7 +269,62 @@ algo.run()
 # Display outputs
 print("Active Indices:", algo.getActiveIndices())
 print("Selection History:", algo.getSelectionHistory())
-print("Fitting Score History:", algo.getFittingScoreHistory())
+fitting_score_list = algo.getFittingScoreHistory()
+print("Fitting Score History:", fitting_score_list)
 result = algo.getResult()
+
+# %%
+fitting = algo.getFittingAlgorithm()
+
+# %%
+input_test = im.inputDistribution.getSample(1000)
+output_test = im.model(input_test)
+meta_model = result.getMetaModel()
+validation = ot.MetaModelValidation(output_test, meta_model(input_test))
+print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
+
+
+# %%
+def argmin(liste):
+    # This can be avoided if using np.argmin.
+    # But we want to show that Numpy can be avoided here,
+    # and rely only on OpenTURNS for the OMP algorithm.
+    if not liste:
+        return None
+
+    indice_min = 0
+    valeur_min = liste[0]
+
+    for i in range(1, len(liste)):
+        if liste[i] < valeur_min:
+            valeur_min = liste[i]
+            indice_min = i
+
+    return indice_min
+
+
+# %%
+threshold = ot.ResourceMap.GetAsScalar("SparseMethod-ErrorThreshold")
+error_factor = ot.ResourceMap.GetAsScalar("SparseMethod-MaximumErrorFactor")
+min_index = argmin(fitting_score_list)
+fitting_score_min = min(fitting_score_list)
+graph = ot.Graph(
+    f"{fitting.getClassName()}", "Iteration", f"{fitting.getClassName()} score", True
+)
+cloud = ot.Cloud(range(maximumBasisSize), fitting_score_list)
+graph.add(cloud)
+graph.setLogScale(ot.GraphImplementation.LOGY)
+# Plot min corrected score
+cloud = ot.Cloud([min_index], [fitting_score_min])
+cloud.setPointStyle("circle")
+cloud.setLegend("Min")
+graph.add(cloud)
+# Plot error factor
+curve = ot.Curve([0, maximumBasisSize], [error_factor * fitting_score_min] * 2)
+curve.setLineWidth(2.0)
+curve.setLegend("Treshold")
+graph.add(curve)
+view = otv.View(graph)
+view.save("OrthogonalMatchingPursuitPCE.png")
 
 # %%

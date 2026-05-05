@@ -16,6 +16,9 @@ TODO: Show how it could be extended to ridge regression
 
 # %%
 import openturns as ot
+from openturns.usecases import ishigami_function
+from math import pi
+from time import time
 
 
 # %%
@@ -26,7 +29,7 @@ class LeastSquaresFCE:
         output_sample,
         distribution,
         basis,
-        totalDegree,
+        basis_dimension,
         wX=None,
         leastSquaresMethod="SVD",
     ):
@@ -46,8 +49,8 @@ class LeastSquaresFCE:
             The distributino of the input.
         basis : ot.OrthogonalBasis()
             The orthogonal basis of functions.
-        totalDegree : int
-            The maximum total degree.
+        basis_dimension : int
+            The number of coefficients.
         wX : ot.Point(size), optional
             The quadrature weights. The default is None.
         leastSquaresMethod : ot.LeastSquaresMethod()
@@ -63,7 +66,7 @@ class LeastSquaresFCE:
         self.output_sample = output_sample
         self.distribution = distribution
         self.basis = basis
-        self.totalDegree = totalDegree
+        self.basis_dimension = basis_dimension
         self.leastSquaresMethod = leastSquaresMethod
         self.result = None
 
@@ -80,12 +83,9 @@ class LeastSquaresFCE:
         None.
 
         """
-        enumerateFunction = self.basis.getEnumerateFunction()
-        strataIndex = enumerateFunction.getMaximumDegreeStrataIndex(self.totalDegree)
-        maximumBasisSize = enumerateFunction.getStrataCumulatedCardinal(strataIndex)
         transformation = ot.DistributionTransformation(self.distribution, self.basis.getMeasure())
         standard_input = transformation(self.input_sample)
-        indices = ot.Indices(maximumBasisSize)
+        indices = ot.Indices(self.basis_dimension)
         indices.fill()
         functions = [self.basis.build(i) for i in indices]
         designProxy = ot.DesignProxy(standard_input, functions)
@@ -98,10 +98,10 @@ class LeastSquaresFCE:
                 self.leastSquaresMethod, designProxy, self.wX, indices
             )
         outputDimension = self.output_sample.getDimension()
-        coefficients = ot.Sample(maximumBasisSize, outputDimension)
+        coefficients = ot.Sample(self.basis_dimension, outputDimension)
         for j in range(outputDimension):
             coeffsJ = leastSquaresMethod.solve(output_sample.getMarginal(j).asPoint())
-            for i in range(maximumBasisSize):
+            for i in range(self.basis_dimension):
                 coefficients[i, j] = coeffsJ[i]
         # Create the result
         self.result = ot.FunctionalChaosResult(
@@ -131,38 +131,35 @@ class LeastSquaresFCE:
         return self.result
 
 # %%
-from math import pi
-from time import time
+# Create the Ishigami model
+im = ishigami_function.IshigamiModel()
+dimension = im.inputDistribution.getDimension()
+model = im.model
+distribution = im.inputDistribution
 
-a = 7.0
-b = 0.1
-inputVariables = ["xi1", "xi2", "xi3"]
-formula = [
-    "sin(xi1) + ("
-    + str(a)
-    + ") * (sin(xi2)) ^ 2 + ("
-    + str(b)
-    + ") * xi3^4 * sin(xi1)"
-]
-model = ot.SymbolicFunction(inputVariables, formula)
-
-# Create the input distribution
-dimension = len(inputVariables)
-distribution = ot.ComposedDistribution([ot.Uniform(-pi, pi)] * dimension)
-
-# Create the orthogonal basis
+# %%
+# Create the basis
 enumerateFunction = ot.LinearEnumerateFunction(dimension)
 basis = ot.OrthogonalProductPolynomialFactory(
     [ot.LegendreFactory()] * dimension, enumerateFunction
 )
 
+# %%
 # Create the input/output database
 size = 10000
 input_sample = distribution.getSample(size)
 output_sample = model(input_sample)
-totalDegree = 5
+
+# %%
+totalDegree = 7
+enumerateFunction = basis.getEnumerateFunction()
+basis_dimension = enumerateFunction.getBasisSizeFromTotalDegree(totalDegree)
+print(f"Number of coefficients = {basis_dimension}")
+
+
+# %%
 algo = LeastSquaresFCE(
-    input_sample, output_sample, distribution, basis, totalDegree
+    input_sample, output_sample, distribution, basis, basis_dimension
 )
 
 t0 = time()
@@ -189,5 +186,12 @@ print("t=", t1 - t0, "s")
 
 # %%
 result
+
+# %%
+input_test = im.inputDistribution.getSample(1000)
+output_test = im.model(input_test)
+meta_model = result.getMetaModel()
+validation = ot.MetaModelValidation(output_test, meta_model(input_test))
+print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
 
 # %%
