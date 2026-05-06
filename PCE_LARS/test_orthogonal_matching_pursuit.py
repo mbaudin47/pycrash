@@ -102,10 +102,6 @@ for j in range(outputDimension):
     for i in range(len(indices)):
         coefficients[i, j] = coeffsJ[i]
 # Create the result
-# The physical model is unknown in this case ...
-physicalModel = ot.Function()
-# ... which implies that the composed model is unknown in this case
-composedModel = ot.Function()
 result = ot.FunctionalChaosResult(
     input_sample,
     output_sample,
@@ -132,7 +128,7 @@ sample_size = standard_input.getSize()
 transformation = ot.DistributionTransformation(im.inputDistribution, basis.getMeasure())
 standard_input = transformation(input_sample)
 # Create a list of functions
-functions = [basis.build(i) for i in range(maximum_basis_dimension)]
+functions = [functions[i] for i in range(maximum_basis_dimension)]
 designProxy = ot.DesignProxy(standard_input, functions)
 # Initialisation
 list_of_active_functions = [0]  # Initialize with constant basis
@@ -197,7 +193,7 @@ coefficientSample = ot.Sample.BuildFromPoint(coefficients)
 
 # Réserve
 # Create the result
-functions = [basis.build(i) for i in list_of_active_functions]
+functions = [functions[i] for i in list_of_active_functions]
 result = ot.FunctionalChaosResult(
     input_sample,
     output_sample,

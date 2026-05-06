@@ -1,12 +1,8 @@
-"""Implements the selection method of a polynomial chaos expansion algorithm in Python.
+"""Implements the OMP selection method of a polynomial chaos expansion algorithm in Python.
 
 This implements 2 algorithms:
-- Algorithm B.1 page 628 of (Lüthen, et al., 2021),
+- Algorithm B.1 Orthogonal matching pursuit (OMP) page 628 of (Lüthen, et al., 2021),
 - Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
-
-TODO-List
----------
-- Extend the code to multiple output dimensions.
 
 Reference
 ---------
@@ -141,7 +137,9 @@ class OrthogonalMatchingPursuitPCE:
 
             for i in range(self.maximumBasisSize - 1):
                 if self.verbose:
-                    print(f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}")
+                    print(
+                        f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}"
+                    )
                 maximum_absolute_correlation = 0.0
                 best_basis_function_index = None
 
@@ -167,8 +165,10 @@ class OrthogonalMatchingPursuitPCE:
                 # Early stopping criterion ---
                 if maximum_absolute_correlation < self.minAbsCorrelation:
                     if self.verbose:
-                        print(f"  Stopping early: maximum absolute correlation ({maximum_absolute_correlation:.4e}) "
-                              f"is below the threshold ({self.minAbsCorrelation:.4e}).")
+                        print(
+                            f"  Stopping early: maximum absolute correlation ({maximum_absolute_correlation:.4e}) "
+                            f"is below the threshold ({self.minAbsCorrelation:.4e})."
+                        )
                     break
                 # Update the LS method
                 leastSquaresMethod.update(
@@ -187,7 +187,9 @@ class OrthogonalMatchingPursuitPCE:
                 residuals = marginal_output.asPoint() - designMatrix * coefficients
 
                 # Compute corrected leave-out score
-                fitting_score = self.fittingAlgorithm.run(leastSquaresMethod, marginal_output)
+                fitting_score = self.fittingAlgorithm.run(
+                    leastSquaresMethod, marginal_output
+                )
 
                 if self.verbose:
                     print(f"  Fitting score = {fitting_score:.4e}")
@@ -216,7 +218,7 @@ class OrthogonalMatchingPursuitPCE:
         coefficient_list = [coefficients_map[idx] for idx in sorted_indices]
         coefficient_sample = ot.Sample(coefficient_list)
 
-        final_functions = [self.basis.build(idx) for idx in sorted_indices]
+        final_functions = [functions[idx] for idx in sorted_indices]
 
         # Create the result
         self.result = ot.FunctionalChaosResult(
@@ -278,11 +280,9 @@ output_sample = im.model(input_sample)
 
 # %%
 # Create basis
+input_dimension = im.inputDistribution.getDimension()
 basis = ot.OrthogonalProductPolynomialFactory(
-    [
-        im.inputDistribution.getMarginal(i)
-        for i in range(im.inputDistribution.getDimension())
-    ]
+    [im.inputDistribution.getMarginal(i) for i in range(input_dimension)]
 )
 
 # %%
@@ -290,7 +290,7 @@ maximumBasisSize = 100
 print(f"Number of coefficients = {maximumBasisSize}")
 
 # %%
-# Set minAbsCorrelation to zero to see all path. 
+# Set minAbsCorrelation to zero to see all path.
 algo = OrthogonalMatchingPursuitPCE(
     input_sample,
     output_sample,
@@ -298,7 +298,7 @@ algo = OrthogonalMatchingPursuitPCE(
     basis,
     maximumBasisSize,
     verbose=True,
-    minAbsCorrelation = 1.0e-2  # Arbitrary early stopping
+    minAbsCorrelation=1.0e-2,  # Arbitrary early stopping
 )
 algo.run()
 
@@ -359,7 +359,9 @@ cloud.setPointStyle("circle")
 cloud.setLegend("Min")
 graph.add(cloud)
 # Plot error factor
-curve = ot.Curve([0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2)
+curve = ot.Curve(
+    [0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2
+)
 curve.setLineWidth(2.0)
 curve.setLegend("Treshold")
 graph.add(curve)

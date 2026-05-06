@@ -1,3 +1,17 @@
+"""Implements the LARS selection method of a polynomial chaos expansion algorithm in Python.
+
+This implements Algorithm B.2 : Least angle regression stepwise (LARS)
+page 630 of (Lüthen, et al., 2021).
+
+Reference
+---------
+- Lüthen, N., Marelli, S., & Sudret, B. (2021).
+  Sparse polynomial chaos expansions: Literature survey and benchmark.
+  SIAM/ASA Journal on Uncertainty Quantification, 9(2), 593-649.
+- Efron, B., Hastie, T., Johnstone, I., & Tibshirani, R. (2004).
+  Least angle regression. _The Annals of Statistics_, _32_(2), 407–499.
+"""
+
 # %%
 import openturns as ot
 from openturns.usecases import ishigami_function
@@ -18,6 +32,7 @@ class LeastAngleRegressionStepwisePCE:
         fittingAlgorithm=None,
         kParameter=10,
         minAbsCorrelation=0.0,
+        denominatorThreshold=1.0e-12,
         verbose=False,
     ):
         """
@@ -46,6 +61,8 @@ class LeastAngleRegressionStepwisePCE:
             The number of folds when fittingAlgorithm="KFold".
         minAbsCorrelation : float
             Stop if the best absolute correlation is below this threshold.
+        denominatorThreshold : float, > 0
+            The epsilon in the Efron's min^+ condition.
         verbose : bool
             If True, print the progression of the algorithm.
         """
@@ -61,6 +78,7 @@ class LeastAngleRegressionStepwisePCE:
             self.fittingAlgorithm = fittingAlgorithm
         self.maximumBasisSize = maximumBasisSize
         self.minAbsCorrelation = minAbsCorrelation
+        self.denominatorThreshold = denominatorThreshold
         self.verbose = verbose
 
         self.result = None
@@ -68,21 +86,27 @@ class LeastAngleRegressionStepwisePCE:
         self.selectionHistory = []
         self.fittingScoreHistory = []
 
+    def _min_plus(self, numerator, denominator, current_gamma):
+        """
+        Evaluates Efron's min^+ condition (Equation 2.13).
+        Returns the new step size if it is strictly positive and smaller
+        than current_gamma.
+        """
+        if denominator > self.denominatorThreshold:
+            step = numerator / denominator
+            if 0 < step < current_gamma:
+                return step
+        return current_gamma
+
     def run(self):
         """
         Create the functional chaos metamodel by Least Angle Regression Stepwise.
-        """
 
-        def _min_plus(numerator, denominator, current_gamma):
-            """
-            Evaluates Efron's min^+ condition (Equation 2.13).
-            Returns the new step size if it is strictly positive and smaller than current_gamma.
-            """
-            if denominator > 1e-12:
-                step = numerator / denominator
-                if 0 < step < current_gamma:
-                    return step
-            return current_gamma
+        Computes the LARS step direction by projecting directly toward the
+        active set's Ordinary Least Squares (OLS) solution.
+        This optimizes the normalized equiangular vector (Efron, Eq. 2.6) by
+        evaluating the fractional distance to the OLS projection.
+        """
 
         # Setup
         transformation = ot.DistributionTransformation(
@@ -138,7 +162,8 @@ class LeastAngleRegressionStepwisePCE:
             residuals = marginal_output.asPoint() - ot.Point(sample_size, sample_mean)
             coefficients_dict = {0: sample_mean}
 
-            # Loop stops either when max basis size is reached, or when no degrees of freedom are left
+            # Loop stops either when max basis size is reached, or when no
+            # degrees of freedom are left
             max_iterations = min(sample_size, self.maximumBasisSize) - 1
 
             for i in range(max_iterations):
@@ -150,7 +175,8 @@ class LeastAngleRegressionStepwisePCE:
                 # 1. Compute correlations
                 v = (X.transpose() * residuals) / sample_size
 
-                # 2. Find candidate with maximum absolute correlation with the residual
+                # 2. Find candidate with maximum absolute correlation with the
+                # residual
                 C = 0.0
                 best_basis_function_index = None
 
@@ -199,6 +225,10 @@ class LeastAngleRegressionStepwisePCE:
                 d = c_ols - c_curr
 
                 # Compute X_A * d
+                # This points in the exact direction of the equiangular vector
+                # u_A (Efron eq. 2.6).
+                # Unlike u_A, which is normalized, X_A_d spans the full distance
+                # to the OLS projection.
                 # Expand the active direction 'd' to the full basis dimension
                 d_full = ot.Point(self.maximumBasisSize, 0.0)
                 for idx, active_idx in enumerate(list_of_active_functions):
@@ -212,8 +242,8 @@ class LeastAngleRegressionStepwisePCE:
                 gamma = 1.0
                 for k in range(self.maximumBasisSize):
                     if k not in list_of_active_functions:
-                        gamma = _min_plus(C - v[k], C - a[k], gamma)  # Forward
-                        gamma = _min_plus(C + v[k], C + a[k], gamma)  # Backward
+                        gamma = self._min_plus(C - v[k], C - a[k], gamma)  # Forward
+                        gamma = self._min_plus(C + v[k], C + a[k], gamma)  # Backward
 
                 # 6. Update coefficients and residuals
                 c_next = c_curr + d * gamma
@@ -222,7 +252,8 @@ class LeastAngleRegressionStepwisePCE:
 
                 residuals -= X_A_d * gamma
 
-                # 7. Compute CV score (evaluates the OLS model of the active set matching LARS-OLS approach)
+                # 7. Compute CV score (evaluates the OLS model of the active set
+                # matching LARS-OLS approach)
                 fitting_score = fitting.run(leastSquaresMethod, marginal_output)
 
                 if self.verbose:
@@ -314,11 +345,9 @@ output_sample = im.model(input_sample)
 
 # %%
 # Create basis
+input_dimension = im.inputDistribution.getDimension()
 basis = ot.OrthogonalProductPolynomialFactory(
-    [
-        im.inputDistribution.getMarginal(i)
-        for i in range(im.inputDistribution.getDimension())
-    ]
+    [im.inputDistribution.getMarginal(i) for i in range(input_dimension)]
 )
 
 # %%
