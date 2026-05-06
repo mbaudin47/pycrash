@@ -12,7 +12,7 @@ import time
 import os
 import numpy as np
 import tqdm
-
+import otbenchmark as otb
 
 # %%
 def ComputeSparseLeastSquaresFunctionalChaos(
@@ -186,25 +186,48 @@ def benchmarkSparsePCE(
 # %%
 ot.Log.Show(ot.Log.NONE)
 
-
+# %%
+sampleSize = 1000
+benchmarkProblemList = otb.SensitivityBenchmarkProblemList()
+for dimension in [10, 15, 20]:
+    problem = otb.GSobolSensitivity(list(range(dimension)))
+    problem.name = f"GSobol{dimension}"
+    benchmarkProblemList.append(problem)
+#
+numberOfProblems = len(benchmarkProblemList)
+maximumElapsedTime = 2.0
+maximumNumberOfIterations = 20
+#
 # %%
 print("+ Mesure de la performance en fonction du degré")
-im = ishigami_function.IshigamiModel()
-sampleSize = 1000
-maximumElapsedTime = 2.0
-maximumNumberOfIterations = 10
-
-# %%
-fig = benchmarkSparsePCE(
-    im.model,
-    im.distribution,
-    sampleSize,
-    maximumElapsedTime=2.0,
-    maximumNumberOfIterations=10,
-    verbose=True
-)
-ax = fig.gca()  # Récupère l'axe actuel (Get Current Axis)
-ax.set_title(f"Ishigami, d={im.distribution.getDimension()}, n={sampleSize}")
-plt.savefig(os.path.join("benchmark_sparse_least_squares.pdf"), bbox_inches="tight")
+print(f"n = {sampleSize}")
+print(f"Nombre de problèmes = {numberOfProblems}")
+print(f"Maximum elapsed time = {maximumElapsedTime:.2f} (s)")
+print(f"Maximum number of iterations = {maximumNumberOfIterations}")
+for i in range(numberOfProblems):
+    problem = benchmarkProblemList[i]
+    name = problem.getName()
+    distribution = problem.getInputDistribution()
+    model = problem.getFunction()
+    base_filename = str(name)
+    for c in [" ", ".", "'", "-"]:
+        base_filename = base_filename.replace(c,"")
+    print(f"name = {name}")
+    dimension = problem.getInputDistribution().getDimension()
+    fig = benchmarkSparsePCE(
+        model,
+        distribution,
+        sampleSize,
+        maximumElapsedTime=maximumElapsedTime,
+        maximumNumberOfIterations=maximumNumberOfIterations,
+        verbose=True
+    )
+    ax = fig.gca()  # Récupère l'axe actuel (Get Current Axis)
+    ax.set_title(f"{name}, d={distribution.getDimension()}, n={sampleSize}")
+    for extension in [".pdf", ".png"]:
+        filename = f"figures/benchmark_sparse_least_squares_{base_filename}{extension}"
+        print(f"Wrile on {filename}...")
+        _ = plt.savefig(os.path.join(filename), bbox_inches="tight")
+    _ = plt.show()
 
 # %%
