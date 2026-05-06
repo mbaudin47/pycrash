@@ -1,21 +1,3 @@
-"""Implements the selection method of a polynomial chaos expansion algorithm in Python.
-
-This implements 2 algorithms:
-- Algorithm B.1 page 628 of (Lüthen, et al., 2021),
-- Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
-
-TODO-List
----------
-- Extend the code to multiple output dimensions.
-
-Reference
----------
-- Lüthen, N., Marelli, S., & Sudret, B. (2021).
-  Sparse polynomial chaos expansions: Literature survey and benchmark.
-  SIAM/ASA Journal on Uncertainty Quantification, 9(2), 593-649.
-- https://gist.github.com/mbaudin47/87a09578aef2e38b498f2f5c5cda193b
-"""
-
 # %%
 import openturns as ot
 from openturns.usecases import ishigami_function
@@ -23,7 +5,7 @@ import openturns.viewer as otv
 
 
 # %%
-class OrthogonalMatchingPursuitPCE:
+class LeastAngleRegressionStepwisePCE:
     def __init__(
         self,
         input_sample,
@@ -39,7 +21,7 @@ class OrthogonalMatchingPursuitPCE:
         verbose=False,
     ):
         """
-        Create a polynomial chaos by Orthogonal Matching Pursuit.
+        Create a polynomial chaos by Least Angle Regression Stepwise (LARS).
 
         Parameters
         ----------
@@ -88,7 +70,7 @@ class OrthogonalMatchingPursuitPCE:
 
     def run(self):
         """
-        Create the functional chaos metamodel by Orthogonal Matching Pursuit.
+        Create the functional chaos metamodel by Least Angle Regression Stepwise.
         """
         # Setup
         transformation = ot.DistributionTransformation(
@@ -102,6 +84,11 @@ class OrthogonalMatchingPursuitPCE:
         functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
+        # Precompute evaluated basis functions as a list of Points
+        X = [functions[j](standard_input).asPoint() for j in range(self.maximumBasisSize)]
+
+        fitting = self.fittingAlgorithm
+
         coefficients_map = {}
         self.selectionHistory = []
         self.fittingScoreHistory = []
@@ -111,6 +98,7 @@ class OrthogonalMatchingPursuitPCE:
                 print(f"--- Output marginal {output_index} ---")
 
             marginal_output = self.output_sample.getMarginal(output_index)
+            sample_mean = marginal_output.computeMean()[0]
 
             # Initialisation
             list_of_active_functions = [0]
@@ -119,10 +107,9 @@ class OrthogonalMatchingPursuitPCE:
             leastSquaresMethod = ot.LeastSquaresMethod.Build(
                 self.leastSquaresMethodName, designProxy, list_of_active_functions
             )
-            residuals = marginal_output.asPoint()
 
             # Compute initial fitting score
-            fitting_score = self.fittingAlgorithm.run(
+            fitting_score = fitting.run(
                 standard_input,
                 marginal_output,
                 ot.Point(sample_size, 1) / sample_size,
@@ -135,59 +122,100 @@ class OrthogonalMatchingPursuitPCE:
 
             marginal_fitting_scores = [fitting_score]
 
-            # Update residuals
-            residuals -= ot.Point(sample_size, marginal_output.computeMean()[0])
-            coefficients = ot.Point([marginal_output.computeMean()[0]])
+            # Update residuals and initial coefficients
+            residuals = marginal_output.asPoint() - ot.Point(sample_size, sample_mean)
+            coefficients_dict = {0: sample_mean}
 
-            for i in range(self.maximumBasisSize - 1):
+            # Loop stops either when max basis size is reached, or when no degrees of freedom are left
+            max_iterations = min(sample_size, self.maximumBasisSize) - 1
+            
+            for i in range(max_iterations):
                 if self.verbose:
                     print(f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}")
-                maximum_absolute_correlation = 0.0
+
+                # 1. Compute correlations
+                v = [X[j].dot(residuals) / sample_size for j in range(self.maximumBasisSize)]
+
+                # 2. Find candidate with maximum absolute correlation with the residual
+                C = 0.0
                 best_basis_function_index = None
 
-                # Find candidate with maximum absolute correlation with the residual
                 for j in range(self.maximumBasisSize):
                     if j in list_of_active_functions:
-                        # Skip this basis (already active)
                         continue
-                    current_basis_function = functions[j]
-                    basis_function_value = current_basis_function(standard_input)
-                    current_absolute_correlation = (
-                        abs(residuals.dot(basis_function_value.asPoint())) / sample_size
-                    )
-                    if current_absolute_correlation > maximum_absolute_correlation:
+                    current_absolute_correlation = abs(v[j])
+                    if current_absolute_correlation > C:
                         best_basis_function_index = j
-                        maximum_absolute_correlation = current_absolute_correlation
+                        C = current_absolute_correlation
+
+                if best_basis_function_index is None:
+                    break
 
                 if self.verbose:
                     print(
                         f"  Best index = {best_basis_function_index} "
-                        f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
+                        f"with max. abs. corr. = {C:.4e}"
                     )
-                # Early stopping criterion ---
-                if maximum_absolute_correlation < self.minAbsCorrelation:
+
+                # Early stopping criterion
+                if C < self.minAbsCorrelation:
                     if self.verbose:
-                        print(f"  Stopping early: maximum absolute correlation ({maximum_absolute_correlation:.4e}) "
+                        print(f"  Stopping early: maximum absolute correlation ({C:.4e}) "
                               f"is below the threshold ({self.minAbsCorrelation:.4e}).")
                     break
-                # Update the LS method
-                leastSquaresMethod.update(
-                    [best_basis_function_index], list_of_active_functions, []
-                )
 
                 # Add the best candidate to the active set
                 list_of_active_functions.append(best_basis_function_index)
                 marginal_selection.append(best_basis_function_index)
+                coefficients_dict[best_basis_function_index] = 0.0
 
-                # Update the coefficients
-                coefficients = leastSquaresMethod.solve(marginal_output.asPoint())
+                # 3. Compute the OLS direction for the updated active set
+                leastSquaresMethod = ot.LeastSquaresMethod.Build(
+                    self.leastSquaresMethodName, designProxy, list_of_active_functions
+                )
+                c_ols = leastSquaresMethod.solve(marginal_output.asPoint())
 
-                # Update the residuals
-                designMatrix = leastSquaresMethod.computeWeightedDesign()
-                residuals = marginal_output.asPoint() - designMatrix * coefficients
+                c_curr = ot.Point(len(list_of_active_functions), 0.0)
+                for idx, active_idx in enumerate(list_of_active_functions):
+                    c_curr[idx] = coefficients_dict[active_idx]
 
-                # Compute corrected leave-out score
-                fitting_score = self.fittingAlgorithm.run(leastSquaresMethod, marginal_output)
+                d = c_ols - c_curr
+
+                # Compute X_A * d
+                X_A_d = ot.Point(sample_size, 0.0)
+                for idx, active_idx in enumerate(list_of_active_functions):
+                    X_A_d += X[active_idx] * d[idx]
+
+                # 4. Compute inner products with direction
+                a = [X[j].dot(X_A_d) / sample_size for j in range(self.maximumBasisSize)]
+
+                # 5. Find step size gamma
+                gamma = 1.0
+                for k in range(self.maximumBasisSize):
+                    if k not in list_of_active_functions:
+                        # Forward evaluation
+                        den_plus = C - a[k]
+                        if den_plus > 1e-12:
+                            g_plus = (C - v[k]) / den_plus
+                            if 0 < g_plus < gamma:
+                                gamma = g_plus
+
+                        # Backward evaluation
+                        den_minus = C + a[k]
+                        if den_minus > 1e-12:
+                            g_minus = (C + v[k]) / den_minus
+                            if 0 < g_minus < gamma:
+                                gamma = g_minus
+
+                # 6. Update coefficients and residuals
+                c_next = c_curr + d * gamma
+                for idx, active_idx in enumerate(list_of_active_functions):
+                    coefficients_dict[active_idx] = c_next[idx]
+
+                residuals -= X_A_d * gamma
+
+                # 7. Compute CV score (evaluates the OLS model of the active set matching LARS-OLS approach)
+                fitting_score = fitting.run(leastSquaresMethod, marginal_output)
 
                 if self.verbose:
                     print(f"  Fitting score = {fitting_score:.4e}")
@@ -199,7 +227,7 @@ class OrthogonalMatchingPursuitPCE:
                 idx = list_of_active_functions[j]
                 if idx not in coefficients_map:
                     coefficients_map[idx] = ot.Point(output_dimension, 0.0)
-                coefficients_map[idx][output_index] = coefficients[j]
+                coefficients_map[idx][output_index] = coefficients_dict[idx]
 
             self.selectionHistory.append(marginal_selection)
             self.fittingScoreHistory.append(marginal_fitting_scores)
@@ -249,7 +277,7 @@ class OrthogonalMatchingPursuitPCE:
 
     def getSelectionHistory(self):
         """
-        Return the OMP selection history.
+        Return the LARS selection history.
         """
         if self.result is None:
             self.run()
@@ -290,15 +318,15 @@ maximumBasisSize = 100
 print(f"Number of coefficients = {maximumBasisSize}")
 
 # %%
-# Set minAbsCorrelation to zero to see all path. 
-algo = OrthogonalMatchingPursuitPCE(
+# Execution using the new LARS algorithm
+algo = LeastAngleRegressionStepwisePCE(
     input_sample,
     output_sample,
     im.inputDistribution,
     basis,
     maximumBasisSize,
     verbose=True,
-    minAbsCorrelation = 1.0e-2  # Arbitrary early stopping
+    minAbsCorrelation=1.0e-2  # Arbitrary early stopping
 )
 algo.run()
 
@@ -324,9 +352,6 @@ print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
 
 # %%
 def argmin(liste):
-    # This can be avoided if using np.argmin.
-    # But we want to show that Numpy can be avoided here,
-    # and rely only on OpenTURNS for the OMP algorithm.
     if not liste:
         return None
 
@@ -364,6 +389,6 @@ curve.setLineWidth(2.0)
 curve.setLegend("Treshold")
 graph.add(curve)
 view = otv.View(graph)
-view.save("OrthogonalMatchingPursuitPCE.png")
+view.save("LeastAngleRegressionStepwisePCE.png")
 
 # %%

@@ -166,7 +166,7 @@ for i in range(maximum_basis_dimension - 1):
         if j in list_of_active_functions:
             # Skip this basis (already active)
             continue
-        current_basis_function = basis.build(j)
+        current_basis_function = functions[j]
         basis_function_value = current_basis_function(standard_input)
         current_absolute_correlation = (
             abs(residuals.dot(basis_function_value.asPoint())) / sample_size
