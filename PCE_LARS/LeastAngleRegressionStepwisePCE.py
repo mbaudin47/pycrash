@@ -72,6 +72,18 @@ class LeastAngleRegressionStepwisePCE:
         """
         Create the functional chaos metamodel by Least Angle Regression Stepwise.
         """
+
+        def _min_plus(numerator, denominator, current_gamma):
+            """
+            Evaluates Efron's min^+ condition (Equation 2.13).
+            Returns the new step size if it is strictly positive and smaller than current_gamma.
+            """
+            if denominator > 1e-12:
+                step = numerator / denominator
+                if 0 < step < current_gamma:
+                    return step
+            return current_gamma
+
         # Setup
         transformation = ot.DistributionTransformation(
             self.distribution, self.basis.getMeasure()
@@ -84,8 +96,8 @@ class LeastAngleRegressionStepwisePCE:
         functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
-        # Precompute evaluated basis functions as a list of Points
-        X = [functions[j](standard_input).asPoint() for j in range(self.maximumBasisSize)]
+        # Precompute the entire design matrix in one C++ call for maximum speed
+        X = designProxy.computeDesign(range(self.maximumBasisSize))
 
         fitting = self.fittingAlgorithm
 
@@ -128,13 +140,15 @@ class LeastAngleRegressionStepwisePCE:
 
             # Loop stops either when max basis size is reached, or when no degrees of freedom are left
             max_iterations = min(sample_size, self.maximumBasisSize) - 1
-            
+
             for i in range(max_iterations):
                 if self.verbose:
-                    print(f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}")
+                    print(
+                        f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}"
+                    )
 
                 # 1. Compute correlations
-                v = [X[j].dot(residuals) / sample_size for j in range(self.maximumBasisSize)]
+                v = (X.transpose() * residuals) / sample_size
 
                 # 2. Find candidate with maximum absolute correlation with the residual
                 C = 0.0
@@ -142,6 +156,7 @@ class LeastAngleRegressionStepwisePCE:
 
                 for j in range(self.maximumBasisSize):
                     if j in list_of_active_functions:
+                        # Skip this basis (already active)
                         continue
                     current_absolute_correlation = abs(v[j])
                     if current_absolute_correlation > C:
@@ -160,8 +175,10 @@ class LeastAngleRegressionStepwisePCE:
                 # Early stopping criterion
                 if C < self.minAbsCorrelation:
                     if self.verbose:
-                        print(f"  Stopping early: maximum absolute correlation ({C:.4e}) "
-                              f"is below the threshold ({self.minAbsCorrelation:.4e}).")
+                        print(
+                            f"  Stopping early: maximum absolute correlation ({C:.4e}) "
+                            f"is below the threshold ({self.minAbsCorrelation:.4e})."
+                        )
                     break
 
                 # Add the best candidate to the active set
@@ -182,30 +199,21 @@ class LeastAngleRegressionStepwisePCE:
                 d = c_ols - c_curr
 
                 # Compute X_A * d
-                X_A_d = ot.Point(sample_size, 0.0)
+                # Expand the active direction 'd' to the full basis dimension
+                d_full = ot.Point(self.maximumBasisSize, 0.0)
                 for idx, active_idx in enumerate(list_of_active_functions):
-                    X_A_d += X[active_idx] * d[idx]
+                    d_full[active_idx] = d[idx]
+                X_A_d = X * d_full
 
                 # 4. Compute inner products with direction
-                a = [X[j].dot(X_A_d) / sample_size for j in range(self.maximumBasisSize)]
+                a = (X.transpose() * X_A_d) / sample_size
 
                 # 5. Find step size gamma
                 gamma = 1.0
                 for k in range(self.maximumBasisSize):
                     if k not in list_of_active_functions:
-                        # Forward evaluation
-                        den_plus = C - a[k]
-                        if den_plus > 1e-12:
-                            g_plus = (C - v[k]) / den_plus
-                            if 0 < g_plus < gamma:
-                                gamma = g_plus
-
-                        # Backward evaluation
-                        den_minus = C + a[k]
-                        if den_minus > 1e-12:
-                            g_minus = (C + v[k]) / den_minus
-                            if 0 < g_minus < gamma:
-                                gamma = g_minus
+                        gamma = _min_plus(C - v[k], C - a[k], gamma)  # Forward
+                        gamma = _min_plus(C + v[k], C + a[k], gamma)  # Backward
 
                 # 6. Update coefficients and residuals
                 c_next = c_curr + d * gamma
@@ -244,7 +252,7 @@ class LeastAngleRegressionStepwisePCE:
         coefficient_list = [coefficients_map[idx] for idx in sorted_indices]
         coefficient_sample = ot.Sample(coefficient_list)
 
-        final_functions = [self.basis.build(idx) for idx in sorted_indices]
+        final_functions = [functions[idx] for idx in sorted_indices]
 
         # Create the result
         self.result = ot.FunctionalChaosResult(
@@ -326,7 +334,7 @@ algo = LeastAngleRegressionStepwisePCE(
     basis,
     maximumBasisSize,
     verbose=True,
-    minAbsCorrelation=1.0e-2  # Arbitrary early stopping
+    minAbsCorrelation=1.0e-3,  # Arbitrary early stopping
 )
 algo.run()
 
@@ -384,7 +392,9 @@ cloud.setPointStyle("circle")
 cloud.setLegend("Min")
 graph.add(cloud)
 # Plot error factor
-curve = ot.Curve([0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2)
+curve = ot.Curve(
+    [0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2
+)
 curve.setLineWidth(2.0)
 curve.setLegend("Treshold")
 graph.add(curve)
