@@ -13,6 +13,7 @@ import os
 import numpy as np
 import tqdm
 import otbenchmark as otb
+import math
 
 # %%
 def ComputeSparseLeastSquaresFunctionalChaos(
@@ -229,5 +230,142 @@ for i in range(numberOfProblems):
         print(f"Wrile on {filename}...")
         _ = plt.savefig(os.path.join(filename), bbox_inches="tight")
     _ = plt.show()
+
+# %%
+
+# %%
+from openturns.usecases import ishigami_function
+
+# %%
+verbose = True
+im = ishigami_function.IshigamiModel()
+distribution = im.distribution
+model = im.model
+multivariateBasis = ot.OrthogonalProductPolynomialFactory([im.X1, im.X2, im.X3])
+
+# %%
+if verbose:
+    print(f"Dimension = {distribution.getDimension()}")
+    print(f"Sample size = {sampleSize}")
+    print(f"Maximum number of iterations = {maximumNumberOfIterations}")
+    print(f"Maximum elapsed time = {maximumElapsedTime}")
+#
+testSampleSize = 1000
+maximumElapsedTime = 1.0
+maximumNumberOfIterations = 20
+inputTest = distribution.getSample(testSampleSize)
+outputTest = model(inputTest)
+#
+sampleSizeTrain = 500
+inputTrain = distribution.getSample(sampleSizeTrain)
+outputTrain = model(inputTrain)
+#
+inputDimension = distribution.getDimension()
+listOfMarginals = [distribution.getMarginal(i) for i in range(inputDimension)]
+multivariateBasis = ot.OrthogonalProductPolynomialFactory(listOfMarginals)
+#
+listOfBasisSize = np.linspace(10.0, sampleSizeTrain, maximumNumberOfIterations)
+listOfBasisSize = [int(i) for i in listOfBasisSize]
+
+# %%
+# Sparse PCE
+if verbose:
+    print("+ Sparse PCE")
+listOfFVUSparsePCE = []
+listOfElapsedTimeSparsePCE = []
+totalDegree = 0
+for iteration in tqdm.tqdm(range(maximumNumberOfIterations)):
+    t1 = time.time()
+    basisSize = listOfBasisSize[iteration]
+    result = ComputeSparseLeastSquaresFunctionalChaos(
+        inputTrain,
+        outputTrain,
+        multivariateBasis,
+        basisSize,
+        distribution,
+        sparse=True,
+    )
+    t2 = time.time()
+    elapsed_time = t2 - t1
+    metamodel = result.getMetaModel()
+    predictions = metamodel(inputTest)
+    validation = ot.MetaModelValidation(predictions, outputTest)
+    fvu = 1.0 - max(0.0, validation.computeR2Score()[0])
+    listOfFVUSparsePCE.append(fvu)
+    listOfElapsedTimeSparsePCE.append(elapsed_time)
+    print(
+        f"Iter={iteration}/{maximumNumberOfIterations}, "
+        f"Sparse PCE, elapsed = {elapsed_time:.2f} (s), "
+        f"Basis size = {basisSize}",
+        f"FVU = {fvu:.2f}",
+        flush=True,
+    )
+    if elapsed_time > maximumElapsedTime:
+        break
+
+# %%
+# Full PCE
+if verbose:
+    print("+ Full PCE")
+totalDegree = 0
+listOfFVUFullPCE = []
+listOfElapsedTimeFullPCE = []
+for iteration in tqdm.tqdm(range(maximumNumberOfIterations)):
+    totalDegree += 1
+    t1 = time.time()
+    basisSize = listOfBasisSize[iteration]
+    result = ComputeSparseLeastSquaresFunctionalChaos(
+        inputTrain,
+        outputTrain,
+        multivariateBasis,
+        basisSize,
+        distribution,
+        sparse=False,
+    )
+
+    t2 = time.time()
+    elapsed_time = t2 - t1
+    metamodel = result.getMetaModel()
+    predictions = metamodel(inputTest)
+    validation = ot.MetaModelValidation(predictions, outputTest)
+    fvu = 1.0 - max(0.0, validation.computeR2Score()[0])
+    listOfFVUFullPCE.append(fvu)
+    listOfElapsedTimeFullPCE.append(elapsed_time)
+    print(
+        f"Iter={iteration}/{maximumNumberOfIterations}, "
+        f"Full PCE, elapsed = {elapsed_time:.2f} (s), "
+        f"Basis size = {basisSize}",
+        f"FVU = {fvu:.2f}",
+        flush=True,
+    )
+    if elapsed_time > maximumElapsedTime:
+        break
+
+# %%
+if verbose:
+    print("+ Plot elapsed time vs basis size")
+figsize = (4.0, 3.0)
+point_style_full = "s"
+point_style_sparse = "o"
+color_full = "tab:orange"
+color_sparse = "tab:blue"
+inputDimension = distribution.getDimension()
+fig = plt.figure(figsize=figsize)
+plt.plot(
+    listOfFVUFullPCE, listOfElapsedTimeFullPCE, point_style_full, label="Full", color=color_full
+)
+plt.plot(
+    listOfFVUSparsePCE,
+    listOfElapsedTimeSparsePCE,
+    point_style_sparse,
+    label="Sparse",
+    color=color_sparse
+)
+plt.xscale("log")
+plt.title(f"PCE, d={inputDimension}, n={sampleSize}")
+plt.xlabel("FVU")
+plt.ylabel("Elapsed time (s)")
+plt.yscale("log")
+plt.legend(bbox_to_anchor=(1.0, 1.0), loc="upper left")
 
 # %%
