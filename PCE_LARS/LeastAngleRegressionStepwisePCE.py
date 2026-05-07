@@ -26,7 +26,7 @@ class LeastAngleRegressionStepwisePCE:
         output_sample,
         distribution,
         basis,
-        maximumBasisSize=10,
+        candidateBasisSize=10,
         wX=None,
         leastSquaresMethodName="SVD",
         fittingAlgorithm=None,
@@ -48,8 +48,8 @@ class LeastAngleRegressionStepwisePCE:
             The distribution of the input.
         basis : ot.OrthogonalBasis
             The orthogonal basis of functions.
-        maximumBasisSize : int, optional
-            The maximum number of active basis functions.
+        candidateBasisSize : int, optional
+            The number of candidate basis functions.
         wX : ot.Point(size), optional
             The quadrature weights. The default is None.
         leastSquaresMethodName : str
@@ -66,6 +66,20 @@ class LeastAngleRegressionStepwisePCE:
         verbose : bool
             If True, print the progression of the algorithm.
         """
+        sample_size = input_sample.getSize()
+        if output_sample.getSize() != sample_size:
+            raise ValueError(f"Input sample has size {sample_size} but output sample has size {output_sample.getSize()}.")
+        input_dimension = input_sample.getDimension()
+        if distribution.getDimension() != input_dimension:
+            raise ValueError(f"Distribution has dimension {distribution.getDimension()} but input sample has dimension {input_dimension}.")
+        if wX is None:
+            wX = ot.Point(sample_size, 1.0 / sample_size)
+        if not all(abs(w - 1.0 / sample_size) < 1.0e-14 for w in wX):
+            raise NotImplementedError("Non-uniform weights are not yet supported.")
+        if kParameter > sample_size:
+            raise ValueError(f"K-Fold parameter is {kParameter} but sample size is {sample_size}.")
+        if kParameter < 2:
+            raise ValueError(f"K-Fold parameter is {kParameter} but should be at least 2.")
         self.input_sample = input_sample
         self.output_sample = output_sample
         self.distribution = distribution
@@ -76,7 +90,7 @@ class LeastAngleRegressionStepwisePCE:
             self.fittingAlgorithm = ot.KFold(kParameter)
         else:
             self.fittingAlgorithm = fittingAlgorithm
-        self.maximumBasisSize = maximumBasisSize
+        self.candidateBasisSize = candidateBasisSize
         self.minAbsCorrelation = minAbsCorrelation
         self.denominatorThreshold = denominatorThreshold
         self.verbose = verbose
@@ -107,6 +121,8 @@ class LeastAngleRegressionStepwisePCE:
         This optimizes the normalized equiangular vector (Efron, Eq. 2.6) by
         evaluating the fractional distance to the OLS projection.
         """
+        if self.result is not None:
+            return
 
         # Setup
         transformation = ot.DistributionTransformation(
@@ -117,11 +133,11 @@ class LeastAngleRegressionStepwisePCE:
         output_dimension = self.output_sample.getDimension()
 
         # Create a list of functions
-        functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
+        functions = [self.basis.build(i) for i in range(self.candidateBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
         # Precompute the entire design matrix
-        X = designProxy.computeDesign(range(self.maximumBasisSize))
+        X = designProxy.computeDesign(range(self.candidateBasisSize))
 
         fitting = self.fittingAlgorithm
 
@@ -140,6 +156,8 @@ class LeastAngleRegressionStepwisePCE:
                 print(f"--- Output marginal {output_index} ---")
 
             marginal_output = self.output_sample.getMarginal(output_index)
+            # Note: With non equal weights, the output sample mean must be weighted,
+            # i.e. the next line is wrong.
             sample_mean = marginal_output.computeMean()
 
             # Initialisation
@@ -162,7 +180,7 @@ class LeastAngleRegressionStepwisePCE:
 
             # Loop stops either when max basis size is reached, or when no
             # degrees of freedom are left
-            max_iterations = min(sample_size, self.maximumBasisSize) - 1
+            max_iterations = min(sample_size, self.candidateBasisSize) - 1
 
             for i in range(max_iterations):
                 if self.verbose:
@@ -171,6 +189,8 @@ class LeastAngleRegressionStepwisePCE:
                     )
 
                 # 1. Compute correlations
+                # Note: With non equal weights, the sample correlation must be weighted, 
+                # i.e. the next line is wrong.
                 v = (X.transpose() * residuals) / sample_size
 
                 # 2. Find candidate with maximum absolute correlation with the
@@ -178,9 +198,9 @@ class LeastAngleRegressionStepwisePCE:
                 C = 0.0
                 best_basis_function_index = None
 
-                for j in range(self.maximumBasisSize):
-                    if j in list_of_active_functions:
-                        # Skip this basis (already active)
+                for j in range(self.candidateBasisSize):
+                    if j in marginal_selection:
+                        # Skip this basis (already active for the current marginal)
                         continue
                     current_absolute_correlation = abs(v[j])
                     if current_absolute_correlation > C:
@@ -229,7 +249,7 @@ class LeastAngleRegressionStepwisePCE:
                 # Unlike u_A, which is normalized, X_A_d spans the full distance
                 # to the OLS projection.
                 # Expand the active direction 'd' to the full basis dimension
-                d_full = ot.Point(self.maximumBasisSize, 0.0)
+                d_full = ot.Point(self.candidateBasisSize, 0.0)
                 for idx, active_idx in enumerate(list_of_active_functions):
                     d_full[active_idx] = d[idx]
                 X_A_d = X * d_full
@@ -239,7 +259,7 @@ class LeastAngleRegressionStepwisePCE:
 
                 # 5. Find step size gamma
                 gamma = 1.0
-                for k in range(self.maximumBasisSize):
+                for k in range(self.candidateBasisSize):
                     if k not in list_of_active_functions:
                         gamma = self._min_plus(C - v[k], C - a[k], gamma)  # Forward
                         gamma = self._min_plus(C + v[k], C + a[k], gamma)  # Backward
@@ -261,13 +281,13 @@ class LeastAngleRegressionStepwisePCE:
                 marginal_fitting_scores.append(fitting_score)
 
             # Store the coefficients for this output marginal
-            for j in range(len(list_of_active_functions)):
-                idx = list_of_active_functions[j]
+            for j in range(len(marginal_selection)):
+                idx = marginal_selection[j]
                 if idx not in coefficients_map:
                     coefficients_map[idx] = ot.Point(output_dimension, 0.0)
                 coefficients_map[idx][output_index] = coefficients_dict[idx]
 
-            self.selectionHistory.append(marginal_selection)
+            self.selectionHistory.append(marginal_selection.copy())
             self.fittingScoreHistory.append(marginal_fitting_scores)
 
         # Merge active indices and build the final samples and functions
@@ -345,8 +365,8 @@ basis = ot.OrthogonalProductPolynomialFactory(
 )
 
 # %%
-maximumBasisSize = 100
-print(f"Number of coefficients = {maximumBasisSize}")
+candidateBasisSize = 100
+print(f"Number of coefficients = {candidateBasisSize}")
 
 # %%
 # Execution using the new LARS algorithm
@@ -355,7 +375,7 @@ algo = LeastAngleRegressionStepwisePCE(
     output_sample,
     im.inputDistribution,
     basis,
-    maximumBasisSize,
+    candidateBasisSize,
     verbose=True,
     minAbsCorrelation=1.0e-2,  # Arbitrary early stopping
 )

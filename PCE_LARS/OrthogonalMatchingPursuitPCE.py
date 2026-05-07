@@ -1,8 +1,11 @@
 """Implements the OMP selection method of a polynomial chaos expansion algorithm in Python.
 
-This implements 2 algorithms:
-- Algorithm B.1 Orthogonal matching pursuit (OMP) page 628 of (Lüthen, et al., 2021),
-- Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
+This implements the next algorithm:
+Algorithm B.1 Orthogonal matching pursuit (OMP) page 628 of (Lüthen, et al., 2021).
+
+TODO:
+Implement Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
+Currently, the K-Fold score is evaluated, but not used in the algorithm.
 
 Reference
 ---------
@@ -24,7 +27,7 @@ class OrthogonalMatchingPursuitPCE:
         output_sample,
         distribution,
         basis,
-        maximumBasisSize=10,
+        candidateBasisSize=10,
         wX=None,
         leastSquaresMethodName="SVD",
         fittingAlgorithm=None,
@@ -45,8 +48,8 @@ class OrthogonalMatchingPursuitPCE:
             The distribution of the input.
         basis : ot.OrthogonalBasis
             The orthogonal basis of functions.
-        maximumBasisSize : int, optional
-            The maximum number of active basis functions.
+        candidateBasisSize : int, optional
+            The number of candidate basis functions.
         wX : ot.Point(size), optional
             The quadrature weights. The default is None.
         leastSquaresMethodName : str
@@ -61,6 +64,20 @@ class OrthogonalMatchingPursuitPCE:
         verbose : bool
             If True, print the progression of the algorithm.
         """
+        sample_size = input_sample.getSize()
+        if output_sample.getSize() != sample_size:
+            raise ValueError(
+                f"Input sample has size {sample_size} but output sample has size {output_sample.getSize()}."
+            )
+        input_dimension = input_sample.getDimension()
+        if distribution.getDimension() != input_dimension:
+            raise ValueError(
+                f"Distribution has dimension {distribution.getDimension()} but input sample has dimension {input_dimension}."
+            )
+        if wX is None:
+            wX = ot.Point(sample_size, 1.0 / sample_size)
+        if not all(abs(w - 1.0 / sample_size) < 1.0e-14 for w in wX):
+            raise NotImplementedError("Non-uniform weights are not yet supported.")
         self.input_sample = input_sample
         self.output_sample = output_sample
         self.distribution = distribution
@@ -68,22 +85,33 @@ class OrthogonalMatchingPursuitPCE:
         self.wX = wX
         self.leastSquaresMethodName = leastSquaresMethodName
         if fittingAlgorithm is None:
+            if kParameter > sample_size:
+                raise ValueError(
+                    f"K-Fold parameter is {kParameter} but sample size is {sample_size}."
+                )
+            if kParameter < 2:
+                raise ValueError(
+                    f"K-Fold parameter is {kParameter} but should be at least 2."
+                )
             self.fittingAlgorithm = ot.KFold(kParameter)
         else:
             self.fittingAlgorithm = fittingAlgorithm
-        self.maximumBasisSize = maximumBasisSize
+        self.candidateBasisSize = candidateBasisSize
         self.minAbsCorrelation = minAbsCorrelation
         self.verbose = verbose
 
         self.result = None
         self.activeIndices = None
         self.selectionHistory = []
-        self.fittingScoreHistory = []
+        self.fittingScoreHistory = None
 
     def run(self):
         """
         Create the functional chaos metamodel by Orthogonal Matching Pursuit.
         """
+        if self.result is not None:
+            return
+
         # Setup
         transformation = ot.DistributionTransformation(
             self.distribution, self.basis.getMeasure()
@@ -93,18 +121,15 @@ class OrthogonalMatchingPursuitPCE:
         output_dimension = self.output_sample.getDimension()
 
         # Create a list of functions
-        functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
+        functions = [self.basis.build(i) for i in range(self.candidateBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
         # Precompute the entire design matrix
-        X = designProxy.computeDesign(range(self.maximumBasisSize))
+        X = designProxy.computeDesign(range(self.candidateBasisSize))
+        XT = X.transpose()
 
         coefficients_map = {}
-        self.selectionHistory = []
-        self.fittingScoreHistory = ot.Sample(self.maximumBasisSize - 1, output_dimension)
-
-        # Initialize the list of active functions over all outputs
-        list_of_active_functions = [0]
+        self.fittingScoreHistory = ot.Sample(self.candidateBasisSize, output_dimension)
 
         for output_index in range(output_dimension):
             if self.verbose:
@@ -118,7 +143,7 @@ class OrthogonalMatchingPursuitPCE:
             leastSquaresMethod = ot.LeastSquaresMethod.Build(
                 self.leastSquaresMethodName, designProxy, self.wX, marginal_selection
             )
-            residuals = marginal_output.asPoint()
+            rightHandSide = marginal_output.asPoint()
 
             # Compute initial fitting score
             fitting_score = self.fittingAlgorithm.run(
@@ -129,29 +154,38 @@ class OrthogonalMatchingPursuitPCE:
             if self.verbose:
                 print(f"  Fitting score = {fitting_score:.4e}")
 
-            marginal_fitting_scores = [fitting_score]
+            self.fittingScoreHistory[0, output_index] = fitting_score
 
-            # Update residuals
-            residuals -= ot.Point(sample_size, marginal_output.computeMean()[0])
-            coefficients = ot.Point([marginal_output.computeMean()[0]])
+            # Set residuals
+            # Note: With non equal weights, the output sample mean must be weighted,
+            # i.e. the next line is wrong.
+            # This would be sum_i w_i * y_i
+            marginal_output_mean = marginal_output.computeMean()[0]
+            residuals = rightHandSide - ot.Point(sample_size, marginal_output_mean)
 
-            for i in range(self.maximumBasisSize - 1):
+            # Initialize coefficients (useful in case of early stopping)
+            coefficients = [marginal_output_mean]
+
+            for i in range(self.candidateBasisSize - 1):
                 if self.verbose:
                     print(
-                        f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}"
+                        f"Current active indices ({len(marginal_selection)})={marginal_selection}"
                     )
-                maximum_absolute_correlation = 0.0
-                best_basis_function_index = None
 
                 # 1. Compute correlations
-                v = (X.transpose() * residuals) / sample_size
+                # Note: With non equal weights, the sample correlation must be weighted,
+                # i.e. the next line is wrong.
+                # This would be c_j = sum_i w_i * psi_j(x_i) * r_i
+                v = (XT * residuals) / sample_size
 
                 # 2. Find candidate with maximum absolute correlation with the residual
-                for j in range(self.maximumBasisSize):
-                    if j in list_of_active_functions:
-                        # Skip this basis (already active)
+                maximum_absolute_correlation = 0.0
+                best_basis_function_index = None
+                for j in range(self.candidateBasisSize):
+                    if j in marginal_selection:
+                        # Skip this basis (already active for the current marginal)
                         continue
-                    current_absolute_correlation = abs(v[j]) / sample_size
+                    current_absolute_correlation = abs(v[j])
                     if current_absolute_correlation > maximum_absolute_correlation:
                         best_basis_function_index = j
                         maximum_absolute_correlation = current_absolute_correlation
@@ -162,7 +196,10 @@ class OrthogonalMatchingPursuitPCE:
                         f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
                     )
                 # 3. Early stopping criterion ---
-                if maximum_absolute_correlation < self.minAbsCorrelation:
+                if (
+                    best_basis_function_index is None
+                    or maximum_absolute_correlation < self.minAbsCorrelation
+                ):
                     if self.verbose:
                         print(
                             f"  Stopping early: maximum absolute correlation ({maximum_absolute_correlation:.4e}) "
@@ -176,15 +213,15 @@ class OrthogonalMatchingPursuitPCE:
                 )
 
                 # 5. Add the best candidate to the active set
-                list_of_active_functions.append(best_basis_function_index)
                 marginal_selection.append(best_basis_function_index)
 
                 # 6. Update the coefficients
-                coefficients = leastSquaresMethod.solve(marginal_output.asPoint())
+                coefficients = leastSquaresMethod.solve(rightHandSide)
 
                 # 7. Update the residuals
                 designMatrix = leastSquaresMethod.computeWeightedDesign()
-                residuals = marginal_output.asPoint() - designMatrix * coefficients
+                # Question: Would designMatrix = X.getMarginal(marginal_selection) work?
+                residuals = rightHandSide - designMatrix * coefficients
 
                 # 8. Compute corrected leave-out score
                 fitting_score = self.fittingAlgorithm.run(
@@ -194,16 +231,16 @@ class OrthogonalMatchingPursuitPCE:
                 if self.verbose:
                     print(f"  Fitting score = {fitting_score:.4e}")
 
-                self.fittingScoreHistory[i, output_index] = fitting_score
+                self.fittingScoreHistory[i + 1, output_index] = fitting_score
 
             # Store the coefficients for this output marginal
-            for j in range(len(list_of_active_functions)):
-                idx = list_of_active_functions[j]
+            for j in range(len(marginal_selection)):
+                idx = marginal_selection[j]
                 if idx not in coefficients_map:
                     coefficients_map[idx] = ot.Point(output_dimension, 0.0)
                 coefficients_map[idx][output_index] = coefficients[j]
 
-            self.selectionHistory.append(marginal_selection)
+            self.selectionHistory.append(marginal_selection.copy())
 
         # Merge active indices and build the final samples and functions
         sorted_indices = sorted(coefficients_map.keys())
