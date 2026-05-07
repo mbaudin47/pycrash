@@ -120,7 +120,7 @@ class LeastAngleRegressionStepwisePCE:
         functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
-        # Precompute the entire design matrix in one C++ call for maximum speed
+        # Precompute the entire design matrix
         X = designProxy.computeDesign(range(self.maximumBasisSize))
 
         fitting = self.fittingAlgorithm
@@ -129,28 +129,26 @@ class LeastAngleRegressionStepwisePCE:
         self.selectionHistory = []
         self.fittingScoreHistory = []
 
+        # Initialize the list of active functions for all output marginals
+        list_of_active_functions = [0]
+        leastSquaresMethod = ot.LeastSquaresMethod.Build(
+            self.leastSquaresMethodName, designProxy, list_of_active_functions
+        )
+
         for output_index in range(output_dimension):
             if self.verbose:
                 print(f"--- Output marginal {output_index} ---")
 
             marginal_output = self.output_sample.getMarginal(output_index)
-            sample_mean = marginal_output.computeMean()[0]
+            sample_mean = marginal_output.computeMean()
 
             # Initialisation
-            list_of_active_functions = [0]
             marginal_selection = [0]
-
-            leastSquaresMethod = ot.LeastSquaresMethod.Build(
-                self.leastSquaresMethodName, designProxy, list_of_active_functions
-            )
 
             # Compute initial fitting score
             fitting_score = fitting.run(
-                standard_input,
+                leastSquaresMethod,
                 marginal_output,
-                ot.Point(sample_size, 1) / sample_size,
-                functions,
-                list_of_active_functions,
             )
 
             if self.verbose:
@@ -159,8 +157,8 @@ class LeastAngleRegressionStepwisePCE:
             marginal_fitting_scores = [fitting_score]
 
             # Update residuals and initial coefficients
-            residuals = marginal_output.asPoint() - ot.Point(sample_size, sample_mean)
-            coefficients_dict = {0: sample_mean}
+            residuals = (marginal_output - sample_mean).asPoint()
+            coefficients_dict = {0: sample_mean[0]}
 
             # Loop stops either when max basis size is reached, or when no
             # degrees of freedom are left
@@ -207,15 +205,16 @@ class LeastAngleRegressionStepwisePCE:
                         )
                     break
 
+                # Update the decomposition
+                leastSquaresMethod.update(
+                    [best_basis_function_index], list_of_active_functions, []
+                )
                 # Add the best candidate to the active set
                 list_of_active_functions.append(best_basis_function_index)
                 marginal_selection.append(best_basis_function_index)
                 coefficients_dict[best_basis_function_index] = 0.0
 
                 # 3. Compute the OLS direction for the updated active set
-                leastSquaresMethod = ot.LeastSquaresMethod.Build(
-                    self.leastSquaresMethodName, designProxy, list_of_active_functions
-                )
                 c_ols = leastSquaresMethod.solve(marginal_output.asPoint())
 
                 c_curr = ot.Point(len(list_of_active_functions), 0.0)
@@ -236,7 +235,7 @@ class LeastAngleRegressionStepwisePCE:
                 X_A_d = X * d_full
 
                 # 4. Compute inner products with direction
-                a = (X.transpose() * X_A_d) / sample_size
+                a = X.computeGram() * d_full / sample_size
 
                 # 5. Find step size gamma
                 gamma = 1.0
@@ -270,11 +269,6 @@ class LeastAngleRegressionStepwisePCE:
 
             self.selectionHistory.append(marginal_selection)
             self.fittingScoreHistory.append(marginal_fitting_scores)
-
-        # Unpack histories if the output is 1D to preserve backwards compatibility
-        if output_dimension == 1:
-            self.selectionHistory = self.selectionHistory[0]
-            self.fittingScoreHistory = self.fittingScoreHistory[0]
 
         # Merge active indices and build the final samples and functions
         sorted_indices = sorted(coefficients_map.keys())
@@ -363,7 +357,7 @@ algo = LeastAngleRegressionStepwisePCE(
     basis,
     maximumBasisSize,
     verbose=True,
-    minAbsCorrelation=1.0e-3,  # Arbitrary early stopping
+    minAbsCorrelation=1.0e-2,  # Arbitrary early stopping
 )
 algo.run()
 
@@ -409,7 +403,10 @@ error_factor = ot.ResourceMap.GetAsScalar("SparseMethod-MaximumErrorFactor")
 min_index = argmin(fitting_score_list)
 fitting_score_min = min(fitting_score_list)
 graph = ot.Graph(
-    f"{fitting.getClassName()}", "Iteration", f"{fitting.getClassName()} score", True
+    f"LARS with {fitting.getClassName()}",
+    "Iteration",
+    f"{fitting.getClassName()} score",
+    True,
 )
 number_of_selected_coefficients = len(fitting_score_list)
 cloud = ot.Cloud(range(number_of_selected_coefficients), fitting_score_list)

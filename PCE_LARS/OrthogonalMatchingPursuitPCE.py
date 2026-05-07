@@ -14,8 +14,6 @@ Reference
 
 # %%
 import openturns as ot
-from openturns.usecases import ishigami_function
-import openturns.viewer as otv
 
 
 # %%
@@ -98,9 +96,15 @@ class OrthogonalMatchingPursuitPCE:
         functions = [self.basis.build(i) for i in range(self.maximumBasisSize)]
         designProxy = ot.DesignProxy(standard_input, functions)
 
+        # Precompute the entire design matrix
+        X = designProxy.computeDesign(range(self.maximumBasisSize))
+
         coefficients_map = {}
         self.selectionHistory = []
-        self.fittingScoreHistory = []
+        self.fittingScoreHistory = ot.Sample(self.maximumBasisSize - 1, output_dimension)
+
+        # Initialize the list of active functions over all outputs
+        list_of_active_functions = [0]
 
         for output_index in range(output_dimension):
             if self.verbose:
@@ -108,22 +112,18 @@ class OrthogonalMatchingPursuitPCE:
 
             marginal_output = self.output_sample.getMarginal(output_index)
 
-            # Initialisation
-            list_of_active_functions = [0]
+            # Initialisation for current output
             marginal_selection = [0]
 
             leastSquaresMethod = ot.LeastSquaresMethod.Build(
-                self.leastSquaresMethodName, designProxy, list_of_active_functions
+                self.leastSquaresMethodName, designProxy, self.wX, marginal_selection
             )
             residuals = marginal_output.asPoint()
 
             # Compute initial fitting score
             fitting_score = self.fittingAlgorithm.run(
-                standard_input,
+                leastSquaresMethod,
                 marginal_output,
-                ot.Point(sample_size, 1) / sample_size,
-                functions,
-                list_of_active_functions,
             )
 
             if self.verbose:
@@ -143,16 +143,15 @@ class OrthogonalMatchingPursuitPCE:
                 maximum_absolute_correlation = 0.0
                 best_basis_function_index = None
 
-                # Find candidate with maximum absolute correlation with the residual
+                # 1. Compute correlations
+                v = (X.transpose() * residuals) / sample_size
+
+                # 2. Find candidate with maximum absolute correlation with the residual
                 for j in range(self.maximumBasisSize):
                     if j in list_of_active_functions:
                         # Skip this basis (already active)
                         continue
-                    current_basis_function = functions[j]
-                    basis_function_value = current_basis_function(standard_input)
-                    current_absolute_correlation = (
-                        abs(residuals.dot(basis_function_value.asPoint())) / sample_size
-                    )
+                    current_absolute_correlation = abs(v[j]) / sample_size
                     if current_absolute_correlation > maximum_absolute_correlation:
                         best_basis_function_index = j
                         maximum_absolute_correlation = current_absolute_correlation
@@ -162,7 +161,7 @@ class OrthogonalMatchingPursuitPCE:
                         f"  Best index = {best_basis_function_index} "
                         f"with max. abs. corr. = {maximum_absolute_correlation:.4e}"
                     )
-                # Early stopping criterion ---
+                # 3. Early stopping criterion ---
                 if maximum_absolute_correlation < self.minAbsCorrelation:
                     if self.verbose:
                         print(
@@ -170,23 +169,24 @@ class OrthogonalMatchingPursuitPCE:
                             f"is below the threshold ({self.minAbsCorrelation:.4e})."
                         )
                     break
-                # Update the LS method
+
+                # 4. Update the LS method
                 leastSquaresMethod.update(
-                    [best_basis_function_index], list_of_active_functions, []
+                    [best_basis_function_index], marginal_selection, []
                 )
 
-                # Add the best candidate to the active set
+                # 5. Add the best candidate to the active set
                 list_of_active_functions.append(best_basis_function_index)
                 marginal_selection.append(best_basis_function_index)
 
-                # Update the coefficients
+                # 6. Update the coefficients
                 coefficients = leastSquaresMethod.solve(marginal_output.asPoint())
 
-                # Update the residuals
+                # 7. Update the residuals
                 designMatrix = leastSquaresMethod.computeWeightedDesign()
                 residuals = marginal_output.asPoint() - designMatrix * coefficients
 
-                # Compute corrected leave-out score
+                # 8. Compute corrected leave-out score
                 fitting_score = self.fittingAlgorithm.run(
                     leastSquaresMethod, marginal_output
                 )
@@ -194,7 +194,7 @@ class OrthogonalMatchingPursuitPCE:
                 if self.verbose:
                     print(f"  Fitting score = {fitting_score:.4e}")
 
-                marginal_fitting_scores.append(fitting_score)
+                self.fittingScoreHistory[i, output_index] = fitting_score
 
             # Store the coefficients for this output marginal
             for j in range(len(list_of_active_functions)):
@@ -204,12 +204,6 @@ class OrthogonalMatchingPursuitPCE:
                 coefficients_map[idx][output_index] = coefficients[j]
 
             self.selectionHistory.append(marginal_selection)
-            self.fittingScoreHistory.append(marginal_fitting_scores)
-
-        # Unpack histories if the output is 1D to preserve backwards compatibility
-        if output_dimension == 1:
-            self.selectionHistory = self.selectionHistory[0]
-            self.fittingScoreHistory = self.fittingScoreHistory[0]
 
         # Merge active indices and build the final samples and functions
         sorted_indices = sorted(coefficients_map.keys())
@@ -268,104 +262,5 @@ class OrthogonalMatchingPursuitPCE:
     def getFittingAlgorithm(self):
         return self.fittingAlgorithm
 
-
-# %%
-ot.RandomGenerator.SetSeed(0)
-
-# %%
-im = ishigami_function.IshigamiModel()
-sample_size = 200
-input_sample = im.inputDistribution.getSample(sample_size)
-output_sample = im.model(input_sample)
-
-# %%
-# Create basis
-input_dimension = im.inputDistribution.getDimension()
-basis = ot.OrthogonalProductPolynomialFactory(
-    [im.inputDistribution.getMarginal(i) for i in range(input_dimension)]
-)
-
-# %%
-maximumBasisSize = 100
-print(f"Number of coefficients = {maximumBasisSize}")
-
-# %%
-# Set minAbsCorrelation to zero to see all path.
-algo = OrthogonalMatchingPursuitPCE(
-    input_sample,
-    output_sample,
-    im.inputDistribution,
-    basis,
-    maximumBasisSize,
-    verbose=True,
-    minAbsCorrelation=1.0e-2,  # Arbitrary early stopping
-)
-algo.run()
-
-# %%
-# Display outputs
-print("Active Indices:", algo.getActiveIndices())
-print("Selection History:", algo.getSelectionHistory())
-fitting_score_list = algo.getFittingScoreHistory()
-print("Fitting Score History:", fitting_score_list)
-result = algo.getResult()
-result
-
-# %%
-fitting = algo.getFittingAlgorithm()
-
-# %%
-input_test = im.inputDistribution.getSample(1000)
-output_test = im.model(input_test)
-meta_model = result.getMetaModel()
-validation = ot.MetaModelValidation(output_test, meta_model(input_test))
-print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
-
-
-# %%
-def argmin(liste):
-    # This can be avoided if using np.argmin.
-    # But we want to show that Numpy can be avoided here,
-    # and rely only on OpenTURNS for the OMP algorithm.
-    if not liste:
-        return None
-
-    indice_min = 0
-    valeur_min = liste[0]
-
-    for i in range(1, len(liste)):
-        if liste[i] < valeur_min:
-            valeur_min = liste[i]
-            indice_min = i
-
-    return indice_min
-
-
-# %%
-threshold = ot.ResourceMap.GetAsScalar("SparseMethod-ErrorThreshold")
-error_factor = ot.ResourceMap.GetAsScalar("SparseMethod-MaximumErrorFactor")
-min_index = argmin(fitting_score_list)
-fitting_score_min = min(fitting_score_list)
-graph = ot.Graph(
-    f"{fitting.getClassName()}", "Iteration", f"{fitting.getClassName()} score", True
-)
-number_of_selected_coefficients = len(fitting_score_list)
-cloud = ot.Cloud(range(number_of_selected_coefficients), fitting_score_list)
-graph.add(cloud)
-graph.setLogScale(ot.GraphImplementation.LOGY)
-# Plot min corrected score
-cloud = ot.Cloud([min_index], [fitting_score_min])
-cloud.setPointStyle("circle")
-cloud.setLegend("Min")
-graph.add(cloud)
-# Plot error factor
-curve = ot.Curve(
-    [0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2
-)
-curve.setLineWidth(2.0)
-curve.setLegend("Treshold")
-graph.add(curve)
-view = otv.View(graph)
-view.save("OrthogonalMatchingPursuitPCE.png")
 
 # %%

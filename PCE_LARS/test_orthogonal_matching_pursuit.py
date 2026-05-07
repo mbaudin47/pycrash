@@ -67,7 +67,8 @@ ot.RandomGenerator.SetSeed(0)
 # %%
 im = ishigami_function.IshigamiModel()
 sample_size = 200
-input_sample = im.inputDistribution.getSample(sample_size)
+experiment = ot.MonteCarloExperiment(im.inputDistribution, sample_size)
+input_sample, wX = experiment.generateWithWeights()
 output_sample = im.model(input_sample)
 
 # %%
@@ -93,7 +94,7 @@ indices.fill()
 functions = [basis.build(i) for i in indices]
 designProxy = ot.DesignProxy(standard_input, functions)
 leastSquaresSolver = ot.LeastSquaresMethod.Build(
-    leastSquaresMethodName, designProxy, range(len(indices))
+    leastSquaresMethodName, designProxy, wX, range(len(indices))
 )
 outputDimension = output_sample.getDimension()
 coefficients = ot.Sample(len(indices), outputDimension)
@@ -116,11 +117,15 @@ result = ot.FunctionalChaosResult(
 result
 
 # %%
-input_test = im.inputDistribution.getSample(1000)
+# TODO : Extend MetaModelValidation with weights 
+# (see https://github.com/openturns/openturns/issues/2722)
+experiment = ot.MonteCarloExperiment(im.inputDistribution, 100)
+input_test = experiment.generate()
 output_test = im.model(input_test)
 meta_model = result.getMetaModel()
 validation = ot.MetaModelValidation(output_test, meta_model(input_test))
 print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
+
 
 # %%
 # 2. Compute the coefficients using Orthogonal Matching Pursuit (OMP) method
@@ -133,7 +138,7 @@ designProxy = ot.DesignProxy(standard_input, functions)
 # Initialisation
 list_of_active_functions = [0]  # Initialize with constant basis
 leastSquaresMethod = ot.LeastSquaresMethod.Build(
-    leastSquaresMethodName, designProxy, list_of_active_functions
+    leastSquaresMethodName, designProxy, wX, list_of_active_functions
 )
 residuals = output_sample.asPoint()
 # Select your best fitting algorithm
@@ -142,11 +147,8 @@ kParameter = 10
 fitting = ot.KFold(kParameter)
 # Compute initial fitting score
 fitting_score = fitting.run(
-    standard_input,
+    leastSquaresMethod,
     output_sample,
-    ot.Point(sample_size, 1) / sample_size,
-    functions,
-    list_of_active_functions,
 )
 print(f"  Fitting score = {fitting_score:.4e}")
 fitting_score_list = [fitting_score]
@@ -191,7 +193,7 @@ for i in range(maximum_basis_dimension - 1):
 
 coefficientSample = ot.Sample.BuildFromPoint(coefficients)
 
-# Réserve
+# %%
 # Create the result
 functions = [functions[i] for i in list_of_active_functions]
 result = ot.FunctionalChaosResult(
