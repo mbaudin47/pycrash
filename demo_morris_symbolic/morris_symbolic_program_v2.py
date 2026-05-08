@@ -3,10 +3,6 @@ import openturns as ot
 import openturns.testing as ott
 import time
 
-import openturns as ot
-import openturns.testing as ott
-import time
-
 
 # %%
 def build_morris_function(b0_random=0.0, b1_random=ot.Point(10), b2_random=ot.Point(175)):
