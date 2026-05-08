@@ -69,8 +69,8 @@ input_sample, wX = experiment.generateWithWeights()
 output_sample = test_function(input_sample)
 
 # %%
-print("Entrées (X) :\n", input_sample)
-print("Sorties calculées (Y) :\n", output_sample)
+print("Entrées (X) :\n", input_sample[:5])
+print("Sorties calculées (Y) :\n", output_sample[:5])
 
 # %%
 basis = ot.OrthogonalProductPolynomialFactory([distribution])

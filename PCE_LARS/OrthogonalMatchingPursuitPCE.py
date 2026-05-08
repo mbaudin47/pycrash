@@ -1,11 +1,14 @@
 """Implements the OMP selection method of a polynomial chaos expansion algorithm in Python.
 
-This implements the next algorithm:
-Algorithm B.1 Orthogonal matching pursuit (OMP) page 628 of (Lüthen, et al., 2021).
+This implements the Algorithm B.1 Orthogonal matching pursuit (OMP)
+page 628 of (Lüthen, et al., 2021).
 
-TODO:
-Implement Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
-Currently, the K-Fold score is evaluated, but not used in the algorithm.
+TODO
+----
+- Implement Algorithm B.1 with with CV using Corrected Leave-One-Out or K-Fold.
+  Currently, the K-Fold score is evaluated, but not used in the algorithm.
+  Instead the early stopping rule is based on a threshold on the
+  maximum absolute correlation.
 
 Reference
 ---------
@@ -15,11 +18,9 @@ Reference
 - https://gist.github.com/mbaudin47/87a09578aef2e38b498f2f5c5cda193b
 """
 
-# %%
 import openturns as ot
 
 
-# %%
 class OrthogonalMatchingPursuitPCE:
     def __init__(
         self,
@@ -298,6 +299,3 @@ class OrthogonalMatchingPursuitPCE:
 
     def getFittingAlgorithm(self):
         return self.fittingAlgorithm
-
-
-# %%
