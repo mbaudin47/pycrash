@@ -186,7 +186,6 @@ class MorrisFunction(ot.OpenTURNSPythonFunction):
 
     def _exec(self, x):
         """Evaluate the Morris function at point x (vectorized)."""
-        # Convert to numpy array
         y = self.g(x)
         return y
 
