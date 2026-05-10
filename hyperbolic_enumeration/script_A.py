@@ -18,30 +18,51 @@ import time
 import openturns as ot
 
 # %%
-print(f"LinearEnumerateFunction")
+print("")
+print(f"+ LinearEnumerateFunction")
 t1 = time.time()
 enumerateFunction = ot.LinearEnumerateFunction(10)
 nbCoeffs = enumerateFunction.getBasisSizeFromTotalDegree(5)
 t2 = time.time()
-print(f"Elapsed = {t2 - t1:.4f} (s)")
+elapsed = t2 - t1
+print(f"Elapsed = {elapsed:.4f} (s)")
 print(f"Nb. Coeffs = {nbCoeffs}")
+print(f"Speed={nbCoeffs / elapsed:.2f} coeffs/s")
 
 # %%
-print(f"HyperbolicAnisotropicEnumerateFunction(10, 1.0)")
+print("")
+print(f"+ HyperbolicAnisotropicEnumerateFunction(10, 1.0)")
 t1 = time.time()
 enumerateFunction = ot.HyperbolicAnisotropicEnumerateFunction(10, 1.0)
 nbCoeffs = enumerateFunction.getBasisSizeFromTotalDegree(5)
 t2 = time.time()
-print(f"Elapsed = {t2 - t1:.4f} (s)")
+elapsed = t2 - t1
+print(f"Elapsed = {elapsed:.4f} (s)")
 print(f"Nb. Coeffs = {nbCoeffs}")
+print(f"Speed={nbCoeffs / elapsed:.2f} coeffs/s")
 
 # %%
-print(f"HyperbolicAnisotropicEnumerateFunction(20, 0.7)")
+print("")
+print(f"+ HyperbolicAnisotropicEnumerateFunction(20, 0.7)")
 t1 = time.time()
 enumerateFunction = ot.HyperbolicAnisotropicEnumerateFunction(20, 0.7)
-nbCoeffs = enumerateFunction.getBasisSizeFromTotalDegree(4)
+nbCoeffs = enumerateFunction.getBasisSizeFromTotalDegree(5)
 t2 = time.time()
-print(f"Elapsed = {t2 - t1:.4f} (s)")
+elapsed = t2 - t1
+print(f"Elapsed = {elapsed:.4f} (s)")
 print(f"Nb. Coeffs = {nbCoeffs}")
+print(f"Speed={nbCoeffs / elapsed:.2f} coeffs/s")
+
+# %%
+print("")
+print(f"+ HyperbolicEnumerateFunction(20, 0.7) (New!)")
+t1 = time.time()
+enumerateFunction = ot.HyperbolicEnumerateFunction(20, 0.7)
+nbCoeffs = enumerateFunction.getBasisSizeFromTotalDegree(5)
+t2 = time.time()
+elapsed = t2 - t1
+print(f"Elapsed = {elapsed:.4f} (s)")
+print(f"Nb. Coeffs = {nbCoeffs}")
+print(f"Speed={nbCoeffs / elapsed:.2f} coeffs/s")
 
 # %%

@@ -3,10 +3,12 @@
 """
 Get the number of polynomials lower than a given degree.
 """
+# %%
 import openturns as ot
 import numpy as np
 
 
+# %%
 def print_up_to_maximum_strata_index(enumerateFunction, degree_strata_index):
     for strata_index in range(1 + degree_strata_index):
         print("+ strata index = ", strata_index)
@@ -18,6 +20,7 @@ def print_up_to_maximum_strata_index(enumerateFunction, degree_strata_index):
             print("    ", multiindex, " sum=", sum(multiindex))
     return None
 
+# %%
 
 dimension = 2
 quasi_norm_parameter = 0.5
@@ -29,6 +32,7 @@ enumerateFunction = ot.HyperbolicAnisotropicEnumerateFunction(
 strata_index = enumerateFunction.getMaximumDegreeStrataIndex(polynomial_degree)
 cardinal = enumerateFunction.getStrataCardinal(strata_index)
 cumulated_cardinal = enumerateFunction.getStrataCumulatedCardinal(strata_index)
+# %%
 
 print("dimension=", dimension)
 print("quasi_norm_parameter=", quasi_norm_parameter)
@@ -37,9 +41,11 @@ print("strata_index=", strata_index)
 print("cardinal=", cardinal)
 print("cumulated_cardinal=", cumulated_cardinal)
 
+# %%
 
 print_up_to_maximum_strata_index(enumerateFunction, strata_index)
 
+# %%
 
 class QuasiNorm(ot.OpenTURNSPythonFunction):
     def __init__(self, dimension, quasi_norm_parameter):
@@ -58,6 +64,7 @@ class QuasiNorm(ot.OpenTURNSPythonFunction):
 
 quasi_norm = ot.Function(QuasiNorm(dimension, quasi_norm_parameter))
 
+# %%
 
 if False:
     polynomial_degree = 3
@@ -71,3 +78,5 @@ if False:
         qnorm = quasi_norm(multiindex)
         total_degree = sum(multiindex)
         print(multiindex, "Q-Norm=", qnorm, "Total degree=", total_degree)
+
+# %%

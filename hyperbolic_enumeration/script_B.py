@@ -362,6 +362,6 @@ for dimension in [2, 3, 5, 10, 20]:
         figure_kw={"figsize": (5.0, 3.0)},
         legend_kw={"bbox_to_anchor": (1.0, 1.0), "loc": "upper left"},
     )
-    filename = "benchmark-hyperbolic-enumeration-dimension-%d.pdf" % (dimension)
+    filename = "figures/benchmark-hyperbolic-enumeration-dimension-%d.pdf" % (dimension)
     view.getFigure().savefig(filename, bbox_inches="tight")
     otv.View.ShowAll()
