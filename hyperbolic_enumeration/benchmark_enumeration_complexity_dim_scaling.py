@@ -1,4 +1,24 @@
 """
+Banc d'essai comparatif de la vitesse des fonctions d'énumération.
+
+Ce script a pour objectif de quantifier et de comparer la puissance de calcul
+des différentes stratégies d'énumération d'OpenTURNS en fonction de la taille
+de la base et de la dimension du problème. Il permet de mesurer précisément
+la dégradation des performances lors du passage d'une règle linéaire à une 
+règle hyperbolique, tout en analysant la sensibilité du temps de génération 
+à la valeur de la quasi-norme $q$.
+
+La mise en œuvre repose sur une procédure de montée en charge itérative qui
+augmente la taille de la base jusqu'à atteindre un seuil temporel critique.
+Pour chaque configuration, le script calcule le débit de production de 
+multi-indices (exprimé en milliers d'indices par seconde) et génère des
+graphiques de synthèse en échelle logarithmique. Ces résultats sont exportés 
+sous forme de fichiers PDF pour différentes dimensions, permettant une analyse 
+visuelle de la complexité algorithmique des fonctions testées.
+
+References
+----------
+
 https://github.com/openturns/openturns/issues/2971
 
 Output
@@ -265,7 +285,7 @@ def MakeBenchmarkEnumerationRule(
 ):
     # 1. Benchmark linear enumeration
     enumerateFunction = ot.LinearEnumerateFunction(dimension)
-    (basisSizeListLinear, timeListLinear, performanceListLinear) = benchmarkEnumeration(
+    basisSizeListLinear, timeListLinear, performanceListLinear = benchmarkEnumeration(
         enumerateFunction,
         minimum_basisSize=minimum_basisSize,
         number_of_points_per_second_factor=number_of_points_per_second_factor,

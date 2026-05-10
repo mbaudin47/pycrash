@@ -1,24 +1,45 @@
+"""
+Portage Python de la règle d'énumération anisotrope hyperbolique d'OpenTURNS.
+
+Cette classe a pour objectif de fournir une bijection entre l'ensemble des
+entiers naturels et l'ensemble des multi-indices, permettant ainsi d'ordonner
+les fonctions d'une base de polynômes orthogonaux. En s'appuyant sur une
+quasi-norme $q$ et des poids dimensionnels, elle permet de sélectionner
+prioritairement les interactions de bas degré et les variables les plus
+influentes, optimisant ainsi la troncature des développements en chaos
+polynomial.
+
+La mise en œuvre repose sur un algorithme d'exploration par voisinage maintenu
+dans une file de priorité (implémentée ici par une liste triée et un objet
+`deque`). À chaque itération, le multi-indice de norme minimale est extrait
+pour alimenter un cache, puis ses successeurs directs sont générés et insérés
+de manière ordonnée. Cette structure permet également la gestion dynamique des
+strates (groupes d'indices de même norme) et propose des méthodes pour calculer
+l'inverse de la fonction ou déterminer le cardinal cumulé des strates.
+"""
+
 import math
 from collections import deque
+
 
 class HyperbolicAnisotropicEnumerateFunction:
     """
     The bijective function to select polynomials in the orthogonal basis.
     Converted from C++ OpenTURNS implementation.
     """
-    
+
     def __init__(self, *args):
         # Initialisation des attributs
         self.dimension = 0
         self.weight_ = []
         self.q_ = 0.0
         self.upperBound_ = []
-        
+
         # Cache et structures de données (mutable en C++)
         self.candidates_ = deque()  # Équivalent std::list de paires (Indices, Scalar)
-        self.cache_ = []            # Collection<Indices>
-        self.strataCumulatedCardinal_ = [] # Indices
-        
+        self.cache_ = []  # Collection<Indices>
+        self.strataCumulatedCardinal_ = []  # Indices
+
         if len(args) == 0:
             # Constructeur par défaut
             pass
@@ -27,15 +48,15 @@ class HyperbolicAnisotropicEnumerateFunction:
                 # Constructeur avec dimension et q
                 self.dimension = args[0]
                 self.weight_ = [1.0] * self.dimension
-                self.upperBound_ = [float('inf')] * self.dimension
+                self.upperBound_ = [float("inf")] * self.dimension
                 self.setQ(args[1])
             else:
                 # Constructeur avec point de poids et q
                 self.weight_ = list(args[0])
                 self.dimension = len(self.weight_)
-                self.upperBound_ = [float('inf')] * self.dimension
+                self.upperBound_ = [float("inf")] * self.dimension
                 self.setQ(args[1])
-        
+
         if self.dimension > 0:
             self.initialize()
 
@@ -53,7 +74,7 @@ class HyperbolicAnisotropicEnumerateFunction:
             for j in range(self.dimension):
                 result += indices[j] * self.weight_[j]
             return result
-        
+
         for j in range(self.dimension):
             result += math.pow(indices[j] * self.weight_[j], self.q_)
         return math.pow(result, 1.0 / self.q_)
@@ -65,7 +86,9 @@ class HyperbolicAnisotropicEnumerateFunction:
         """Équivalent de l'operator() en C++"""
         while len(self.cache_) <= index:
             if not self.candidates_:
-                raise Exception(f"Cannot enumerate up to index={index} because of the bounds.")
+                raise Exception(
+                    f"Cannot enumerate up to index={index} because of the bounds."
+                )
 
             # current (ValueType) est le premier candidat (trié par q-norm)
             current = self.candidates_.popleft()
@@ -88,14 +111,14 @@ class HyperbolicAnisotropicEnumerateFunction:
                 next_indices = list(current_indices)
                 if next_indices[j] >= self.upperBound_[j]:
                     continue
-                
+
                 next_indices[j] += 1
                 next_norm = self.qNorm(next_indices)
-                
+
                 # Insertion dans la liste triée (maintien du tri par q-norm)
                 inserted = False
                 duplicate = False
-                
+
                 # Recherche de la position d'insertion
                 idx = 0
                 while idx < len(self.candidates_):
@@ -107,10 +130,10 @@ class HyperbolicAnisotropicEnumerateFunction:
                             duplicate = True
                             break
                     idx += 1
-                
+
                 if not duplicate:
                     self.candidates_.insert(idx, (next_indices, next_norm))
-                    
+
         return self.cache_[index]
 
     def inverse(self, indices):
@@ -118,7 +141,7 @@ class HyperbolicAnisotropicEnumerateFunction:
         # Recherche dans le cache existant
         while result < len(self.cache_) and self.cache_[result] != indices:
             result += 1
-            
+
         if result == len(self.cache_):
             # Génération jusqu'à trouver l'indice
             while True:
@@ -146,7 +169,7 @@ class HyperbolicAnisotropicEnumerateFunction:
             if degree > maximumDegree:
                 break
             index += 1
-        
+
         strataIndex = 0
         while self.getStrataCumulatedCardinal(strataIndex) < index:
             strataIndex += 1
@@ -177,5 +200,7 @@ class HyperbolicAnisotropicEnumerateFunction:
         self.initialize()
 
     def __repr__(self):
-        return (f"class=HyperbolicAnisotropicEnumerateFunction "
-                f"q={self.q_} weights={self.weight_}")
+        return (
+            f"class=HyperbolicAnisotropicEnumerateFunction "
+            f"q={self.q_} weights={self.weight_}"
+        )

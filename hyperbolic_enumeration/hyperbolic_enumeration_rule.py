@@ -1,8 +1,28 @@
+"""
+Analyse de la structure des strates pour la règle d'énumération hyperbolique.
+
+Ce script a pour objectif d'étudier la correspondance entre le degré total des
+multi-indices et leur appartenance aux strates définies par une quasi-norme $q$.
+Il vise particulièrement à identifier l'indice de strate minimal nécessaire
+pour atteindre un degré total donné, tout en proposant une alternative
+corrective aux méthodes natives d'OpenTURNS qui peuvent présenter des
+comportements inattendus lors de la recherche du cardinal cumulé.
+
+La mise en œuvre s'appuie sur une exploration itérative des strates de la classe
+HyperbolicAnisotropicEnumerateFunction. Pour chaque strate, le code parcourt
+les multi-indices associés, calcule leur somme algébrique et compare ce degré
+au seuil fixé. Le script compare ensuite trois approches différentes : une
+recherche exhaustive personnalisée, la méthode intégrée à la bibliothèque et
+une réplication locale de l'algorithme C++ sous-jacent afin d'en vérifier la
+cohérence.
+"""
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Experiment with the hyperbolic enumeration rule.
 """
+
 import openturns as ot
 
 

@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Plot the quasi-norm of a vector.
+Visualisation de la géométrie des boules pour la quasi-norme $q$.
+
+Ce script a pour objectif d'illustrer l'évolution de la topologie d'une norme
+en fonction du paramètre de quasi-norme $q$. En représentant les lignes de
+niveau (contours) dans un plan bidimensionnel, il permet d'observer la
+transition entre une norme classique ($q=1$) et des configurations de type 
+hyperbolique ($q < 1$), illustrant ainsi graphiquement la concavité induite 
+par ces mesures de distance dans le cadre de la troncature polynomiale.
+
+La mise en œuvre repose sur la création d'une classe héritant des fonctions
+Python d'OpenTURNS pour évaluer la norme $q$ de manière vectorisée. Le script
+calcule la norme via une formulation logarithmique pour assurer la stabilité
+numérique, puis génère une série de graphiques exportés au format PDF. Chaque
+figure applique un rapport d'aspect égal et une palette de couleurs distincte
+pour faciliter la comparaison visuelle de la courbure des strates.
 
 References
 ----------
@@ -19,14 +33,12 @@ a^b = exp(b * log(a))
 Hence:
 
 a^(1/q) = exp(log(a) / q)
-    
-"""
 
+"""
 
 import openturns as ot
 import openturns.viewer as otv
 import numpy as np
-
 
 
 class QuasiNorm(ot.OpenTURNSPythonFunction):

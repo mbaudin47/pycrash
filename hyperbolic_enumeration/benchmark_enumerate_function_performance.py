@@ -1,4 +1,23 @@
 """
+Évaluation des performances de calcul du cardinal des bases polynomiales.
+
+Ce script a pour objectif de mesurer le temps requis par différentes classes
+d'énumération d'OpenTURNS pour déterminer la taille d'une base à partir d'un
+degré total donné. Il permet de quantifier l'efficacité computationnelle de la
+méthode `getBasisSizeFromTotalDegree` lorsqu'elle est soumise à des contraintes
+linéaires ou hyperboliques, mettant ainsi en évidence les différences de coût
+entre les algorithmes standards et les nouvelles implémentations.
+
+La mise en œuvre consiste à comparer systématiquement quatre configurations :
+une énumération linéaire classique et trois variantes hyperboliques (isotropes
+et anisotropes) avec des paramètres de norme $q$ distincts. Pour chaque test,
+le script enregistre le temps de calcul précis, le nombre de coefficients
+générés et le débit résultant, facilitant ainsi l'identification de gains de
+performance potentiels apportés par les versions récentes de la bibliothèque.
+
+References
+----------
+
 https://github.com/openturns/openturns/issues/2971
 
 Output
@@ -13,6 +32,7 @@ Elapsed = 2.3327 (s)
 Nb. Coeffs = 3003
 
 """
+
 # %%
 import time
 import openturns as ot

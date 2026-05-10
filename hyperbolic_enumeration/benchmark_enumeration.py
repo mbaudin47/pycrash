@@ -1,4 +1,21 @@
 """
+Analyse comparative des performances des fonctions d'énumération d'OpenTURNS.
+
+Ce script a pour objectif de mesurer et de comparer le temps d'exécution de
+différentes stratégies d'énumération de multi-indices en haute dimension. Il
+cible particulièrement les fonctions linéaires et hyperboliques (isotopes et
+anisotropes) afin de quantifier l'impact de la norme $q$ et de la dimension sur
+la vitesse de génération des coefficients d'une base polynomiale.
+
+La mise en œuvre consiste à instancier plusieurs classes de la bibliothèque
+OpenTURNS et à chronométrer l'accès séquentiel aux 5000 premiers indices de
+chaque fonction. Pour chaque configuration, le script calcule le temps total
+écoulé ainsi que le débit de génération exprimé en coefficients par seconde,
+permettant ainsi d'identifier les goulots d'étranglement algorithmiques.
+
+References
+----------
+
 https://github.com/openturns/openturns/issues/2971
 
 Output
@@ -34,9 +51,9 @@ import openturns as ot
 import time
 import openturns.viewer as otv
 
-
 # %%
 print(f"OT Version: {ot.__version__}")
+
 
 # %%
 def TimeEnumerationFunction(enumerateFunction, basisSize):
@@ -46,7 +63,6 @@ def TimeEnumerationFunction(enumerateFunction, basisSize):
     t2 = time.time()
     elapsed = t2 - t1
     return elapsed
-
 
 
 # %%

@@ -1,65 +1,113 @@
+"""
+Visualisation de la stratification des multi-indices pour le chaos polynomial.
+
+Ce script a pour objectif de représenter graphiquement la répartition des
+multi-indices dans un plan bidimensionnel, en fonction d'une fonction
+d'énumération anisotrope hyperbolique. Il permet de visualiser comment les
+indices sont regroupés par strates et comment la norme q pondérée définit
+les frontières de ces ensembles au sein de la base polynomiale.
+
+La mise en œuvre s'appuie sur la bibliothèque OpenTURNS pour la gestion des
+fonctions d'énumération et la création d'objets graphiques. Le code calcule
+le rang de chaque multi-indice, lui attribue une couleur selon sa strate
+d'appartenance, et superpose les lignes de niveau théoriques calculées via une
+fonction symbolique paramétrique de la norme q.
+"""
 # %%
 import openturns as ot
 import openturns.viewer as otv
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+
 # %%
-def draw_stratas_custom(enumeration_function, maximum_strata_index):
+def draw_stratas_custom(
+    enumeration_function, maximum_strata_index, offset_text=[0.1, 0.1], font_size=1
+):
     """
-    Représente les multi-indices colorés par strates.
+    Représente les multi-indices colorés par strates avec étiquettes de rang.
     """
     cmap = plt.colormaps["viridis"]
-    colors = [mcolors.to_hex(cmap(i / (maximum_strata_index - 1))) for i in range(maximum_strata_index)]
-    
-    graph = ot.Graph("Stratification (q={})".format(enumeration_function.getQ()), "alpha_1", "alpha_2", True)
-    
+    colors = [
+        mcolors.to_hex(cmap(i / (maximum_strata_index - 1)))
+        for i in range(maximum_strata_index)
+    ]
+
+    graph = ot.Graph(
+        "Stratification (q={})".format(enumeration_function.getQ()),
+        "alpha_1",
+        "alpha_2",
+        True,
+    )
+
     layers_levels = []
-    offset = 0
+    global_index = 0
+    offset_indices = 0
+
     for strata_index in range(maximum_strata_index):
         strata_cardinal = enumeration_function.getStrataCardinal(strata_index)
-        # Récupération des indices de la strate actuelle
-        indices_list = [enumeration_function(idx + offset) for idx in range(strata_cardinal)]
-        offset += strata_cardinal
+        indices_list = [
+            enumeration_function(idx + offset_indices) for idx in range(strata_cardinal)
+        ]
 
-        # Print the q-Norm of points in this layer
         q = enumeration_function.getQ()
         weights = enumeration_function.getWeight()
         q_norm_function = build_q_norm_function(weights, q)
+
         for j in range(len(indices_list)):
             multiindex = indices_list[j]
             q_norm = q_norm_function(multiindex)[0]
-            print(f"Layer #{strata_index}, j={j}, multiindex={multiindex}, q-Norm={q_norm:.2f}")
             layers_levels.append(q_norm)
 
-        # Draw the cloud
+            # Ajout du texte pour chaque point (rang d'énumération)
+            # On place le texte avec le décalage spécifié
+            text_pos = [multiindex[0] + offset_text[0], multiindex[1] + offset_text[1]]
+            text_pos = ot.Sample([text_pos])
+            description = ot.Description(1)
+            description[0] = str(global_index)
+            label = ot.Text(text_pos, description)
+            label.setTextSize(font_size)
+            label.setColor("black")
+            graph.add(label)
+
+            global_index += 1
+
+        # Dessin du nuage de points de la strate
         cloud = ot.Cloud(ot.Sample(indices_list))
         cloud.setPointStyle("circle")
         cloud.setColor(colors[strata_index])
         cloud.setLegend("Strate {}".format(strata_index))
         graph.add(cloud)
-        
+
+        offset_indices += strata_cardinal
+
     graph.setIntegerXTick(True)
     graph.setIntegerYTick(True)
-    levels = list(set(layers_levels))
-    levels.sort()
+    levels = sorted(list(set(layers_levels)))
     return graph, levels
+
 
 # %%
 def build_q_norm_function(weights, q):
-    q_norm_function = ot.SymbolicFunction(["x1", "x2", "w1", "w2", "q"], ["((w1 * x1)^(q) + (w2 * x2)^(q))^(1/q)"])
-    q_norm_parametric = ot.ParametricFunction(q_norm_function, [2, 3, 4], [weights[0], weights[1], q])
+    q_norm_function = ot.SymbolicFunction(
+        ["x1", "x2", "w1", "w2", "q"], ["((w1 * x1)^(q) + (w2 * x2)^(q))^(1/q)"]
+    )
+    q_norm_parametric = ot.ParametricFunction(
+        q_norm_function, [2, 3, 4], [weights[0], weights[1], q]
+    )
     return q_norm_parametric
+
 
 # %%
 def draw_qnorm_contour(weights, q, levels):
     """
     Trace les lignes de niveau de la norme q pondérée.
     """
-    f = build_q_norm_function(weights, q)    
+    f = build_q_norm_function(weights, q)
     contour = f.draw([0.0, 0.0], [5.0, 5.0]).getDrawable(0).getImplementation()
     contour.setLevels(levels)
     return contour
+
 
 # %%
 # Paramètres de l'analyse
@@ -67,11 +115,11 @@ max_strata = 8
 
 # %%
 # Création de la planche graphique (Grid)
-q= 0.7
-weights = [1.0, 1.0] # Cas isotrope pour la clarté visuelle
+q = 0.7
+weights = [1.0, 1.0]  # Cas isotrope pour la clarté visuelle
 dim = len(weights)
-graph = ot.Graph("Isolignes", "x1", "x2", True)
-graph.setTitle("Isolignes (q={}, w={})".format(q, weights))
+graph = ot.Graph("", r"$\alpha_1$", r"$\alpha_2$", True)
+graph.setTitle("q={}, w={}".format(q, weights))
 
 # Répartition des indices
 enumeration_function = ot.HyperbolicAnisotropicEnumerateFunction(weights, q)

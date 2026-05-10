@@ -1,8 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Évaluation du cardinal des bases polynomiales sous contrainte de degré.
+
 Get the number of polynomials lower than a given degree.
+Ce script a pour objectif de déterminer le nombre de polynômes dont le degré
+total est inférieur ou égal à un seuil donné, en utilisant une règle
+d'énumération hyperbolique. Il permet d'analyser la structure de la base en
+identifiant précisément la strate limite et le nombre cumulé de multi-indices
+nécessaires pour couvrir l'espace polynomial souhaité, facilitant ainsi le
+dimensionnement des modèles de substitution.
+
+La mise en œuvre s'appuie sur la classe HyperbolicAnisotropicEnumerateFunction
+d'OpenTURNS pour lier le degré polynomial aux indices de strates. Le script
+calcule les cardinaux par strate et les cardinaux cumulés, puis affiche le
+détail de chaque multi-indice généré jusqu'à la strate maximale. Une fonction
+Python personnalisée évaluant la quasi-norme $q$ est également incluse pour
+permettre la vérification de la cohérence entre la norme analytique et le rang
+d'énumération.
 """
+
+
 # %%
 import openturns as ot
 import numpy as np
@@ -19,6 +37,7 @@ def print_up_to_maximum_strata_index(enumerateFunction, degree_strata_index):
             multiindex = enumerateFunction(i)
             print("    ", multiindex, " sum=", sum(multiindex))
     return None
+
 
 # %%
 
@@ -46,6 +65,7 @@ print("cumulated_cardinal=", cumulated_cardinal)
 print_up_to_maximum_strata_index(enumerateFunction, strata_index)
 
 # %%
+
 
 class QuasiNorm(ot.OpenTURNSPythonFunction):
     def __init__(self, dimension, quasi_norm_parameter):
