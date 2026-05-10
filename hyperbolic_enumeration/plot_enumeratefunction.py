@@ -65,7 +65,7 @@ def draw_stratas(enum_func, maximum_strata_index):
     graph : openturns.Graph
         Plot of the multi-indices colored by stratas
     """
-    cmap = plt.colormaps["viridis"]
+    cmap = plt.get_cmap("viridis")
     viridis_palette = [
         mcolors.to_hex(cmap(i / (maximum_strata_index - 1)))
         for i in range(maximum_strata_index)
@@ -129,6 +129,27 @@ graph.setLogScale(ot.GraphImplementation.LOGY)
 view = otv.View(graph, figure_kw={"figsize": (5, 4)})
 
 # %%
+
+
+def build_q_norm_function(weights, q):
+    """Returns a parametric function representing the $q$-norm of a 
+    two-dimensional vector weighted by the provided coefficients."""
+    if any(w <= 0 for w in weights):
+        raise ValueError("All weights must be strictly positive.")
+    if len(weights) != 2:
+        raise ValueError(f"The number of weights should be 2, but is {len(weights)}")
+    if q < 0.0 or q > 1.0:
+        raise ValueError(f"The parameter q should be between 0 and 1, but is {q}")
+    q_norm_function = ot.SymbolicFunction(
+        ["x1", "x2", "w1", "w2", "q"], ["((w1 * x1)^q + (w2 * x2)^q)^(1 / q)"]
+    )
+    q_norm_parametric = ot.ParametricFunction(
+        q_norm_function, [2, 3, 4], [weights[0], weights[1], q]
+    )
+    return q_norm_parametric
+
+
+# %%
 # The hyperbolic enumeration function is based on the q-norm.
 # We plot the hyperbolic quasi norm for different values of :math:`q`.
 # With :math:`q = 1` (with isotropy), stratas are hyperplanes:
@@ -138,19 +159,12 @@ view = otv.View(graph, figure_kw={"figsize": (5, 4)})
 def draw_qnorm(q):
     """Generates a contour plot of the Lq-norm for a given exponent q in a
     two-dimensional space."""
-
-    def qnorm(x):
-        """Computes the Lq-norm of a vector x for a given exponent q."""
-        norm = 0.0
-        for xi in x:
-            norm += xi**q
-        norm = norm ** (1.0 / q)
-        return [norm]
-
-    f = ot.PythonFunction(2, 1, qnorm)
-    f.setInputDescription(["x1", "x2"])
+    weights = [1.0, 1.0]
+    f = build_q_norm_function(weights, q)
     graph = f.draw([0.0] * 2, [1.0] * 2)
     graph.setTitle(f"q = {q}")
+    graph.setXTitle("$x_1$")
+    graph.setYTitle("$x_2$")
     return graph
 
 

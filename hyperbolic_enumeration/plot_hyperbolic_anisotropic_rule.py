@@ -89,8 +89,16 @@ def draw_stratas_custom(
 
 # %%
 def build_q_norm_function(weights, q):
+    """Returns a parametric function representing the $q$-norm of a 
+    two-dimensional vector weighted by the provided coefficients."""
+    if any(w <= 0 for w in weights):
+        raise ValueError("All weights must be strictly positive.")
+    if len(weights) != 2:
+        raise ValueError(f"The number of weights should be 2, but is {len(weights)}")
+    if q < 0.0 or q > 1.0:
+        raise ValueError(f"The parameter q should be between 0 and 1, but is {q}")
     q_norm_function = ot.SymbolicFunction(
-        ["x1", "x2", "w1", "w2", "q"], ["((w1 * x1)^(q) + (w2 * x2)^(q))^(1/q)"]
+        ["x1", "x2", "w1", "w2", "q"], ["((w1 * x1)^q + (w2 * x2)^q)^(1 / q)"]
     )
     q_norm_parametric = ot.ParametricFunction(
         q_norm_function, [2, 3, 4], [weights[0], weights[1], q]
