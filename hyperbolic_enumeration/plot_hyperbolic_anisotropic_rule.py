@@ -20,13 +20,11 @@ import openturns.viewer as otv
 import plot_hyperbolic_anisotropic_rule_lib as pharlib
 import tabulate
 
-
-
 # %%
 weights = [1.0, 0.5]  # Cas isotrope pour la clarté visuelle
 q = 0.7
 graph, multindex_table, maximum_q_norm = pharlib.plot_hyperbolic_anisotropic_rule(
-    weights, q, maximum_strata_index=8, maximum_marginal_index = 8.0
+    weights, q, maximum_strata_index=8, maximum_marginal_index=8.0
 )
 view = otv.View(graph, axes_kw={"aspect": "equal"}, figure_kw={"figsize": (5, 4)})
 

@@ -4,16 +4,16 @@ Banc d'essai comparatif de la vitesse des fonctions d'énumération.
 Ce script a pour objectif de quantifier et de comparer la puissance de calcul
 des différentes stratégies d'énumération d'OpenTURNS en fonction de la taille
 de la base et de la dimension du problème. Il permet de mesurer précisément
-la dégradation des performances lors du passage d'une règle linéaire à une 
-règle hyperbolique, tout en analysant la sensibilité du temps de génération 
+la dégradation des performances lors du passage d'une règle linéaire à une
+règle hyperbolique, tout en analysant la sensibilité du temps de génération
 à la valeur de la quasi-norme $q$.
 
 La mise en œuvre repose sur une procédure de montée en charge itérative qui
 augmente la taille de la base jusqu'à atteindre un seuil temporel critique.
-Pour chaque configuration, le script calcule le débit de production de 
+Pour chaque configuration, le script calcule le débit de production de
 multi-indices (exprimé en milliers d'indices par seconde) et génère des
-graphiques de synthèse en échelle logarithmique. Ces résultats sont exportés 
-sous forme de fichiers PDF pour différentes dimensions, permettant une analyse 
+graphiques de synthèse en échelle logarithmique. Ces résultats sont exportés
+sous forme de fichiers PDF pour différentes dimensions, permettant une analyse
 visuelle de la complexité algorithmique des fonctions testées.
 
 References

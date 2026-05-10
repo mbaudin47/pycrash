@@ -20,7 +20,6 @@ permettre la vérification de la cohérence entre la norme analytique et le rang
 d'énumération.
 """
 
-
 # %%
 import openturns as ot
 import numpy as np

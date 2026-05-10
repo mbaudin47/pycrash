@@ -87,7 +87,6 @@ def draw_stratas_custom(
             # Met à jour la q-Norme maximale
             maximum_q_norm = max(maximum_q_norm, q_norm)
 
-
             global_index += 1
 
         # Dessin du nuage de points de la strate
@@ -130,14 +129,20 @@ def draw_qnorm_contour(weights, q, levels, maximum_marginal_index):
     Trace les lignes de niveau de la norme q pondérée.
     """
     f = build_q_norm_function(weights, q)
-    contour = f.draw([0.0, 0.0], [maximum_marginal_index, maximum_marginal_index]).getDrawable(0).getImplementation()
+    contour = (
+        f.draw([0.0, 0.0], [maximum_marginal_index, maximum_marginal_index])
+        .getDrawable(0)
+        .getImplementation()
+    )
     contour.setLevels(levels)
     return contour
 
 
 # %%
 # Paramètres de l'analyse
-def plot_hyperbolic_anisotropic_rule(weights, q, maximum_strata_index=8, maximum_marginal_index = 10.0):
+def plot_hyperbolic_anisotropic_rule(
+    weights, q, maximum_strata_index=8, maximum_marginal_index=10.0
+):
     # Création de la planche graphique (Grid)
     dim = len(weights)
     graph = ot.Graph("", r"$\alpha_1$", r"$\alpha_2$", True)
@@ -153,4 +158,3 @@ def plot_hyperbolic_anisotropic_rule(weights, q, maximum_strata_index=8, maximum
     # Lignes de niveau
     graph.add(draw_qnorm_contour(weights, q, levels, maximum_marginal_index))
     return graph, multindex_table, maximum_q_norm
-

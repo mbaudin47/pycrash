@@ -16,6 +16,7 @@ pour garantir qu'un même multi-indice n'est jamais traité deux fois, tandis
 qu'une clé secondaire assure un tri lexicographique inverse gradué en cas
 d'égalité de norme.
 """
+
 import heapq
 
 

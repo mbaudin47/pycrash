@@ -132,7 +132,7 @@ view = otv.View(graph, figure_kw={"figsize": (5, 4)})
 
 
 def build_q_norm_function(weights, q):
-    """Returns a parametric function representing the $q$-norm of a 
+    """Returns a parametric function representing the $q$-norm of a
     two-dimensional vector weighted by the provided coefficients."""
     if any(w <= 0 for w in weights):
         raise ValueError("All weights must be strictly positive.")

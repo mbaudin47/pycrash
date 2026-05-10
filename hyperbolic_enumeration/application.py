@@ -17,29 +17,34 @@ selon une norme $q$ pondérée (énumération anisotrope hyperbolique).
 
 # Barre latérale pour les widgets
 st.sidebar.header("Paramètres")
-q_param = st.sidebar.slider("Valeur de q", min_value=0.1, max_value=1.0, value=0.7, step=0.05)
+q_param = st.sidebar.slider(
+    "Valeur de q", min_value=0.1, max_value=1.0, value=0.7, step=0.05
+)
 w1 = st.sidebar.slider("Poids w1", min_value=0.1, max_value=1.0, value=1.0, step=0.05)
 w2 = st.sidebar.slider("Poids w2", min_value=0.1, max_value=1.0, value=1.0, step=0.05)
-nb_strates = st.sidebar.number_input("Nombre de strates", min_value=2, max_value=15, value=8)
+nb_strates = st.sidebar.number_input(
+    "Nombre de strates", min_value=2, max_value=15, value=8
+)
 
 # Sélecteur pour l'indice marginal maximum
 max_marginal = st.sidebar.number_input(
-    "Indice marginal maximum", 
-    min_value=1, 
-    max_value=16, 
-    value=8, 
-    step=1
+    "Indice marginal maximum", min_value=1, max_value=16, value=8, step=1
 )
 
 weights = [w1, w2]
 
 # Calculs (Utilisation de nb_strates ici)
 graph, data_table, maximum_q_norm = pharlib.plot_hyperbolic_anisotropic_rule(
-    weights, q_param, maximum_strata_index=int(nb_strates), maximum_marginal_index=max_marginal
+    weights,
+    q_param,
+    maximum_strata_index=int(nb_strates),
+    maximum_marginal_index=max_marginal,
 )
 
 # Préparation unique du DataFrame avec correction
-df = pd.DataFrame(data_table, columns=["Indice", "Couche", "Degré", "Multi-indice", "q-norm"])
+df = pd.DataFrame(
+    data_table, columns=["Indice", "Couche", "Degré", "Multi-indice", "q-norm"]
+)
 # Conversion systématique en chaîne pour PyArrow
 df["Multi-indice"] = df["Multi-indice"].apply(lambda x: str(list(x)))
 
@@ -58,7 +63,7 @@ with m2:
     st.metric(label="Q-Norme maximale", value=f"{maximum_q_norm:.4f}")
 
 
-st.divider() # Petite ligne de séparation visuelle
+st.divider()  # Petite ligne de séparation visuelle
 
 # Affichage du graphique et du tableau
 col1, col2 = st.columns([1, 2])
@@ -74,6 +79,8 @@ with col2:
     st.subheader("Données des indices")
 
     # On utilise le DataFrame déjà corrigé
-    st.dataframe(df, width='stretch', hide_index=True, height=400)
+    st.dataframe(df, width="stretch", hide_index=True, height=400)
 
-st.info("Les lignes de niveau représentent la frontière théorique de chaque strate selon la norme q.")
+st.info(
+    "Les lignes de niveau représentent la frontière théorique de chaque strate selon la norme q."
+)

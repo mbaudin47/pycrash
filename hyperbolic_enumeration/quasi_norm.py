@@ -6,8 +6,8 @@ Visualisation de la géométrie des boules pour la quasi-norme $q$.
 Ce script a pour objectif d'illustrer l'évolution de la topologie d'une norme
 en fonction du paramètre de quasi-norme $q$. En représentant les lignes de
 niveau (contours) dans un plan bidimensionnel, il permet d'observer la
-transition entre une norme classique ($q=1$) et des configurations de type 
-hyperbolique ($q < 1$), illustrant ainsi graphiquement la concavité induite 
+transition entre une norme classique ($q=1$) et des configurations de type
+hyperbolique ($q < 1$), illustrant ainsi graphiquement la concavité induite
 par ces mesures de distance dans le cadre de la troncature polynomiale.
 
 La mise en œuvre repose sur la création d'une classe héritant des fonctions
