@@ -47,6 +47,7 @@ def draw_stratas_custom(
     offset_indices = 0
     multindex_table = []
     maximum_marginal_index = [0, 0]
+    maximum_q_norm = 0.0
 
     for strata_index in range(maximum_strata_index):
         strata_cardinal = enumeration_function.getStrataCardinal(strata_index)
@@ -83,6 +84,10 @@ def draw_stratas_custom(
             maximum_marginal_index[0] = max(maximum_marginal_index[0], multiindex[0])
             maximum_marginal_index[1] = max(maximum_marginal_index[1], multiindex[1])
 
+            # Met à jour la q-Norme maximale
+            maximum_q_norm = max(maximum_q_norm, q_norm)
+
+
             global_index += 1
 
         # Dessin du nuage de points de la strate
@@ -97,7 +102,7 @@ def draw_stratas_custom(
     graph.setIntegerXTick(True)
     graph.setIntegerYTick(True)
     levels = sorted(list(set(layers_levels)))
-    return graph, levels, multindex_table, maximum_marginal_index
+    return graph, levels, multindex_table, maximum_marginal_index, maximum_q_norm
 
 
 # %%
@@ -140,12 +145,12 @@ def plot_hyperbolic_anisotropic_rule(weights, q, maximum_strata_index=8, maximum
 
     # Répartition des indices
     enumeration_function = ot.HyperbolicAnisotropicEnumerateFunction(weights, q)
-    curve, levels, multindex_table, _ = draw_stratas_custom(
+    curve, levels, multindex_table, _, maximum_q_norm = draw_stratas_custom(
         enumeration_function, maximum_strata_index
     )
     graph.add(curve)
 
     # Lignes de niveau
     graph.add(draw_qnorm_contour(weights, q, levels, maximum_marginal_index))
-    return graph, multindex_table
+    return graph, multindex_table, maximum_q_norm
 
