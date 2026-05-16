@@ -2,20 +2,13 @@
 #
 # Example
 # -------
-# $ bash github_count_cloc.sh
-#
-# Note
-# ----
-# To install cloc locally:
-# curl -L https://github.com/AlDanial/cloc/releases/download/v1.96/cloc-1.96.pl -o cloc
-# chmod +x cloc
-# export PATH="$HOME/PathToBinary:$PATH"
+# $ bash github_count_cloc.sh > github_count_cloc.txt
 
 # Exit immediately if a command exits with a non-zero status
 set -e
 
 # 1. Download the local cloc script if it does not exist
-CLOC_VERSION="2.00" # Updated version for 2026
+CLOC_VERSION="2.00" 
 if [ ! -f "./cloc" ]; then
     echo "Downloading cloc v${CLOC_VERSION}..."
     curl -L "https://github.com/AlDanial/cloc/releases/download/v${CLOC_VERSION}/cloc-${CLOC_VERSION}.pl" -o cloc
@@ -37,6 +30,9 @@ REPOS=(
     "https://github.com/jonathf/chaospy"
     "https://github.com/sandialabs/UQTk"
 )
+
+# Define directories to ignore specifically for Queso
+QUESO_EXCLUDES="validationCycle,validationCycle2,gpmsaTower,t01_valid_cycle,t04_bimodal,test_Regression,test_gpmsa"
 
 # Create a temporary directory for cloning
 TEMP_DIR="tmp_repos"
@@ -60,7 +56,14 @@ for repo in "${REPOS[@]}"; do
     echo "Run cloc..."
     echo "----------------------------------------"
     echo "Results for $repo_name:"
-    ./cloc "$TEMP_DIR/$repo_name" --quiet
+    
+    # Check if the current repository is queso
+    if [ "$repo_name" = "queso" ]; then
+        ./cloc "$TEMP_DIR/$repo_name" --quiet --exclude-dir="$QUESO_EXCLUDES"
+    else
+        ./cloc "$TEMP_DIR/$repo_name" --quiet
+    fi
+    
     echo "========================================"
     
     # Remove the cloned repository to save disk space

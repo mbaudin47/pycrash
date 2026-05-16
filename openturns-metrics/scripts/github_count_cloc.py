@@ -6,14 +6,17 @@ import squarify
 
 # %%
 # 1. Chargement des données
-# Remplacez 'logiciels_cloc.csv' par le chemin réel de votre fichier
-df = pd.read_csv("logiciels_cloc.csv")
+# Remplacez 'github_count_cloc.csv' par le chemin réel de votre fichier
+df = pd.read_csv("github_count_cloc.csv")
 
 # %%
 # Nettoyage des espaces potentiels dans les noms de colonnes ou de chaînes
 df.columns = df.columns.str.strip()
 df["logiciel"] = df["logiciel"].str.strip()
 df["langage"] = df["langage"].str.strip()
+
+# Filtrage pour ignorer les fichiers CSV et SVG
+df = df[~df["langage"].isin(["CSV", "SVG", "HTML", "XML", "JSON"])]
 
 # %%
 # ==============================================================================
@@ -22,9 +25,13 @@ df["langage"] = df["langage"].str.strip()
 totaux_code = df.groupby("logiciel")["code"].sum().sort_values(ascending=False)
 
 plt.figure(figsize=(8, 4))
-bars = plt.bar(totaux_code.index, totaux_code.values, color="skyblue", edgecolor="grey")
+bars = plt.bar(
+    totaux_code.index, totaux_code.values, color="skyblue", edgecolor="grey"
+)
 
-plt.title("Nombre total de lignes de code par logiciel", fontsize=14, fontweight="bold")
+plt.title(
+    "Nombre total de lignes de code par logiciel", fontsize=14, fontweight="bold"
+)
 plt.xlabel("Logiciels")
 plt.ylabel("Lignes de code")
 plt.xticks(rotation=45)
