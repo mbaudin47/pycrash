@@ -29,6 +29,7 @@ REPOS=(
     "https://github.com/SURGroup/UQpy"
     "https://github.com/jonathf/chaospy"
     "https://github.com/sandialabs/UQTk"
+    "https://github.com/cran/sensitivity"
 )
 
 # Define directories to ignore specifically for Queso
