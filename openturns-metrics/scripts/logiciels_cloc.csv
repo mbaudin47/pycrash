@@ -1,0 +1,211 @@
+logiciel,langage,fichiers,vides,commentaires,code
+SGpp,CSV,24,1,0,655926
+SGpp,C++,1097,29209,18117,177518
+SGpp,Text,51,72,0,89365
+SGpp,C/C++ Header,1202,19675,58410,67838
+SGpp,Python,383,13165,20304,44911
+SGpp,SVG,8,5,30,7171
+SGpp,SWIG,38,791,1086,5510
+SGpp,JSON,34,4,0,1508
+SGpp,Bourne Shell,35,88,170,626
+SGpp,R,11,106,208,577
+SGpp,CUDA,4,47,92,371
+SGpp,Java,6,76,342,262
+SGpp,TeX,4,5,0,213
+SGpp,CSS,1,0,0,150
+SGpp,Groovy,1,5,42,129
+SGpp,YAML,3,9,8,117
+SGpp,MATLAB,2,31,153,88
+SGpp,Markdown,4,28,0,76
+SGpp,Bourne Again Shell,4,5,15,41
+SGpp,D,1,0,0,40
+SGpp,make,1,2,0,17
+SGpp,JavaScript,1,0,0,9
+SGpp,CMake,1,3,0,6
+OpenCossan,MATLAB,1045,16201,33146,59171
+OpenCossan,Text,19,283,0,29093
+OpenCossan,C,12,609,1065,4182
+OpenCossan,XML,4,123,328,998
+OpenCossan,Python,5,206,177,575
+OpenCossan,HTML,4,63,88,359
+OpenCossan,C/C++ Header,4,50,129,271
+OpenCossan,Bourne Shell,7,63,86,237
+OpenCossan,Tcl/Tk,1,80,121,117
+OpenCossan,Markdown,1,32,0,53
+OpenCossan,Groovy,1,3,2,26
+OpenCossan,Java,1,8,7,20
+OpenCossan,make,1,9,3,17
+EasyVVUQ,Python,163,4483,7747,12895
+EasyVVUQ,SVG,7,1,98,7541
+EasyVVUQ,Jupyter Notebook,25,0,53719,3721
+EasyVVUQ,YAML,16,48,38,2211
+EasyVVUQ,reStructuredText,19,655,339,1480
+EasyVVUQ,JSON,17,0,0,1177
+EasyVVUQ,Markdown,5,228,0,511
+EasyVVUQ,CSV,6,0,0,371
+EasyVVUQ,Text,5,5,0,139
+EasyVVUQ,Bourne Shell,3,22,17,77
+EasyVVUQ,TOML,1,9,3,68
+EasyVVUQ,C++,1,16,24,65
+EasyVVUQ,DOS Batch,1,8,1,26
+EasyVVUQ,Dockerfile,1,7,6,17
+EasyVVUQ,make,2,4,7,16
+EasyVVUQ,Jinja Template,1,0,0,8
+dakota,C++,429,33211,43031,172740
+dakota,JSON,12,1,0,92031
+dakota,Python,192,12819,7911,82760
+dakota,C/C++ Header,346,19537,29860,51687
+dakota,reStructuredText,425,13330,18092,33475
+dakota,Text,34,655,0,16746
+dakota,Java,58,1443,1384,8214
+dakota,CMake,174,2401,4772,6809
+dakota,XML,16,759,1,6505
+dakota,TeX,3,586,109,3805
+dakota,HTML,47,44,64,2803
+dakota,Perl,6,744,1061,2374
+dakota,Markdown,8,554,0,1389
+dakota,C,5,223,48,1316
+dakota,Fortran 77,3,53,1022,1193
+dakota,YAML,46,34,1,815
+dakota,Bourne Shell,41,397,714,623
+dakota,GLSL,2,87,64,401
+dakota,Fortran 90,2,24,315,341
+dakota,CSS,2,26,33,208
+dakota,SWIG,2,23,28,193
+dakota,MATLAB,7,31,26,143
+dakota,XSD,1,17,11,106
+dakota,Pascal,1,20,29,72
+dakota,DOS Batch,7,50,85,67
+dakota,Dockerfile,1,20,46,42
+dakota,Bourne Again Shell,6,26,57,35
+dakota,make,2,9,12,24
+dakota,TOML,1,3,0,21
+dakota,C Shell,2,4,6,11
+dakota,ReScript,5,1,0,5
+GPMSA,MATLAB,38,596,1189,3592
+GPMSA,Markdown,1,6,0,7
+openturns,C++,1417,35924,59816,221289
+openturns,C/C++ Header,944,33252,40656,102283
+openturns,SWIG,1618,28112,4810,80117
+openturns,Python,1171,18398,33547,68654
+openturns,CSV,24,1,0,26954
+openturns,XML,91,0,0,18464
+openturns,Text,148,6676,0,14863
+openturns,reStructuredText,148,7078,6906,10966
+openturns,CMake,61,518,579,5575
+openturns,SVG,9,6,6,3929
+openturns,C,4,451,659,3161
+openturns,JavaScript,1,69,112,409
+openturns,R,11,53,51,373
+openturns,Bourne Shell,14,69,25,320
+openturns,YAML,7,16,0,307
+openturns,HTML,2,30,0,196
+openturns,XMI,1,0,0,163
+openturns,TeX,1,20,20,156
+openturns,JSON,1,0,0,46
+openturns,make,1,11,3,45
+openturns,CSS,2,7,6,27
+openturns,Markdown,1,0,0,1
+psuade,C++,195,10127,31587,182836
+psuade,Fortran 77,268,125,33301,38429
+psuade,C,233,7803,8074,34480
+psuade,Text,11,115,0,22222
+psuade,C/C++ Header,229,3085,9220,10533
+psuade,Python,30,270,819,2407
+psuade,MATLAB,10,79,206,1742
+psuade,make,21,326,129,951
+psuade,CMake,14,123,108,511
+psuade,Markdown,2,64,0,154
+psuade,Bourne Shell,1,6,7,32
+psuade,Logos,3,3,0,10
+queso,MATLAB,141,857,751,2605982
+queso,Text,80,8905,0,80510
+queso,C++,377,12377,16380,62279
+queso,C/C++ Header,271,6679,16854,18931
+queso,Perl,7,2152,3027,10145
+queso,TeX,22,1853,1172,6403
+queso,m4,46,910,121,6268
+queso,make,23,460,368,2541
+queso,MSBuild script,4,0,0,1360
+queso,Bourne Shell,22,186,147,443
+queso,Python,5,130,87,443
+queso,Visualforce Page,6,28,0,116
+queso,Markdown,1,29,0,89
+queso,Fortran 90,2,37,93,78
+queso,C,1,28,13,75
+queso,Visual Studio Solution,1,0,1,45
+queso,YAML,1,0,0,25
+queso,SQL,4,0,0,19
+queso,HTML,1,1,0,7
+queso,Bourne Again Shell,2,0,20,6
+raven,CSV,1566,1568,0,493455
+raven,C/C++ Header,2247,46697,40366,305639
+raven,XML,1251,7617,436,233112
+raven,Python,1027,14968,74123,90024
+raven,TeX,219,9185,6992,69914
+raven,Text,69,326,0,27916
+raven,SWIG,61,213,0,24545
+raven,C++,18,1073,1628,4868
+raven,Bourne Shell,67,531,608,2835
+raven,XSD,16,203,231,2422
+raven,MATLAB,4,756,372,2230
+raven,SVG,4,0,2,2131
+raven,YAML,12,122,70,1472
+raven,CSS,2,173,58,697
+raven,Bourne Again Shell,11,88,120,584
+raven,Markdown,10,138,3,424
+raven,make,15,104,43,261
+raven,CMake,1,18,15,79
+raven,HTML,2,1,16,42
+raven,Jupyter Notebook,1,0,389,38
+raven,DOS Batch,1,0,0,32
+raven,Perl,1,2,15,20
+raven,INI,1,1,0,3
+raven,R,1,0,0,1
+UQpy,Python,595,10721,13447,27147
+UQpy,reStructuredText,173,2518,1661,3434
+UQpy,TeX,1,94,0,928
+UQpy,Tcl/Tk,4,121,197,778
+UQpy,Jupyter Notebook,2,0,848,307
+UQpy,Markdown,5,76,0,205
+UQpy,YAML,4,32,4,189
+UQpy,Text,6,0,0,116
+UQpy,Bourne Shell,6 \t,44,86,59
+UQpy,MATLAB,5,0,0,37
+UQpy,DOS Batch,1,8,1,26
+UQpy,Mathematica,1,0,0,9
+UQpy,make,1,4,7,9
+UQpy,JSON,1,0,0,4
+UQpy,Dockerfile,1,2,5,2
+UQpy,INI,1,0,0,2
+chaospy,Python,205,3162,7364,26538
+chaospy,reStructuredText,39,653,836,1351
+chaospy,Jupyter Notebook,20,0,9254,1081
+chaospy,SVG,2,0,0,174
+chaospy,TeX,2,11,0,121
+chaospy,Markdown,5,34,0,110
+chaospy,YAML,3,13,0,72
+chaospy,TOML,1,4,0,52
+chaospy,Text,3,4,0,17
+chaospy,Bourne Shell,1,1,0,9
+chaospy,make,1,4,6,9
+UQTk,HTML,736,10551,2202,174931
+UQTk,Fortran 77,256,461,34092,28768
+UQTk,C/C++ Header,96,7872,13460,26814
+UQTk,C++,121,7952,8526,26256
+UQTk,Python,110,3001,6866,10723
+UQTk,CMake,113,850,392,3699
+UQTk,CSS,5,668,144,3427
+UQTk,SWIG,3,296,672,2438
+UQTk,Jupyter Notebook,12,0,7027,1437
+UQTk,JavaScript,10,85,263,1059
+UQTk,Bourne Shell,23,132,715,782
+UQTk,C,4,153,547,779
+UQTk,Text,2,0,0,64
+UQTk,TeX,3,188,0,448
+UQTk,Logos,18,194,760,303
+UQTk,XML,6,136,258,266
+UQTk,SVG,12,0,0,163
+UQTk,make,4,51,14,145
+UQTk,Markdown,3,18,0,101
+UQTk,MATLAB,1,2,0,8
