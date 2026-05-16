@@ -5,108 +5,108 @@ import pandas as pd
 import squarify
 
 # %%
-# 1. Chargement des données
-# Remplacez 'github_count_cloc.csv' par le chemin réel de votre fichier
+# 1. Data loading
+# Replace 'github_count_cloc.csv' with the actual path to your file
 df = pd.read_csv("github_count_cloc.csv")
 
 # %%
-# Nettoyage des espaces potentiels dans les noms de colonnes ou de chaînes
+# Cleaning potential spaces in column names or strings
 df.columns = df.columns.str.strip()
 df["logiciel"] = df["logiciel"].str.strip()
 df["langage"] = df["langage"].str.strip()
 
-# Filtrage pour ignorer les fichiers CSV et SVG
+# Filtering to ignore CSV, SVG, HTML, XML, and JSON files
 df = df[~df["langage"].isin(["CSV", "SVG", "HTML", "XML", "JSON"])]
 
 # %%
 # ==============================================================================
-# GRAPHique 1 : Nombre total de lignes de code par logiciel
+# CHART 1: Total lines of code per software
 # ==============================================================================
-totaux_code = df.groupby("logiciel")["code"].sum().sort_values(ascending=False)
+code_totals = df.groupby("logiciel")["code"].sum().sort_values(ascending=False)
 
 plt.figure(figsize=(8, 4))
 bars = plt.bar(
-    totaux_code.index, totaux_code.values, color="skyblue", edgecolor="grey"
+    code_totals.index, code_totals.values, color="skyblue", edgecolor="grey"
 )
 
 plt.title(
-    "Nombre total de lignes de code par logiciel", fontsize=14, fontweight="bold"
+    "Total Lines of Code per Software", fontsize=14, fontweight="bold"
 )
-plt.xlabel("Logiciels")
-plt.ylabel("Lignes de code")
+plt.xlabel("Software")
+plt.ylabel("Lines of Code")
 plt.xticks(rotation=45)
 plt.grid(axis="y", linestyle="--", alpha=0.7)
 
-# Ajout des valeurs au-dessus des barres
-maximum_cloc = 0
+# Adding values above the bars
+max_cloc = 0
 for bar in bars:
-    yval = bar.get_height()
+    y_val = bar.get_height()
     plt.text(
         bar.get_x() + bar.get_width() / 2,
-        yval + (yval * 0.01),
-        f"{yval:,}",
+        y_val + (y_val * 0.01),
+        f"{y_val:,}",
         ha="center",
         va="bottom",
         fontsize=9,
     )
-    maximum_cloc = max(maximum_cloc, yval)
-plt.ylim(0, maximum_cloc * 1.1)
+    max_cloc = max(max_cloc, y_val)
+plt.ylim(0, max_cloc * 1.1)
 plt.savefig("../figures/github_count_cloc_total.png")
 plt.savefig("../figures/github_count_cloc_total.pdf")
 plt.show()
 
 # %%
 # ==============================================================================
-# GRAPHique 2 : Cartes proportionnelles (Treemaps) par projet
+# CHART 2: Treemaps per project
 # ==============================================================================
-logiciels_unique = df["logiciel"].unique()
+unique_software = df["logiciel"].unique()
 
-for log in logiciels_unique:
-    df_log = df[df["logiciel"] == log].copy()
+for software in unique_software:
+    df_software = df[df["logiciel"] == software].copy()
 
-    # Tri par volume de code décroissant
-    df_log = df_log.sort_values(by="code", ascending=False)
+    # Sorting by descending code volume
+    df_software = df_software.sort_values(by="code", ascending=False)
 
-    # Calcul du pourcentage pour filtrer ou étiqueter proprement
-    total_log = df_log["code"].sum()
-    df_log["pourcentage"] = (df_log["code"] / total_log) * 100
+    # Calculating percentage for proper filtering or labeling
+    total_software = df_software["code"].sum()
+    df_software["pourcentage"] = (df_software["code"] / total_software) * 100
 
-    # Pour éviter la surcharge visuelle, regrouper les langages < 1.5% sous "Autres"
-    seuil = 1.5
-    principaux = df_log[df_log["pourcentage"] >= seuil].copy()
-    autres = df_log[df_log["pourcentage"] < seuil]
+    # To avoid visual clutter, group languages < 1.5% under "Others"
+    threshold = 1.5
+    main_languages = df_software[df_software["pourcentage"] >= threshold].copy()
+    others = df_software[df_software["pourcentage"] < threshold]
 
-    if not autres.empty:
-        nouvelle_ligne = pd.DataFrame(
+    if not others.empty:
+        new_row = pd.DataFrame(
             {
-                "logiciel": [log],
-                "langage": ["Autres"],
-                "fichiers": [autres["fichiers"].sum()],
-                "vides": [autres["vides"].sum()],
-                "commentaires": [autres["commentaires"].sum()],
-                "code": [autres["code"].sum()],
-                "pourcentage": [autres["pourcentage"].sum()],
+                "logiciel": [software],
+                "langage": ["Others"],
+                "fichiers": [others["fichiers"].sum()],
+                "vides": [others["vides"].sum()],
+                "commentaires": [others["commentaires"].sum()],
+                "code": [others["code"].sum()],
+                "pourcentage": [others["pourcentage"].sum()],
             }
         )
-        df_visualisation = pd.concat([principaux, nouvelle_ligne], ignore_index=True)
+        df_visualization = pd.concat([main_languages, new_row], ignore_index=True)
     else:
-        df_visualisation = principaux
+        df_visualization = main_languages
 
-    # Préparation des étiquettes (Nom + Pourcentage)
+    # Preparing labels (Name + Percentage)
     labels = [
-        f"{row['langage']}\n{row['code']:,} l.\n({row['pourcentage']:.1f}%)"
-        for _, row in df_visualisation.iterrows()
+        f"{row['langage']}\n{row['code']:,} lines\n({row['pourcentage']:.1f}%)"
+        for _, row in df_visualization.iterrows()
     ]
 
-    # Génération d'une palette de couleurs distinctes
-    couleurs = plt.cm.tab20(np.linspace(0, 1, len(df_visualisation)))
+    # Generating a distinct color palette
+    colors = plt.cm.tab20(np.linspace(0, 1, len(df_visualization)))
 
-    # Création de la figure pour le treemap du logiciel courant
+    # Creating the figure for the current software treemap
     plt.figure(figsize=(5, 5))
     squarify.plot(
-        sizes=df_visualisation["code"],
+        sizes=df_visualization["code"],
         label=labels,
-        color=couleurs,
+        color=colors,
         alpha=0.8,
         edgecolor="white",
         linewidth=2,
@@ -114,13 +114,13 @@ for log in logiciels_unique:
     )
 
     plt.title(
-        f"Répartition des langages dans le projet : {log}\n(Total : {total_log:,} lignes de code)",
+        f"Language Distribution in Project: {software}\n(Total: {total_software:,} lines of code)",
         fontsize=14,
         fontweight="bold",
     )
     plt.axis("off")
     plt.tight_layout()
-    plt.savefig(f"../figures/github_count_cloc_{log}_fractions.png")
-    plt.savefig(f"../figures/github_count_cloc_{log}_fractions.pdf")
+    plt.savefig(f"../figures/github_count_cloc_{software}_fractions.png")
+    plt.savefig(f"../figures/github_count_cloc_{software}_fractions.pdf")
     plt.show()
 # %%
