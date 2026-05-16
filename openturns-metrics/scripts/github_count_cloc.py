@@ -51,8 +51,8 @@ for bar in bars:
     )
     max_cloc = max(max_cloc, y_val)
 plt.ylim(0, max_cloc * 1.1)
-plt.savefig("../figures/github_count_cloc_total.png")
-plt.savefig("../figures/github_count_cloc_total.pdf")
+plt.savefig("../figures/github_count_cloc_total.png", bbox_inches="tight")
+plt.savefig("../figures/github_count_cloc_total.pdf", bbox_inches="tight")
 plt.show()
 
 # %%
@@ -120,7 +120,7 @@ for software in unique_software:
     )
     plt.axis("off")
     plt.tight_layout()
-    plt.savefig(f"../figures/github_count_cloc_{software}_fractions.png")
-    plt.savefig(f"../figures/github_count_cloc_{software}_fractions.pdf")
+    plt.savefig(f"../figures/github_count_cloc_{software}_fractions.png", bbox_inches="tight")
+    plt.savefig(f"../figures/github_count_cloc_{software}_fractions.pdf", bbox_inches="tight")
     plt.show()
 # %%
