@@ -30,6 +30,36 @@ REPOS=(
     "https://github.com/jonathf/chaospy"
     "https://github.com/sandialabs/UQTk"
     "https://github.com/cran/sensitivity"
+    "https://github.com/SALib/SALib"
+    "https://github.com/SMTorg/smt"
+    "https://github.com/anthony-nouy/ApproximationToolbox"
+    "https://github.com/anthony-nouy/tensap"
+    "https://github.com/SAFEtoolbox/SAFE-python"
+    "https://github.com/cran/moko"
+    "https://github.com/deel-ai/puncc"
+    "https://github.com/dfm/celerite"
+    "https://github.com/dfm/celerite2"
+    "https://github.com/dfm/george"
+    "https://github.com/EmuKit/emukit"
+    "https://github.com/JuliaUQ/UncertaintyQuantification.jl"
+    "https://github.com/GeoStat-Framework/GSTools"
+    "https://github.com/GeoStat-Framework/PyKrige"
+    "https://github.com/google/neural-tangents"
+    "https://github.com/GPflow/GPflow"
+    "https://github.com/gpmp-dev/gpmp"
+    "https://github.com/gpstuff-dev/gpstuff"
+    "https://github.com/katzfuss-group/GPvecchia"
+    "https://github.com/libKriging/libKriging"
+    "https://github.com/mlysy/SuperGauss"
+    "https://github.com/mk306/pyGPs"
+    "https://github.com/openturns/otbenchmark"
+    "https://github.com/relf/egobox"
+    "https://github.com/ppgaluzio/MOBOpt"
+    "https://github.com/secondmind-labs/trieste"
+    "https://github.com/SheffieldML/GPy"
+    "https://github.com/simetenn/uncertainpy"
+    "https://github.com/STOR-i/GaussianProcesses.jl"
+    "https://github.com/thomaspinder/GPJax"
 )
 
 # Define directories to ignore specifically for Queso
@@ -49,28 +79,35 @@ for repo in "${REPOS[@]}"; do
     
     echo "Processing: $repo_name..."
     
-    # Clone the repository with depth 1 (faster download, history omitted)
+    # Clone the repository with depth 1
     echo "Git clone..."
-    git clone --depth 1 "$repo" "$TEMP_DIR/$repo_name" --quiet
-    
-    # Run cloc and print the summary for this repository
-    echo "Run cloc..."
-    echo "----------------------------------------"
-    echo "Results for $repo_name:"
-    
-    # Check if the current repository is queso
-    if [ "$repo_name" = "queso" ]; then
-        ./cloc "$TEMP_DIR/$repo_name" --quiet --exclude-dir="$QUESO_EXCLUDES"
+    if git clone --depth 1 "$repo" "$TEMP_DIR/$repo_name" --quiet; then
+        
+        # Run cloc and print the summary for this repository if clone succeeds
+        echo "Run cloc..."
+        echo "----------------------------------------"
+        echo "Results for $repo_name:"
+        
+        # Check if the current repository is queso
+        if [ "$repo_name" = "queso" ]; then
+            ./cloc "$TEMP_DIR/$repo_name" --quiet --exclude-dir="$QUESO_EXCLUDES"
+        else
+            ./cloc "$TEMP_DIR/$repo_name" --quiet
+        fi
+        
+        echo "========================================"
+        
+        # Remove the cloned repository to save disk space
+        # L'opérateur || empêche set -e d'interrompre le script en cas d'échec de rm
+        rm -rf "$TEMP_DIR/$repo_name" || echo "Warning: Unable to fully remove $TEMP_DIR/$repo_name"
     else
-        ./cloc "$TEMP_DIR/$repo_name" --quiet
+        # Handle the failure case gracefully
+        echo "Warning: Failed to clone repository from URL: $repo"
+        echo "Skipping $repo_name and proceeding to the next repository."
+        echo "========================================"
     fi
-    
-    echo "========================================"
-    
-    # Remove the cloned repository to save disk space
-    rm -rf "$TEMP_DIR/$repo_name"
 done
 
 # Clean up the temporary directory
-rm -rf "$TEMP_DIR"
+rm -rf "$TEMP_DIR" || true
 echo "Analysis complete."

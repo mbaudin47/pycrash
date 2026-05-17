@@ -12,25 +12,25 @@ df = pd.read_csv("github_count_cloc.csv")
 # %%
 # Cleaning potential spaces in column names or strings
 df.columns = df.columns.str.strip()
-df["logiciel"] = df["logiciel"].str.strip()
-df["langage"] = df["langage"].str.strip()
+df["software"] = df["software"].str.strip()
+df["language"] = df["language"].str.strip()
 
 # Filtering to ignore CSV, SVG, HTML, XML, and JSON files
-df = df[~df["langage"].isin(["CSV", "SVG", "HTML", "XML", "JSON"])]
+df = df[~df["language"].isin(["CSV", "SVG", "HTML", "XML", "JSON"])]
 
 # %%
 # ==============================================================================
 # CHART 1: Total lines of code per software
 # ==============================================================================
-code_totals = df.groupby("logiciel")["code"].sum().sort_values(ascending=False)
+code_totals = df.groupby("software")["code"].sum().sort_values(ascending=False)
 
-plt.figure(figsize=(8, 4))
+plt.figure(figsize=(40, 4))
 bars = plt.bar(
     code_totals.index, code_totals.values, color="skyblue", edgecolor="grey"
 )
 
 plt.title(
-    "Total Lines of Code per Software", fontsize=14, fontweight="bold"
+    "Total Lines of Code per Software", 
 )
 plt.xlabel("Software")
 plt.ylabel("Lines of Code")
@@ -59,10 +59,10 @@ plt.show()
 # ==============================================================================
 # CHART 2: Treemaps per project
 # ==============================================================================
-unique_software = df["logiciel"].unique()
+unique_software = df["software"].unique()
 
 for software in unique_software:
-    df_software = df[df["logiciel"] == software].copy()
+    df_software = df[df["software"] == software].copy()
 
     # Sorting by descending code volume
     df_software = df_software.sort_values(by="code", ascending=False)
@@ -79,11 +79,11 @@ for software in unique_software:
     if not others.empty:
         new_row = pd.DataFrame(
             {
-                "logiciel": [software],
-                "langage": ["Others"],
-                "fichiers": [others["fichiers"].sum()],
-                "vides": [others["vides"].sum()],
-                "commentaires": [others["commentaires"].sum()],
+                "software": [software],
+                "language": ["Others"],
+                "files": [others["files"].sum()],
+                "empty": [others["empty"].sum()],
+                "comments": [others["comments"].sum()],
                 "code": [others["code"].sum()],
                 "pourcentage": [others["pourcentage"].sum()],
             }
@@ -94,7 +94,7 @@ for software in unique_software:
 
     # Preparing labels (Name + Percentage)
     labels = [
-        f"{row['langage']}\n{row['code']:,} lines\n({row['pourcentage']:.1f}%)"
+        f"{row['language']}\n{row['code']:,} lines\n({row['pourcentage']:.1f}%)"
         for _, row in df_visualization.iterrows()
     ]
 
