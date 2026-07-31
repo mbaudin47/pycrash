@@ -1,0 +1,450 @@
+"""Implements the LARS selection method of a polynomial chaos expansion algorithm in Python.
+
+This implements Algorithm B.2 : Least angle regression stepwise (LARS)
+page 630 of (Lüthen, et al., 2021).
+
+Reference
+---------
+- Lüthen, N., Marelli, S., & Sudret, B. (2021).
+  Sparse polynomial chaos expansions: Literature survey and benchmark.
+  SIAM/ASA Journal on Uncertainty Quantification, 9(2), 593-649.
+- Efron, B., Hastie, T., Johnstone, I., & Tibshirani, R. (2004).
+  Least angle regression. _The Annals of Statistics_, _32_(2), 407–499.
+"""
+
+# %%
+import openturns as ot
+from openturns.usecases import ishigami_function
+import openturns.viewer as otv
+
+
+# %%
+class LeastAngleRegressionStepwisePCE:
+    def __init__(
+        self,
+        input_sample,
+        output_sample,
+        distribution,
+        basis,
+        candidateBasisSize=10,
+        wX=None,
+        leastSquaresMethodName="SVD",
+        fittingAlgorithm=None,
+        kParameter=10,
+        minAbsCorrelation=0.0,
+        denominatorThreshold=1.0e-12,
+        verbose=False,
+    ):
+        """
+        Create a polynomial chaos by Least Angle Regression Stepwise (LARS).
+
+        Parameters
+        ----------
+        input_sample : ot.Sample(size, input_dimension)
+            The input sample.
+        output_sample : ot.Sample(size, output_dimension)
+            The output sample.
+        distribution : ot.Distribution(input_dimension)
+            The distribution of the input.
+        basis : ot.OrthogonalBasis
+            The orthogonal basis of functions.
+        candidateBasisSize : int, optional
+            The number of candidate basis functions.
+        wX : ot.Point(size), optional
+            The quadrature weights. The default is None.
+        leastSquaresMethodName : str
+            The least squares resolution method.
+        fittingAlgorithm : FittingAlgorithm or None
+            The fitting algorithm used to monitor the sparse basis selection.
+            Uses KFold by default.
+        kParameter : int
+            The number of folds when fittingAlgorithm="KFold".
+        minAbsCorrelation : float
+            Stop if the best absolute correlation is below this threshold.
+        denominatorThreshold : float, > 0
+            The epsilon in the Efron's min^+ condition.
+        verbose : bool
+            If True, print the progression of the algorithm.
+        """
+        sample_size = input_sample.getSize()
+        if output_sample.getSize() != sample_size:
+            raise ValueError(f"Input sample has size {sample_size} but output sample has size {output_sample.getSize()}.")
+        input_dimension = input_sample.getDimension()
+        if distribution.getDimension() != input_dimension:
+            raise ValueError(f"Distribution has dimension {distribution.getDimension()} but input sample has dimension {input_dimension}.")
+        if wX is None:
+            wX = ot.Point(sample_size, 1.0 / sample_size)
+        if not all(abs(w - 1.0 / sample_size) < 1.0e-14 for w in wX):
+            raise NotImplementedError("Non-uniform weights are not yet supported.")
+        if kParameter > sample_size:
+            raise ValueError(f"K-Fold parameter is {kParameter} but sample size is {sample_size}.")
+        if kParameter < 2:
+            raise ValueError(f"K-Fold parameter is {kParameter} but should be at least 2.")
+        self.input_sample = input_sample
+        self.output_sample = output_sample
+        self.distribution = distribution
+        self.basis = basis
+        self.wX = wX
+        self.leastSquaresMethodName = leastSquaresMethodName
+        if fittingAlgorithm is None:
+            self.fittingAlgorithm = ot.KFold(kParameter)
+        else:
+            self.fittingAlgorithm = fittingAlgorithm
+        self.candidateBasisSize = candidateBasisSize
+        self.minAbsCorrelation = minAbsCorrelation
+        self.denominatorThreshold = denominatorThreshold
+        self.verbose = verbose
+
+        self.result = None
+        self.activeIndices = None
+        self.selectionHistory = []
+        self.fittingScoreHistory = []
+
+    def _min_plus(self, numerator, denominator, current_gamma):
+        """
+        Evaluates Efron's min^+ condition (Equation 2.13).
+        Returns the new step size if it is strictly positive and smaller
+        than current_gamma.
+        """
+        if denominator > self.denominatorThreshold:
+            step = numerator / denominator
+            if 0 < step < current_gamma:
+                return step
+        return current_gamma
+
+    def run(self):
+        """
+        Create the functional chaos metamodel by Least Angle Regression Stepwise.
+
+        Computes the LARS step direction by projecting directly toward the
+        active set's Ordinary Least Squares (OLS) solution.
+        This optimizes the normalized equiangular vector (Efron, Eq. 2.6) by
+        evaluating the fractional distance to the OLS projection.
+        """
+        if self.result is not None:
+            return
+
+        # Setup
+        transformation = ot.DistributionTransformation(
+            self.distribution, self.basis.getMeasure()
+        )
+        standard_input = transformation(self.input_sample)
+        sample_size = standard_input.getSize()
+        output_dimension = self.output_sample.getDimension()
+
+        # Create a list of functions
+        functions = [self.basis.build(i) for i in range(self.candidateBasisSize)]
+        designProxy = ot.DesignProxy(standard_input, functions)
+
+        # Precompute the entire design matrix
+        X = designProxy.computeDesign(range(self.candidateBasisSize))
+
+        fitting = self.fittingAlgorithm
+
+        coefficients_map = {}
+        self.selectionHistory = []
+        self.fittingScoreHistory = []
+
+        # Initialize the list of active functions for all output marginals
+        list_of_active_functions = [0]
+        leastSquaresMethod = ot.LeastSquaresMethod.Build(
+            self.leastSquaresMethodName, designProxy, list_of_active_functions
+        )
+
+        for output_index in range(output_dimension):
+            if self.verbose:
+                print(f"--- Output marginal {output_index} ---")
+
+            marginal_output = self.output_sample.getMarginal(output_index)
+            # Note: With non equal weights, the output sample mean must be weighted,
+            # i.e. the next line is wrong.
+            sample_mean = marginal_output.computeMean()
+
+            # Initialisation
+            marginal_selection = [0]
+
+            # Compute initial fitting score
+            fitting_score = fitting.run(
+                leastSquaresMethod,
+                marginal_output,
+            )
+
+            if self.verbose:
+                print(f"  Fitting score = {fitting_score:.4e}")
+
+            marginal_fitting_scores = [fitting_score]
+
+            # Update residuals and initial coefficients
+            residuals = (marginal_output - sample_mean).asPoint()
+            coefficients_dict = {0: sample_mean[0]}
+
+            # Loop stops either when max basis size is reached, or when no
+            # degrees of freedom are left
+            max_iterations = min(sample_size, self.candidateBasisSize) - 1
+
+            for i in range(max_iterations):
+                if self.verbose:
+                    print(
+                        f"Current active indices ({len(list_of_active_functions)})= {list_of_active_functions}"
+                    )
+
+                # 1. Compute correlations
+                # Note: With non equal weights, the sample correlation must be weighted, 
+                # i.e. the next line is wrong.
+                v = (X.transpose() * residuals) / sample_size
+
+                # 2. Find candidate with maximum absolute correlation with the
+                # residual
+                C = 0.0
+                best_basis_function_index = None
+
+                for j in range(self.candidateBasisSize):
+                    if j in marginal_selection:
+                        # Skip this basis (already active for the current marginal)
+                        continue
+                    current_absolute_correlation = abs(v[j])
+                    if current_absolute_correlation > C:
+                        best_basis_function_index = j
+                        C = current_absolute_correlation
+
+                if best_basis_function_index is None:
+                    break
+
+                if self.verbose:
+                    print(
+                        f"  Best index = {best_basis_function_index} "
+                        f"with max. abs. corr. = {C:.4e}"
+                    )
+
+                # Early stopping criterion
+                if C < self.minAbsCorrelation:
+                    if self.verbose:
+                        print(
+                            f"  Stopping early: maximum absolute correlation ({C:.4e}) "
+                            f"is below the threshold ({self.minAbsCorrelation:.4e})."
+                        )
+                    break
+
+                # Update the decomposition
+                leastSquaresMethod.update(
+                    [best_basis_function_index], list_of_active_functions, []
+                )
+                # Add the best candidate to the active set
+                list_of_active_functions.append(best_basis_function_index)
+                marginal_selection.append(best_basis_function_index)
+                coefficients_dict[best_basis_function_index] = 0.0
+
+                # 3. Compute the OLS direction for the updated active set
+                c_ols = leastSquaresMethod.solve(marginal_output.asPoint())
+
+                c_curr = ot.Point(len(list_of_active_functions), 0.0)
+                for idx, active_idx in enumerate(list_of_active_functions):
+                    c_curr[idx] = coefficients_dict[active_idx]
+
+                d = c_ols - c_curr
+
+                # Compute X_A * d
+                # This points in the exact direction of the equiangular vector
+                # u_A (Efron eq. 2.6).
+                # Unlike u_A, which is normalized, X_A_d spans the full distance
+                # to the OLS projection.
+                # Expand the active direction 'd' to the full basis dimension
+                d_full = ot.Point(self.candidateBasisSize, 0.0)
+                for idx, active_idx in enumerate(list_of_active_functions):
+                    d_full[active_idx] = d[idx]
+                X_A_d = X * d_full
+
+                # 4. Compute inner products with direction
+                a = X.computeGram() * d_full / sample_size
+
+                # 5. Find step size gamma
+                gamma = 1.0
+                for k in range(self.candidateBasisSize):
+                    if k not in list_of_active_functions:
+                        gamma = self._min_plus(C - v[k], C - a[k], gamma)  # Forward
+                        gamma = self._min_plus(C + v[k], C + a[k], gamma)  # Backward
+
+                # 6. Update coefficients and residuals
+                c_next = c_curr + d * gamma
+                for idx, active_idx in enumerate(list_of_active_functions):
+                    coefficients_dict[active_idx] = c_next[idx]
+
+                residuals -= X_A_d * gamma
+
+                # 7. Compute CV score (evaluates the OLS model of the active set
+                # matching LARS-OLS approach)
+                fitting_score = fitting.run(leastSquaresMethod, marginal_output)
+
+                if self.verbose:
+                    print(f"  Fitting score = {fitting_score:.4e}")
+
+                marginal_fitting_scores.append(fitting_score)
+
+            # Store the coefficients for this output marginal
+            for j in range(len(marginal_selection)):
+                idx = marginal_selection[j]
+                if idx not in coefficients_map:
+                    coefficients_map[idx] = ot.Point(output_dimension, 0.0)
+                coefficients_map[idx][output_index] = coefficients_dict[idx]
+
+            self.selectionHistory.append(marginal_selection.copy())
+            self.fittingScoreHistory.append(marginal_fitting_scores)
+
+        # Merge active indices and build the final samples and functions
+        sorted_indices = sorted(coefficients_map.keys())
+        self.activeIndices = ot.Indices(sorted_indices)
+
+        coefficient_list = [coefficients_map[idx] for idx in sorted_indices]
+        coefficient_sample = ot.Sample(coefficient_list)
+
+        final_functions = [functions[idx] for idx in sorted_indices]
+
+        # Create the result
+        self.result = ot.FunctionalChaosResult(
+            self.input_sample,
+            self.output_sample,
+            self.distribution,
+            transformation,
+            transformation.inverse(),
+            self.basis,
+            self.activeIndices,
+            coefficient_sample,
+            final_functions,
+        )
+
+    def getResult(self):
+        """
+        Return the functional chaos result.
+        """
+        if self.result is None:
+            self.run()
+        return self.result
+
+    def getActiveIndices(self):
+        """
+        Return the active basis indices.
+        """
+        if self.result is None:
+            self.run()
+        return self.activeIndices
+
+    def getSelectionHistory(self):
+        """
+        Return the LARS selection history.
+        """
+        if self.result is None:
+            self.run()
+        return self.selectionHistory
+
+    def getFittingScoreHistory(self):
+        """
+        Return the fitting score history.
+        """
+        if self.result is None:
+            self.run()
+        return self.fittingScoreHistory
+
+    def getFittingAlgorithm(self):
+        return self.fittingAlgorithm
+
+
+# %%
+ot.RandomGenerator.SetSeed(0)
+
+# %%
+im = ishigami_function.IshigamiModel()
+sample_size = 200
+input_sample = im.inputDistribution.getSample(sample_size)
+output_sample = im.model(input_sample)
+
+# %%
+# Create basis
+input_dimension = im.inputDistribution.getDimension()
+basis = ot.OrthogonalProductPolynomialFactory(
+    [im.inputDistribution.getMarginal(i) for i in range(input_dimension)]
+)
+
+# %%
+candidateBasisSize = 100
+print(f"Number of coefficients = {candidateBasisSize}")
+
+# %%
+# Execution using the new LARS algorithm
+algo = LeastAngleRegressionStepwisePCE(
+    input_sample,
+    output_sample,
+    im.inputDistribution,
+    basis,
+    candidateBasisSize,
+    verbose=True,
+    minAbsCorrelation=1.0e-2,  # Arbitrary early stopping
+)
+algo.run()
+
+# %%
+# Display outputs
+print("Active Indices:", algo.getActiveIndices())
+print("Selection History:", algo.getSelectionHistory())
+fitting_score_list = algo.getFittingScoreHistory()
+print("Fitting Score History:", fitting_score_list)
+result = algo.getResult()
+result
+
+# %%
+fitting = algo.getFittingAlgorithm()
+
+# %%
+input_test = im.inputDistribution.getSample(1000)
+output_test = im.model(input_test)
+meta_model = result.getMetaModel()
+validation = ot.MetaModelValidation(output_test, meta_model(input_test))
+print(f"Q2 = {validation.computeR2Score()[0]:.15f}")
+
+
+# %%
+def argmin(liste):
+    if not liste:
+        return None
+
+    indice_min = 0
+    valeur_min = liste[0]
+
+    for i in range(1, len(liste)):
+        if liste[i] < valeur_min:
+            valeur_min = liste[i]
+            indice_min = i
+
+    return indice_min
+
+
+# %%
+threshold = ot.ResourceMap.GetAsScalar("SparseMethod-ErrorThreshold")
+error_factor = ot.ResourceMap.GetAsScalar("SparseMethod-MaximumErrorFactor")
+min_index = argmin(fitting_score_list)
+fitting_score_min = min(fitting_score_list)
+graph = ot.Graph(
+    f"LARS with {fitting.getClassName()}",
+    "Iteration",
+    f"{fitting.getClassName()} score",
+    True,
+)
+number_of_selected_coefficients = len(fitting_score_list)
+cloud = ot.Cloud(range(number_of_selected_coefficients), fitting_score_list)
+graph.add(cloud)
+graph.setLogScale(ot.GraphImplementation.LOGY)
+# Plot min corrected score
+cloud = ot.Cloud([min_index], [fitting_score_min])
+cloud.setPointStyle("circle")
+cloud.setLegend("Min")
+graph.add(cloud)
+# Plot error factor
+curve = ot.Curve(
+    [0, number_of_selected_coefficients], [error_factor * fitting_score_min] * 2
+)
+curve.setLineWidth(2.0)
+curve.setLegend("Treshold")
+graph.add(curve)
+view = otv.View(graph)
+view.save("LeastAngleRegressionStepwisePCE.png")
+
+# %%

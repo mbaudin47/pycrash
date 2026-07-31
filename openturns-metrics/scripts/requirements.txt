@@ -1,0 +1,6 @@
+pandas
+squarify
+numpy
+matplotlib
+openturns
+condastats

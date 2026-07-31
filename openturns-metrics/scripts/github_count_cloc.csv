@@ -1,0 +1,535 @@
+software,language,files,empty,comments,code
+SGpp,CSV,24,1,0,655926
+SGpp,C++,1097,29209,18117,177518
+SGpp,Text,51,72,0,89365
+SGpp,C/C++ Header,1202,19675,58410,67838
+SGpp,Python,383,13165,20304,44911
+SGpp,SVG,8,5,30,7171
+SGpp,SWIG,38,791,1086,5510
+SGpp,JSON,34,4,0,1508
+SGpp,Bourne Shell,35,88,170,626
+SGpp,R,11,106,208,577
+SGpp,CUDA,4,47,92,371
+SGpp,Java,6,76,342,262
+SGpp,TeX,4,5,0,213
+SGpp,CSS,1,0,0,150
+SGpp,Groovy,1,5,42,129
+SGpp,YAML,3,9,8,117
+SGpp,MATLAB,2,31,153,88
+SGpp,Markdown,4,28,0,76
+SGpp,Bourne Again Shell,4,5,15,41
+SGpp,D,1,0,0,40
+SGpp,make,1,2,0,17
+SGpp,JavaScript,1,0,0,9
+SGpp,CMake,1,3,0,6
+OpenCossan,MATLAB,1045,16201,33146,59171
+OpenCossan,Text,19,283,0,29093
+OpenCossan,C,12,609,1065,4182
+OpenCossan,XML,4,123,328,998
+OpenCossan,Python,5,206,177,575
+OpenCossan,HTML,4,63,88,359
+OpenCossan,C/C++ Header,4,50,129,271
+OpenCossan,Bourne Shell,7,63,86,237
+OpenCossan,Tcl/Tk,1,80,121,117
+OpenCossan,Markdown,1,32,0,53
+OpenCossan,Groovy,1,3,2,26
+OpenCossan,Java,1,8,7,20
+OpenCossan,make,1,9,3,17
+EasyVVUQ,Python,163,4483,7747,12895
+EasyVVUQ,SVG,7,1,98,7541
+EasyVVUQ,Jupyter Notebook,25,0,53719,3721
+EasyVVUQ,YAML,16,48,38,2211
+EasyVVUQ,reStructuredText,19,655,339,1480
+EasyVVUQ,JSON,17,0,0,1177
+EasyVVUQ,Markdown,5,228,0,511
+EasyVVUQ,CSV,6,0,0,371
+EasyVVUQ,Text,5,5,0,139
+EasyVVUQ,Bourne Shell,3,22,17,77
+EasyVVUQ,TOML,1,9,3,68
+EasyVVUQ,C++,1,16,24,65
+EasyVVUQ,DOS Batch,1,8,1,26
+EasyVVUQ,Dockerfile,1,7,6,17
+EasyVVUQ,make,2,4,7,16
+EasyVVUQ,Jinja Template,1,0,0,8
+dakota,C++,429,33211,43031,172740
+dakota,JSON,12,1,0,92031
+dakota,Python,192,12819,7911,82760
+dakota,C/C++ Header,346,19537,29860,51687
+dakota,reStructuredText,425,13330,18092,33475
+dakota,Text,34,655,0,16746
+dakota,Java,58,1443,1384,8214
+dakota,CMake,174,2401,4772,6809
+dakota,XML,16,759,1,6505
+dakota,TeX,3,586,109,3805
+dakota,HTML,47,44,64,2803
+dakota,Perl,6,744,1061,2374
+dakota,Markdown,8,554,0,1389
+dakota,C,5,223,48,1316
+dakota,Fortran 77,3,53,1022,1193
+dakota,YAML,46,34,1,815
+dakota,Bourne Shell,41,397,714,623
+dakota,GLSL,2,87,64,401
+dakota,Fortran 90,2,24,315,341
+dakota,CSS,2,26,33,208
+dakota,SWIG,2,23,28,193
+dakota,MATLAB,7,31,26,143
+dakota,XSD,1,17,11,106
+dakota,Pascal,1,20,29,72
+dakota,DOS Batch,7,50,85,67
+dakota,Dockerfile,1,20,46,42
+dakota,Bourne Again Shell,6,26,57,35
+dakota,make,2,9,12,24
+dakota,TOML,1,3,0,21
+dakota,C Shell,2,4,6,11
+dakota,ReScript,5,1,0,5
+GPMSA,MATLAB,38,596,1189,3592
+GPMSA,Markdown,1,6,0,7
+OpenTURNS,C++,1417,35924,59816,221289
+OpenTURNS,C/C++ Header,944,33252,40656,102283
+OpenTURNS,SWIG,1618,28112,4810,80117
+OpenTURNS,Python,1171,18398,33547,68654
+OpenTURNS,CSV,24,1,0,26954
+OpenTURNS,XML,91,0,0,18464
+OpenTURNS,Text,148,6676,0,14863
+OpenTURNS,reStructuredText,148,7078,6906,10966
+OpenTURNS,CMake,61,518,579,5575
+OpenTURNS,SVG,9,6,6,3929
+OpenTURNS,C,4,451,659,3161
+OpenTURNS,JavaScript,1,69,112,409
+OpenTURNS,R,11,53,51,373
+OpenTURNS,Bourne Shell,14,69,25,320
+OpenTURNS,YAML,7,16,0,307
+OpenTURNS,HTML,2,30,0,196
+OpenTURNS,XMI,1,0,0,163
+OpenTURNS,TeX,1,20,20,156
+OpenTURNS,JSON,1,0,0,46
+OpenTURNS,make,1,11,3,45
+OpenTURNS,CSS,2,7,6,27
+OpenTURNS,Markdown,1,0,0,1
+psuade,C++,195,10127,31587,182836
+psuade,Fortran 77,268,125,33301,38429
+psuade,C,233,7803,8074,34480
+psuade,Text,11,115,0,22222
+psuade,C/C++ Header,229,3085,9220,10533
+psuade,Python,30,270,819,2407
+psuade,MATLAB,10,79,206,1742
+psuade,make,21,326,129,951
+psuade,CMake,14,123,108,511
+psuade,Markdown,2,64,0,154
+psuade,Bourne Shell,1,6,7,32
+psuade,Logos,3,3,0,10
+queso,C++,357,11603,15259,59011
+queso,C/C++ Header,256,6014,15990,15556
+queso,Perl,7,2152,3027,10145
+queso,TeX,22,1853,1172,6403
+queso,m4,46,910,121,6268
+queso,Text,39,896,0,6240
+queso,make,23,460,368,2541
+queso,MATLAB,26,249,368,1637
+queso,MSBuild script,4,0,0,1360
+queso,Python,5,130,87,443
+queso,Bourne Shell,12,100,88,249
+queso,Visualforce Page,6,28,0,116
+queso,Markdown,1,29,0,89
+queso,Fortran 90,2,37,93,78
+queso,Visual Studio Solution,1,0,1,45
+queso,YAML,1,0,0,25
+queso,HTML,1,1,0,7
+raven,CSV,1566,1568,0,493455
+raven,C/C++ Header,2247,46697,40366,305639
+raven,XML,1251,7617,436,233112
+raven,Python,1027,14968,74123,90024
+raven,TeX,219,9185,6992,69914
+raven,Text,69,326,0,27916
+raven,SWIG,61,213,0,24545
+raven,C++,18,1073,1628,4868
+raven,Bourne Shell,67,531,608,2835
+raven,XSD,16,203,231,2422
+raven,MATLAB,4,756,372,2230
+raven,SVG,4,0,2,2131
+raven,YAML,12,122,70,1472
+raven,CSS,2,173,58,697
+raven,Bourne Again Shell,11,88,120,584
+raven,Markdown,10,138,3,424
+raven,make,15,104,43,261
+raven,CMake,1,18,15,79
+raven,HTML,2,1,16,42
+raven,Jupyter Notebook,1,0,389,38
+raven,DOS Batch,1,0,0,32
+raven,Perl,1,2,15,20
+raven,INI,1,1,0,3
+raven,R,1,0,0,1
+UQpy,Python,595,10721,13447,27147
+UQpy,reStructuredText,173,2518,1661,3434
+UQpy,TeX,1,94,0,928
+UQpy,Tcl/Tk,4,121,197,778
+UQpy,Jupyter Notebook,2,0,848,307
+UQpy,Markdown,5,76,0,205
+UQpy,YAML,4,32,4,189
+UQpy,Text,6,0,0,116
+UQpy,Bourne Shell,6,44,86,59
+UQpy,MATLAB,5,0,0,37
+UQpy,DOS Batch,1,8,1,26
+UQpy,Mathematica,1,0,0,9
+UQpy,make,1,4,7,9
+UQpy,JSON,1,0,0,4
+UQpy,Dockerfile,1,2,5,2
+UQpy,INI,1,0,0,2
+chaospy,Python,205,3162,7364,26538
+chaospy,reStructuredText,39,653,836,1351
+chaospy,Jupyter Notebook,20,0,9254,1081
+chaospy,SVG,2,0,0,174
+chaospy,TeX,2,11,0,121
+chaospy,Markdown,5,34,0,110
+chaospy,YAML,3,13,0,72
+chaospy,TOML,1,4,0,52
+chaospy,Text,3,4,0,17
+chaospy,Bourne Shell,1,1,0,9
+chaospy,make,1,4,6,9
+UQTk,HTML,736,10551,2202,174931
+UQTk,Fortran 77,256,461,34092,28768
+UQTk,C/C++ Header,96,7872,13460,26814
+UQTk,C++,121,7952,8526,26256
+UQTk,Python,110,3001,6866,10723
+UQTk,CMake,113,850,392,3699
+UQTk,CSS,5,668,144,3427
+UQTk,SWIG,3,296,672,2438
+UQTk,Jupyter Notebook,12,0,7027,1437
+UQTk,JavaScript,10,85,263,1059
+UQTk,Bourne Shell,23,132,715,782
+UQTk,C,4,153,547,779
+UQTk,Text,2,0,0,642
+UQTk,TeX,3,188,0,448
+UQTk,Logos,18,194,760,303
+UQTk,XML,6,136,258,266
+UQTk,SVG,12,0,0,163
+UQTk,make,4,51,14,145
+UQTk,Markdown,3,18,0,101
+UQTk,MATLAB,1,2,0,8
+sensitivity,R,72,3457,3515,13868
+sensitivity,C++,13,164,107,681
+SALib,Python,82,3099,4242,31578
+SALib,CSV,1,0,0,20100
+SALib,Text,6,0,0,9006
+SALib,SVG,3,0,58,2433
+SALib,reStructuredText,14,632,654,704
+SALib,TeX,1,3,0,561
+SALib,Markdown,9,218,2,522
+SALib,DOS Batch,11,75,440,174
+SALib,Bourne Shell,10,68,421,164
+SALib,YAML,7,28,15,162
+SALib,JSON,3,0,0,130
+SALib,TOML,1,10,0,85
+SALib,make,1,6,8,15
+smt,CSV,6,0,0,94115
+smt,Python,164,6454,6561,27051
+smt,Jupyter Notebook,25,0,76288,9853
+smt,reStructuredText,60,2807,7901,2927
+smt,C++,6,154,16,698
+smt,Text,5,6,0,391
+smt,YAML,8,39,17,194
+smt,Markdown,3,108,0,169
+smt,Cython,3,17,0,109
+smt,C/C++ Header,6,18,0,94
+smt,TOML,1,9,0,54
+smt,DOS Batch,1,8,1,27
+smt,make,1,4,6,10
+ApproximationToolbox,MATLAB,204,4812,9998,22677
+ApproximationToolbox,Markdown,1,3,0,4
+tensap,Python,103,6145,12344,14684
+tensap,reStructuredText,21,669,378,1711
+tensap,TeX,2,372,64,1228
+tensap,YAML,2,2,0,61
+tensap,DOS Batch,1,8,1,26
+tensap,Markdown,1,10,0,17
+tensap,make,1,4,7,9
+SAFE-python,Text,3,0,0,49696
+SAFE-python,Python,33,2019,4981,4422
+SAFE-python,Jupyter Notebook,3,0,1127,343
+SAFE-python,Markdown,1,40,0,57
+SAFE-python,YAML,1,0,0,15
+moko,TeX,1,76,9,906
+moko,R,10,60,712,635
+moko,HTML,1,33,2,523
+moko,Rmd,1,40,134,36
+puncc,Python,45,2619,4218,6563
+puncc,Jupyter Notebook,9,0,5462,1538
+puncc,reStructuredText,19,470,607,574
+puncc,YAML,8,31,18,363
+puncc,Markdown,3,92,2,215
+puncc,TeX,1,12,0,106
+puncc,Text,4,3,0,42
+puncc,make,2,11,7,41
+puncc,TOML,1,5,0,30
+puncc,DOS Batch,1,8,1,26
+puncc,INI,1,3,0,13
+puncc,JSON,1,0,0,1
+celerite,TeX,13,1005,868,9733
+celerite,Python,18,596,538,2158
+celerite,Jupyter Notebook,10,0,2445,1810
+celerite,Julia,23,279,417,1497
+celerite,C/C++ Header,9,229,173,1332
+celerite,C++,7,204,77,1000
+celerite,CSV,6,0,0,665
+celerite,Text,2,87,0,479
+celerite,reStructuredText,18,523,719,441
+celerite,DOS Batch,1,36,2,243
+celerite,YAML,7,15,1,181
+celerite,Bourne Shell,3,18,17,79
+celerite,make,2,14,5,49
+celerite,CMake,2,13,7,43
+celerite,JSON,10,0,0,10
+celerite,TOML,1,2,0,8
+celerite2,C/C++ Header,11,3340,1433,14691
+celerite2,Python,43,1304,757,4800
+celerite2,C++,23,526,102,3029
+celerite2,JSON,1,0,0,382
+celerite2,Jupyter Notebook,1,0,410,275
+celerite2,CSS,1,7,0,262
+celerite2,YAML,8,18,1,259
+celerite2,reStructuredText,9,166,209,248
+celerite2,CMake,3,18,7,86
+celerite2,TOML,1,12,0,77
+celerite2,HTML,2,1,0,70
+celerite2,make,1,9,4,29
+celerite2,Markdown,1,2,0,17
+celerite2,JavaScript,1,0,0,7
+george,TeX,4,919,1037,7663
+george,C/C++ Header,9,842,170,3448
+george,Python,21,817,624,2322
+george,Jupyter Notebook,9,0,3577,793
+george,reStructuredText,17,651,796,607
+george,YAML,16,93,0,402
+george,C++,2,49,11,322
+george,make,2,12,5,44
+george,TOML,1,4,0,27
+george,CMake,1,4,0,12
+george,JavaScript,1,1,0,7
+george,Text,1,0,0,2
+emukit,Python,274,6120,6984,14160
+emukit,Jupyter Notebook,25,0,10881,2225
+emukit,Markdown,11,134,0,380
+emukit,reStructuredText,42,304,555,338
+emukit,YAML,5,26,6,165
+emukit,TOML,1,11,3,98
+emukit,Text,5,4,0,40
+emukit,make,1,4,6,10
+emukit,SVG,1,0,0,2
+UncertaintyQuantification.jl,Julia,124,2667,1546,8902
+UncertaintyQuantification.jl,SVG,6,1,1,1981
+UncertaintyQuantification.jl,Markdown,33,703,0,1620
+UncertaintyQuantification.jl,TeX,2,56,0,516
+UncertaintyQuantification.jl,Vuejs Component,4,37,34,339
+UncertaintyQuantification.jl,YAML,8,9,1,166
+UncertaintyQuantification.jl,CSS,1,35,21,157
+UncertaintyQuantification.jl,TypeScript,3,8,4,121
+UncertaintyQuantification.jl,TOML,4,4,0,90
+UncertaintyQuantification.jl,Tcl/Tk,2,29,44,90
+UncertaintyQuantification.jl,Python,1,28,10,89
+UncertaintyQuantification.jl,JSON,2,0,0,31
+UncertaintyQuantification.jl,Bourne Again Shell,1,7,0,18
+UncertaintyQuantification.jl,Bourne Shell,3,13,0,13
+UncertaintyQuantification.jl,PowerShell,3,9,0,8
+GSTools,Python,130,3627,8735,11749
+GSTools,Text,5,0,0,995
+GSTools,Markdown,4,250,0,790
+GSTools,reStructuredText,21,326,370,491
+GSTools,YAML,2,23,5,128
+GSTools,TOML,1,14,0,105
+GSTools,JSON,1,0,0,49
+GSTools,HTML,1,0,0,27
+GSTools,TeX,1,0,0,11
+GSTools,make,1,4,6,10
+GSTools,CSS,1,0,0,3
+PyKrige,Python,31,1283,2630,7193
+PyKrige,Text,7,4,0,1073
+PyKrige,Jupyter Notebook,1,0,333,277
+PyKrige,Markdown,2,126,0,259
+PyKrige,Cython,3,63,9,219
+PyKrige,YAML,2,33,4,167
+PyKrige,TOML,1,15,3,145
+PyKrige,JSON,1,0,0,67
+PyKrige,reStructuredText,6,54,53,59
+PyKrige,HTML,1,0,0,26
+PyKrige,make,1,4,6,10
+neural-tangents,Python,54,4936,5450,16583
+neural-tangents,SVG,1,0,0,3820
+neural-tangents,Jupyter Notebook,11,0,7736,1702
+neural-tangents,Markdown,2,152,1,365
+neural-tangents,YAML,5,60,26,238
+neural-tangents,reStructuredText,9,106,155,82
+neural-tangents,CSS,1,1,0,7
+neural-tangents,Text,1,0,0,5
+GPflow,Python,243,7618,10370,27179
+GPflow,Markdown,15,559,30,1170
+GPflow,YAML,4,34,15,668
+GPflow,reStructuredText,6,136,122,182
+GPflow,TeX,1,0,0,154
+GPflow,Text,2,5,0,46
+GPflow,make,1,12,0,44
+GPflow,INI,1,0,3,8
+GPflow,SVG,3,0,0,7
+GPflow,CSS,1,2,5,3
+gpmp,Python,69,2851,5790,10098
+gpmp,Text,1,121,0,553
+gpmp,SVG,1,0,0,283
+gpmp,CSS,2,45,22,249
+gpmp,reStructuredText,11,110,83,180
+gpmp,Markdown,3,42,0,154
+gpmp,TOML,1,6,0,39
+gpmp,DOS Batch,1,8,1,26
+gpmp,make,1,4,7,9
+gpstuff,MATLAB,441,12371,37324,61555
+gpstuff,Text,62,496,0,38466
+gpstuff,TeX,3,735,919,5229
+gpstuff,C,25,512,956,2579
+gpstuff,TypeScript,1,0,0,1001
+gpstuff,Markdown,2,40,0,122
+gpstuff,Bourne Again Shell,3,8,0,40
+gpstuff,C/C++ Header,3,10,34,12
+GPvecchia,R,29,623,827,1740
+GPvecchia,C++,9,280,284,1152
+GPvecchia,Rmd,1,66,124,185
+GPvecchia,Markdown,3,45,17,92
+GPvecchia,YAML,1,9,8,78
+GPvecchia,C/C++ Header,4,25,1,39
+libKriging,C/C++ Header,59,3922,5005,20397
+libKriging,C++,93,3704,2491,19367
+libKriging,Jupyter Notebook,52,0,49799,5204
+libKriging,R,39,971,2358,3522
+libKriging,CMake,22,426,453,2766
+libKriging,Markdown,35,759,2,2291
+libKriging,Julia,11,371,68,2164
+libKriging,YAML,15,320,91,2123
+libKriging,Python,26,527,272,1884
+libKriging,MATLAB,20,348,168,1498
+libKriging,Bourne Shell,40,345,281,1478
+libKriging,CSV,46,0,0,900
+libKriging,SVG,1,0,0,286
+libKriging,Rmd,1,106,61,251
+libKriging,C,2,18,19,83
+libKriging,make,2,11,11,42
+libKriging,TOML,2,3,0,17
+libKriging,Dockerfile,1,2,1,12
+libKriging,Text,2,0,0,5
+libKriging,DOS Batch,2,2,6,2
+SuperGauss,Bourne Shell,3,938,1098,7354
+SuperGauss,R,68,411,1005,2557
+SuperGauss,C/C++ Header,13,183,1139,1913
+SuperGauss,C++,10,68,504,820
+SuperGauss,HTML,1,35,2,607
+SuperGauss,XML,2,0,0,331
+SuperGauss,Markdown,3,87,2,182
+SuperGauss,m4,1,30,0,177
+SuperGauss,Rmd,1,42,112,134
+SuperGauss,YAML,1,12,2,42
+SuperGauss,TeX,1,3,0,34
+SuperGauss,C,1,0,0,7
+pyGPs,Python,47,1061,2374,5399
+pyGPs,Text,4,20,0,1046
+pyGPs,CSV,1,0,0,518
+pyGPs,Markdown,1,20,0,28
+otbenchmark,Python,177,3025,5892,9850
+otbenchmark,TeX,1,7,4,119
+otbenchmark,YAML,2,2,0,52
+otbenchmark,Markdown,1,17,0,49
+otbenchmark,HTML,2,7,0,48
+otbenchmark,TOML,1,2,0,32
+otbenchmark,CSV,1,0,0,27
+otbenchmark,Bourne Shell,1,6,3,23
+otbenchmark,Text,6,0,0,22
+otbenchmark,reStructuredText,3,25,81,21
+otbenchmark,CSS,1,5,2,18
+otbenchmark,make,1,4,7,9
+egobox,Rust,100,2640,5054,20408
+egobox,Python,19,566,1086,2339
+egobox,Markdown,13,373,0,974
+egobox,YAML,8,68,91,619
+egobox,TOML,9,72,19,396
+egobox,Jupyter Notebook,5,0,3233,381
+egobox,CSV,1,200,0,200
+egobox,TeX,1,6,0,71
+MOBOpt,Python,11,330,211,898
+MOBOpt,Markdown,1,13,0,34
+trieste,Python,162,10678,12537,40231
+trieste,Text,16,12,0,746
+trieste,TeX,1,61,0,480
+trieste,Markdown,7,179,3,420
+trieste,YAML,20,32,65,387
+trieste,INI,1,5,0,113
+trieste,TOML,1,8,13,93
+trieste,JSON,1,0,0,78
+trieste,reStructuredText,3,55,91,46
+trieste,HTML,3,0,0,27
+trieste,DOS Batch,1,9,14,26
+trieste,Bourne Shell,1,6,20,25
+trieste,make,1,5,20,11
+trieste,CSS,1,1,0,7
+GPy,C,7,5744,25457,75806
+GPy,Python,274,10225,14718,38835
+GPy,Markdown,3,6156,0,6327
+GPy,Cython,5,262,320,672
+GPy,JSON,2,2,0,604
+GPy,reStructuredText,6,164,64,384
+GPy,YAML,3,60,10,250
+GPy,Windows Resource File,1,17,0,173
+GPy,make,1,30,6,156
+GPy,C++,1,5,2,54
+GPy,Text,3,2,0,33
+GPy,C/C++ Header,2,2,0,12
+GPy,Bourne Shell,1,0,0,1
+uncertainpy,Python,86,7423,7461,12896
+uncertainpy,C,25,957,449,12172
+uncertainpy,reStructuredText,47,802,439,1919
+uncertainpy,Text,6,121,0,759
+uncertainpy,Jupyter Notebook,2,0,785,661
+uncertainpy,Patran Command Language,4,16,0,396
+uncertainpy,Markdown,2,102,6,229
+uncertainpy,SVG,2,2,2,203
+uncertainpy,HTML,2,22,0,78
+uncertainpy,Bourne Shell,5,2,0,49
+uncertainpy,YAML,2,2,2,31
+uncertainpy,make,1,4,6,10
+GaussianProcesses.jl,Julia,87,1071,1510,5479
+GaussianProcesses.jl,CSV,7,0,0,3843
+GaussianProcesses.jl,Markdown,18,551,0,1071
+GaussianProcesses.jl,Jupyter Notebook,10,0,2449,436
+GaussianProcesses.jl,YAML,5,12,5,94
+GaussianProcesses.jl,MATLAB,1,11,2,68
+GaussianProcesses.jl,Python,2,24,8,68
+GaussianProcesses.jl,TOML,2,5,0,51
+GPJax,Python,130,4881,8352,13801
+GPJax,SVG,5,0,20,5525
+GPJax,YAML,17,181,54,1288
+GPJax,Markdown,20,416,13,1259
+GPJax,TeX,3,51,0,389
+GPJax,TOML,1,35,26,247
+GPJax,CSV,1,0,0,153
+GPJax,CSS,3,30,17,129
+GPJax,JavaScript,2,5,18,73
+GPJax,Text,2,3,0,39
+GPJax,JSON,1,0,0,29
+GPJax,reStructuredText,1,1,4,0
+URANIE,C++,739,36695,45640,211090
+URANIE,HTML,175,7274,10,59027
+URANIE,C/C++ Header,613,11094,38182,31404
+URANIE,C,103,2761,8530,17355
+URANIE,CMake,108,2304,2852,6810
+URANIE,Python,180,1782,2008,6158
+URANIE,CSV,2,0,0,5418
+URANIE,diff,6,741,2830,3649
+URANIE,XML,26,12,0,1381
+URANIE,CUDA,2,215,239,985
+URANIE,Fortran 77,14,68,509,777
+URANIE,CSS,4,78,36,703
+URANIE,Markdown,1,98,0,526
+URANIE,JavaScript,3,80,35,430
+URANIE,XSLT,3,71,39,390
+URANIE,Text,3,67,0,298
+URANIE,Bourne Again Shell,4,26,14,105
+URANIE,C Shell,2,25,15,85
+URANIE,DTD,1,9,25,77
+URANIE,SWIG,2,17,36,46
+URANIE,JSON,1,3,0,28
+URANIE,make,1,10,3,19
+URANIE,PowerShell,2,0,0,4
