@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openturns-study version="102601" manager="XMLH5StorageManager" persalys_version="20.0">
+  <object class="PersistentCollection&lt;DesignOfExperiment&gt;" id="3" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="PersistentCollection&lt;DataFieldModel&gt;" id="4" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="10" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/10</string>
+  </object>
+  <object class="MatrixImplementation" id="11" size="1" nbRows_="1" nbColumns_="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/11</string>
+  </object>
+  <object class="Point" id="12" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="13" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="15" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/15</string>
+  </object>
+  <object class="Point" id="16" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/16</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="17" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/17</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="18" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/18</string>
+  </object>
+  <object class="Interval" id="14" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="15"/>
+    <object member="upperBound_" id="16"/>
+    <object member="finiteLowerBound_" id="17"/>
+    <object member="finiteUpperBound_" id="18"/>
+  </object>
+  <object class="Description" id="19" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">X0</string>
+  </object>
+  <object class="Uniform" id="9" name="Uniform" integrationNodesNumber_="255" isAlreadyComputedMean_="true" isAlreadyComputedCovariance_="false" isAlreadyComputedGaussNodesAndWeights_="false" dimension_="1" weight_="1" isCopula_="false" isParallel_="true" supportEpsilon_="1e-14" a_="2.5" b_="2.6000000000000001" StudyVisible="false" StudyLabel="">
+    <object member="mean_" id="10"/>
+    <object member="covariance_" id="11"/>
+    <object member="gaussNodes_" id="12"/>
+    <object member="gaussWeights_" id="13"/>
+    <object member="range_" id="14"/>
+    <object member="description_" id="19"/>
+  </object>
+  <object class="Input" id="8" name="L" value_="2.5499999999999998" description_="Beam length (m)" unit_="" isStochastic_="true" distributionParametersType_="0" finiteDifferenceStep_="9.9999999999999995e-08" StudyVisible="false" StudyLabel="">
+    <object member="distribution_" id="9"/>
+  </object>
+  <object class="Point" id="22" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/22</string>
+  </object>
+  <object class="MatrixImplementation" id="23" size="1" nbRows_="1" nbColumns_="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/23</string>
+  </object>
+  <object class="Point" id="24" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="25" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="27" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/27</string>
+  </object>
+  <object class="Point" id="28" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/28</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="29" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/29</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="30" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/30</string>
+  </object>
+  <object class="Interval" id="26" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="27"/>
+    <object member="upperBound_" id="28"/>
+    <object member="finiteLowerBound_" id="29"/>
+    <object member="finiteUpperBound_" id="30"/>
+  </object>
+  <object class="Description" id="31" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">X0</string>
+  </object>
+  <object class="LogNormal" id="21" name="LogNormal" integrationNodesNumber_="255" isAlreadyComputedMean_="true" isAlreadyComputedCovariance_="false" isAlreadyComputedGaussNodesAndWeights_="false" dimension_="1" weight_="1" isCopula_="false" isParallel_="true" supportEpsilon_="1e-14" muLog_="5.6988073092296165" sigmaLog_="0.099751345119592702" gamma_="0" normalizationFactor_="3.9993674263052537" H_="123.98588231298574" StudyVisible="false" StudyLabel="">
+    <object member="mean_" id="22"/>
+    <object member="covariance_" id="23"/>
+    <object member="gaussNodes_" id="24"/>
+    <object member="gaussWeights_" id="25"/>
+    <object member="range_" id="26"/>
+    <object member="description_" id="31"/>
+  </object>
+  <object class="Input" id="20" name="F" value_="300" description_="Point load (N)" unit_="" isStochastic_="true" distributionParametersType_="1" finiteDifferenceStep_="9.9999999999999995e-08" StudyVisible="false" StudyLabel="">
+    <object member="distribution_" id="21"/>
+  </object>
+  <object class="Point" id="34" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/34</string>
+  </object>
+  <object class="MatrixImplementation" id="35" size="1" nbRows_="1" nbColumns_="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/35</string>
+  </object>
+  <object class="Point" id="36" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="37" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="39" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/39</string>
+  </object>
+  <object class="Point" id="40" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/40</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="41" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/41</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="42" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/42</string>
+  </object>
+  <object class="Interval" id="38" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="39"/>
+    <object member="upperBound_" id="40"/>
+    <object member="finiteLowerBound_" id="41"/>
+    <object member="finiteUpperBound_" id="42"/>
+  </object>
+  <object class="Description" id="43" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">X0</string>
+  </object>
+  <object class="Beta" id="33" name="Beta" integrationNodesNumber_="255" isAlreadyComputedMean_="true" isAlreadyComputedCovariance_="false" isAlreadyComputedGaussNodesAndWeights_="false" dimension_="1" weight_="1" isCopula_="false" isParallel_="true" supportEpsilon_="1e-14" alpha_="0.90000000000000002" beta_="3.5" a_="6500000000" b_="75000000000" normalizationFactor_="-83.781584930186582" StudyVisible="false" StudyLabel="">
+    <object member="mean_" id="34"/>
+    <object member="covariance_" id="35"/>
+    <object member="gaussNodes_" id="36"/>
+    <object member="gaussWeights_" id="37"/>
+    <object member="range_" id="38"/>
+    <object member="description_" id="43"/>
+  </object>
+  <object class="Input" id="32" name="E" value_="70000000000" description_="Young's modulus (Pa)" unit_="" isStochastic_="true" distributionParametersType_="0" finiteDifferenceStep_="9.9999999999999995e-08" StudyVisible="false" StudyLabel="">
+    <object member="distribution_" id="33"/>
+  </object>
+  <object class="Point" id="46" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/46</string>
+  </object>
+  <object class="MatrixImplementation" id="47" size="1" nbRows_="1" nbColumns_="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/47</string>
+  </object>
+  <object class="Point" id="48" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="49" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="51" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/51</string>
+  </object>
+  <object class="Point" id="52" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/52</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="53" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/53</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="54" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/54</string>
+  </object>
+  <object class="Interval" id="50" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="51"/>
+    <object member="upperBound_" id="52"/>
+    <object member="finiteLowerBound_" id="53"/>
+    <object member="finiteUpperBound_" id="54"/>
+  </object>
+  <object class="Description" id="55" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">X0</string>
+  </object>
+  <object class="Beta" id="45" name="Beta" integrationNodesNumber_="255" isAlreadyComputedMean_="true" isAlreadyComputedCovariance_="false" isAlreadyComputedGaussNodesAndWeights_="false" dimension_="1" weight_="1" isCopula_="false" isParallel_="true" supportEpsilon_="1e-14" alpha_="2.5" beta_="4" a_="1.3e-07" b_="1.6999999999999999e-07" normalizationFactor_="97.275244825734788" StudyVisible="false" StudyLabel="">
+    <object member="mean_" id="46"/>
+    <object member="covariance_" id="47"/>
+    <object member="gaussNodes_" id="48"/>
+    <object member="gaussWeights_" id="49"/>
+    <object member="range_" id="50"/>
+    <object member="description_" id="55"/>
+  </object>
+  <object class="Input" id="44" name="I" value_="1.4999999999999999e-07" description_="Moment of inertia (m4)" unit_="" isStochastic_="true" distributionParametersType_="0" finiteDifferenceStep_="9.9999999999999995e-08" StudyVisible="false" StudyLabel="">
+    <object member="distribution_" id="45"/>
+  </object>
+  <object class="PersistentCollection&lt;Input&gt;" id="7" size="4" StudyVisible="false" StudyLabel="">
+    <object index="0" id="8"/>
+    <object index="1" id="20"/>
+    <object index="2" id="32"/>
+    <object index="3" id="44"/>
+  </object>
+  <object class="Output" id="57" name="Y" value_="0" description_="" unit_="" isSelected_="true" hasBeenComputed_="false" StudyVisible="false" StudyLabel=""/>
+  <object class="PersistentCollection&lt;Output&gt;" id="56" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="57"/>
+  </object>
+  <object class="Point" id="59" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/59</string>
+  </object>
+  <object class="MatrixImplementation" id="60" size="1" nbRows_="1" nbColumns_="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/60</string>
+  </object>
+  <object class="Point" id="61" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="62" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="64" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/64</string>
+  </object>
+  <object class="Point" id="65" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/65</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="66" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/66</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="67" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/67</string>
+  </object>
+  <object class="Interval" id="63" dimension_="4" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="64"/>
+    <object member="upperBound_" id="65"/>
+    <object member="finiteLowerBound_" id="66"/>
+    <object member="finiteUpperBound_" id="67"/>
+  </object>
+  <object class="Description" id="68" size="4" StudyVisible="false" StudyLabel="">
+    <string index="0">L</string>
+    <string index="1">F</string>
+    <string index="2">E</string>
+    <string index="3">I</string>
+  </object>
+  <object class="Point" id="71" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/71</string>
+  </object>
+  <object class="MatrixImplementation" id="72" size="1" nbRows_="1" nbColumns_="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/72</string>
+  </object>
+  <object class="Point" id="73" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="74" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="76" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/76</string>
+  </object>
+  <object class="Point" id="77" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/77</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="78" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/78</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="79" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/79</string>
+  </object>
+  <object class="Interval" id="75" dimension_="4" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="76"/>
+    <object member="upperBound_" id="77"/>
+    <object member="finiteLowerBound_" id="78"/>
+    <object member="finiteUpperBound_" id="79"/>
+  </object>
+  <object class="Description" id="80" size="4" StudyVisible="false" StudyLabel="">
+    <string index="0">L</string>
+    <string index="1">F</string>
+    <string index="2">E</string>
+    <string index="3">I</string>
+  </object>
+  <object class="IndependentCopula" id="70" name="IndependentCopula" integrationNodesNumber_="255" isAlreadyComputedMean_="false" isAlreadyComputedCovariance_="false" isAlreadyComputedGaussNodesAndWeights_="false" dimension_="4" weight_="1" isCopula_="true" isParallel_="true" supportEpsilon_="1e-14" StudyVisible="false" StudyLabel="">
+    <object member="mean_" id="71"/>
+    <object member="covariance_" id="72"/>
+    <object member="gaussNodes_" id="73"/>
+    <object member="gaussWeights_" id="74"/>
+    <object member="range_" id="75"/>
+    <object member="description_" id="80"/>
+  </object>
+  <object class="PersistentCollection&lt;Distribution&gt;" id="69" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="70"/>
+  </object>
+  <object class="BlockIndependentCopula" id="58" name="BlockIndependentCopula" integrationNodesNumber_="255" isAlreadyComputedMean_="false" isAlreadyComputedCovariance_="false" isAlreadyComputedGaussNodesAndWeights_="false" dimension_="4" weight_="1" isCopula_="true" isParallel_="true" supportEpsilon_="1e-14" isIndependent_="true" StudyVisible="false" StudyLabel="">
+    <object member="mean_" id="59"/>
+    <object member="covariance_" id="60"/>
+    <object member="gaussNodes_" id="61"/>
+    <object member="gaussWeights_" id="62"/>
+    <object member="range_" id="63"/>
+    <object member="description_" id="68"/>
+    <object member="copulaCollection_" id="69"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="84" size="10" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/84</string>
+  </object>
+  <object class="Description" id="85" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">t</string>
+  </object>
+  <object class="SampleImplementation" id="83" size_="10" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="84"/>
+    <object member="description_" id="85"/>
+  </object>
+  <object class="Indices" id="87" size="18" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/87</string>
+  </object>
+  <object class="Indices" id="88" size="10" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/88</string>
+  </object>
+  <object class="IndicesCollectionImplementation" id="86" size_="9" StudyVisible="false" StudyLabel="">
+    <object member="values_" id="87"/>
+    <object member="offsets_" id="88"/>
+  </object>
+  <object class="Mesh" id="82" dimension_="1" hasBeenChecked_="false" StudyVisible="false" StudyLabel="">
+    <object member="vertices_" id="83"/>
+    <object member="simplices_" id="86"/>
+  </object>
+  <object class="Variable" id="90" name="t" value_="0" description_="" unit_="" StudyVisible="false" StudyLabel=""/>
+  <object class="PersistentCollection&lt;Variable&gt;" id="89" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="90"/>
+  </object>
+  <object class="Point" id="92" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/92</string>
+  </object>
+  <object class="Point" id="93" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/93</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="94" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/94</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="95" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/95</string>
+  </object>
+  <object class="Interval" id="91" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="92"/>
+    <object member="upperBound_" id="93"/>
+    <object member="finiteLowerBound_" id="94"/>
+    <object member="finiteUpperBound_" id="95"/>
+  </object>
+  <object class="Indices" id="96" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/96</string>
+  </object>
+  <object class="GridMeshModel" id="81" name="meshModel" StudyVisible="false" StudyLabel="">
+    <object member="mesh_" id="82"/>
+    <object member="indexParameters_" id="89"/>
+    <object member="bounds_" id="91"/>
+    <object member="nbNodes_" id="96"/>
+  </object>
+  <object class="Point" id="97" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/97</string>
+  </object>
+  <object class="PythonPhysicalModel" id="6" name="ModèlePython_0" hasMesh_="false" isParallel_="false" evalTime_="0.18799996376037598" processNumber_="1" code_="def _exec(L, F, E, I):&#10;    &quot;&quot;&quot;&#10;    Evaluation function called by Persalys.&#10;    &#10;    Inputs:&#10;        L : Beam length (m)&#10;        F : Point load (N)&#10;        E : Young's modulus (Pa)&#10;        I : Moment of inertia (m4)&#10;        &#10;    Output:&#10;        Y : Beam tip deflection (m)&#10;    &quot;&quot;&quot;&#10;    Y = (F * L**3) / (3.0 * E * I)&#10;    return Y&#10;" StudyVisible="false" StudyLabel="">
+    <object member="inputs_" id="7"/>
+    <object member="outputs_" id="56"/>
+    <object member="blockIndependentCopula_" id="58"/>
+    <object member="meshModel_" id="81"/>
+    <object member="finiteDifferenceSteps_" id="97"/>
+  </object>
+  <object class="PersistentCollection&lt;PhysicalModel&gt;" id="5" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="6"/>
+  </object>
+  <object class="PersistentCollection&lt;LimitState&gt;" id="98" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Description" id="101" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">Y</string>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="103" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Description" id="104" size="4" StudyVisible="false" StudyLabel="">
+    <string index="0">L</string>
+    <string index="1">F</string>
+    <string index="2">E</string>
+    <string index="3">I</string>
+  </object>
+  <object class="SampleImplementation" id="102" size_="0" dimension_="4" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="103"/>
+    <object member="description_" id="104"/>
+  </object>
+  <object class="Description" id="105" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="109" size="12736" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/109</string>
+  </object>
+  <object class="Description" id="110" size="4" StudyVisible="false" StudyLabel="">
+    <string index="0">L</string>
+    <string index="1">F</string>
+    <string index="2">E</string>
+    <string index="3">I</string>
+  </object>
+  <object class="SampleImplementation" id="108" size_="3184" dimension_="4" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="109"/>
+    <object member="description_" id="110"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="112" size="3184" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/112</string>
+  </object>
+  <object class="Description" id="113" size="1" StudyVisible="false" StudyLabel="">
+    <string index="0">Y</string>
+  </object>
+  <object class="SampleImplementation" id="111" size_="3184" dimension_="1" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="112"/>
+    <object member="description_" id="113"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="116" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/116</string>
+  </object>
+  <object class="SampleImplementation" id="115" size_="1" dimension_="4" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="116"/>
+  </object>
+  <object class="PersistentCollection&lt;Sample&gt;" id="114" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="115"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="119" size="4" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/119</string>
+  </object>
+  <object class="SampleImplementation" id="118" size_="1" dimension_="4" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="119"/>
+  </object>
+  <object class="PersistentCollection&lt;Sample&gt;" id="117" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="118"/>
+  </object>
+  <object class="DataModel" id="107" inputContainsNaN_="false" outputContainsNaN_="false" hasPhysicalModel_="true" type_="1" StudyVisible="false" StudyLabel="">
+    <object member="inputSample_" id="108"/>
+    <object member="outputSample_" id="111"/>
+    <object member="listXMin_" id="114"/>
+    <object member="listXMax_" id="117"/>
+    <object member="physicalModel_" id="6"/>
+  </object>
+  <object class="Point" id="121" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/121</string>
+  </object>
+  <object class="Point" id="122" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/122</string>
+  </object>
+  <object class="Point" id="123" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/123</string>
+  </object>
+  <object class="Point" id="124" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/124</string>
+  </object>
+  <object class="Point" id="125" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/125</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="120" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="121"/>
+    <object index="1" id="122"/>
+    <object index="2" id="123"/>
+    <object index="3" id="124"/>
+    <object index="4" id="125"/>
+  </object>
+  <object class="Point" id="127" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/127</string>
+  </object>
+  <object class="Point" id="128" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/128</string>
+  </object>
+  <object class="Point" id="129" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/129</string>
+  </object>
+  <object class="Point" id="130" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/130</string>
+  </object>
+  <object class="Point" id="131" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/131</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="126" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="127"/>
+    <object index="1" id="128"/>
+    <object index="2" id="129"/>
+    <object index="3" id="130"/>
+    <object index="4" id="131"/>
+  </object>
+  <object class="Point" id="133" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/133</string>
+  </object>
+  <object class="Point" id="134" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/134</string>
+  </object>
+  <object class="Point" id="135" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/135</string>
+  </object>
+  <object class="Point" id="136" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/136</string>
+  </object>
+  <object class="Point" id="137" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/137</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="132" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="133"/>
+    <object index="1" id="134"/>
+    <object index="2" id="135"/>
+    <object index="3" id="136"/>
+    <object index="4" id="137"/>
+  </object>
+  <object class="Point" id="139" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/139</string>
+  </object>
+  <object class="Point" id="140" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/140</string>
+  </object>
+  <object class="Point" id="141" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/141</string>
+  </object>
+  <object class="Point" id="142" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/142</string>
+  </object>
+  <object class="Point" id="143" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/143</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="138" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="139"/>
+    <object index="1" id="140"/>
+    <object index="2" id="141"/>
+    <object index="3" id="142"/>
+    <object index="4" id="143"/>
+  </object>
+  <object class="Point" id="145" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/145</string>
+  </object>
+  <object class="Point" id="146" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/146</string>
+  </object>
+  <object class="Point" id="147" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/147</string>
+  </object>
+  <object class="Point" id="148" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/148</string>
+  </object>
+  <object class="Point" id="149" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/149</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="144" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="145"/>
+    <object index="1" id="146"/>
+    <object index="2" id="147"/>
+    <object index="3" id="148"/>
+    <object index="4" id="149"/>
+  </object>
+  <object class="Point" id="151" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/151</string>
+  </object>
+  <object class="Point" id="152" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/152</string>
+  </object>
+  <object class="Point" id="153" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/153</string>
+  </object>
+  <object class="Point" id="154" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/154</string>
+  </object>
+  <object class="Point" id="155" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/155</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="150" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="151"/>
+    <object index="1" id="152"/>
+    <object index="2" id="153"/>
+    <object index="3" id="154"/>
+    <object index="4" id="155"/>
+  </object>
+  <object class="Point" id="157" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/157</string>
+  </object>
+  <object class="Point" id="158" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/158</string>
+  </object>
+  <object class="Point" id="159" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/159</string>
+  </object>
+  <object class="Point" id="160" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/160</string>
+  </object>
+  <object class="Point" id="161" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/161</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="156" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="157"/>
+    <object index="1" id="158"/>
+    <object index="2" id="159"/>
+    <object index="3" id="160"/>
+    <object index="4" id="161"/>
+  </object>
+  <object class="Point" id="163" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/163</string>
+  </object>
+  <object class="Point" id="164" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/164</string>
+  </object>
+  <object class="Point" id="165" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/165</string>
+  </object>
+  <object class="Point" id="166" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/166</string>
+  </object>
+  <object class="Point" id="167" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/167</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="162" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="163"/>
+    <object index="1" id="164"/>
+    <object index="2" id="165"/>
+    <object index="3" id="166"/>
+    <object index="4" id="167"/>
+  </object>
+  <object class="Point" id="169" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/169</string>
+  </object>
+  <object class="Point" id="170" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/170</string>
+  </object>
+  <object class="Point" id="171" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/171</string>
+  </object>
+  <object class="Point" id="172" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/172</string>
+  </object>
+  <object class="Point" id="173" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/173</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="168" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="169"/>
+    <object index="1" id="170"/>
+    <object index="2" id="171"/>
+    <object index="3" id="172"/>
+    <object index="4" id="173"/>
+  </object>
+  <object class="Point" id="175" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/175</string>
+  </object>
+  <object class="Point" id="176" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/176</string>
+  </object>
+  <object class="Point" id="177" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/177</string>
+  </object>
+  <object class="Point" id="178" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/178</string>
+  </object>
+  <object class="Point" id="179" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/179</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="174" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="175"/>
+    <object index="1" id="176"/>
+    <object index="2" id="177"/>
+    <object index="3" id="178"/>
+    <object index="4" id="179"/>
+  </object>
+  <object class="Point" id="181" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/181</string>
+  </object>
+  <object class="Point" id="182" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/182</string>
+  </object>
+  <object class="Point" id="183" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/183</string>
+  </object>
+  <object class="Point" id="184" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/184</string>
+  </object>
+  <object class="Point" id="185" size="1" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/185</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="180" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="181"/>
+    <object index="1" id="182"/>
+    <object index="2" id="183"/>
+    <object index="3" id="184"/>
+    <object index="4" id="185"/>
+  </object>
+  <object class="Point" id="187" size="5" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/187</string>
+  </object>
+  <object class="Point" id="188" size="5" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/188</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="189" size="5" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/189</string>
+  </object>
+  <object class="PersistentCollection&lt;UnsignedInteger&gt;" id="190" size="5" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/190</string>
+  </object>
+  <object class="Interval" id="186" dimension_="5" StudyVisible="false" StudyLabel="">
+    <object member="lowerBound_" id="187"/>
+    <object member="upperBound_" id="188"/>
+    <object member="finiteLowerBound_" id="189"/>
+    <object member="finiteUpperBound_" id="190"/>
+  </object>
+  <object class="Point" id="192" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="193" size="20" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/193</string>
+  </object>
+  <object class="Point" id="194" size="52" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/194</string>
+  </object>
+  <object class="Point" id="195" size="11" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/195</string>
+  </object>
+  <object class="Point" id="196" size="7" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/196</string>
+  </object>
+  <object class="PersistentCollection&lt;Point&gt;" id="191" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="192"/>
+    <object index="1" id="193"/>
+    <object index="2" id="194"/>
+    <object index="3" id="195"/>
+    <object index="4" id="196"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="199" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/199</string>
+  </object>
+  <object class="SampleImplementation" id="198" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="199"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="201" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/201</string>
+  </object>
+  <object class="SampleImplementation" id="200" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="201"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="203" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/203</string>
+  </object>
+  <object class="SampleImplementation" id="202" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="203"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="205" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/205</string>
+  </object>
+  <object class="SampleImplementation" id="204" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="205"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="207" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/207</string>
+  </object>
+  <object class="SampleImplementation" id="206" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="207"/>
+  </object>
+  <object class="PersistentCollection&lt;Sample&gt;" id="197" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="198"/>
+    <object index="1" id="200"/>
+    <object index="2" id="202"/>
+    <object index="3" id="204"/>
+    <object index="4" id="206"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="210" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/210</string>
+  </object>
+  <object class="SampleImplementation" id="209" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="210"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="212" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/212</string>
+  </object>
+  <object class="SampleImplementation" id="211" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="212"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="214" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/214</string>
+  </object>
+  <object class="SampleImplementation" id="213" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="214"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="216" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/216</string>
+  </object>
+  <object class="SampleImplementation" id="215" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="216"/>
+  </object>
+  <object class="PersistentCollection&lt;Scalar&gt;" id="218" size="258" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/218</string>
+  </object>
+  <object class="SampleImplementation" id="217" size_="129" dimension_="2" StudyVisible="false" StudyLabel="">
+    <object member="data_" id="218"/>
+  </object>
+  <object class="PersistentCollection&lt;Sample&gt;" id="208" size="5" StudyVisible="false" StudyLabel="">
+    <object index="0" id="209"/>
+    <object index="1" id="211"/>
+    <object index="2" id="213"/>
+    <object index="3" id="215"/>
+    <object index="4" id="217"/>
+  </object>
+  <object class="PersistentCollection&lt;Sample&gt;" id="219" size="0" StudyVisible="false" StudyLabel=""/>
+  <object class="Point" id="220" size="5" StudyVisible="false" StudyLabel="">
+    <string>exemple4_persalys_study.h5:/220</string>
+  </object>
+  <object class="DataAnalysisResult" id="106" elapsedTime_="0.18799996376037598" allowFailedEvaluations_="false" StudyVisible="false" StudyLabel="">
+    <object member="designOfExperiment_" id="107"/>
+    <object member="min_" id="120"/>
+    <object member="max_" id="126"/>
+    <object member="mean_" id="132"/>
+    <object member="median_" id="138"/>
+    <object member="standardDeviation_" id="144"/>
+    <object member="coefficientOfVariation_" id="150"/>
+    <object member="variance_" id="156"/>
+    <object member="skewness_" id="162"/>
+    <object member="kurtosis_" id="168"/>
+    <object member="firstQuartile_" id="174"/>
+    <object member="thirdQuartile_" id="180"/>
+    <object member="meanConfidenceInterval_" id="186"/>
+    <object member="outliers_" id="191"/>
+    <object member="pdf_" id="197"/>
+    <object member="cdf_" id="208"/>
+    <object member="survFct__" id="219"/>
+    <object member="effectiveSize_" id="220"/>
+    <object member="multiVariateDoE_" id="107"/>
+  </object>
+  <object class="MonteCarloAnalysis" id="100" name="tendanceCentrale_0" errorMessage_="" warningMessage_="" isReliabilityAnalysis_="false" modelHtmlDescription_="&lt;h2&gt;&lt;center&gt;Physical model&lt;/center&gt;&lt;/h2&gt;&lt;h3&gt;Stochastic inputs&lt;/h3&gt;&lt;p&gt;&lt;table style=&quot;width:100%&quot; border=&quot;1&quot; cellpadding=&quot;5&quot;&gt;&lt;tr&gt;  &lt;th&gt;Name&lt;/th&gt;  &lt;th&gt;Description&lt;/th&gt;  &lt;th&gt;Distribution&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;  &lt;td&gt;L&lt;/td&gt;  &lt;td&gt;Beam length (m)&lt;/td&gt;  &lt;td&gt;Uniform(a = 2.5, b = 2.6)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;  &lt;td&gt;F&lt;/td&gt;  &lt;td&gt;Point load (N)&lt;/td&gt;  &lt;td&gt;LogNormal(muLog = 5.69881, sigmaLog = 0.0997513, gamma = 0)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;  &lt;td&gt;E&lt;/td&gt;  &lt;td&gt;Young's modulus (Pa)&lt;/td&gt;  &lt;td&gt;Beta(alpha = 0.9, beta = 3.5, a = 6.5e+09, b = 7.5e+10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;  &lt;td&gt;I&lt;/td&gt;  &lt;td&gt;Moment of inertia (m4)&lt;/td&gt;  &lt;td&gt;Beta(alpha = 2.5, beta = 4, a = 1.3e-07, b = 1.7e-07)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;h3&gt;Outputs&lt;/h3&gt;&lt;p&gt;&lt;table style=&quot;width:100%&quot; border=&quot;1&quot; cellpadding=&quot;5&quot;&gt;&lt;tr&gt;  &lt;th&gt;Name&lt;/th&gt;  &lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;  &lt;td&gt;Y&lt;/td&gt;  &lt;td&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;h3&gt;Python code&lt;/h3&gt;&lt;pre&gt;def _exec(L, F, E, I):&#10;    &amp;quot;&amp;quot;&amp;quot;&#10;    Evaluation function called by Persalys.&#10;    &#10;    Inputs:&#10;        L : Beam length (m)&#10;        F : Point load (N)&#10;        E : Young&amp;#39;s modulus (Pa)&#10;        I : Moment of inertia (m4)&#10;        &#10;    Output:&#10;        Y : Beam tip deflection (m)&#10;    &amp;quot;&amp;quot;&amp;quot;&#10;    Y = (F * L**3) / (3.0 * E * I)&#10;    return Y&#10;&lt;/pre&gt;" blockSize_="8" seed_="0" maximumCalls_="2147483647" maximumCoefficientOfVariation_="0.01" maximumElapsedTime_="60" maximumConfidenceIntervalLength_="-1" isConfidenceIntervalRequired_="true" levelConfidenceInterval_="0.94999999999999996" allowFailedEvaluations_="false" StudyVisible="false" StudyLabel="">
+    <object member="interestVariables_" id="101"/>
+    <object member="physicalModel_" id="6"/>
+    <object member="failedInputSample_" id="102"/>
+    <object member="errorDescription_" id="105"/>
+    <object member="result_" id="106"/>
+  </object>
+  <object class="PersistentCollection&lt;Analysis&gt;" id="99" size="1" StudyVisible="false" StudyLabel="">
+    <object index="0" id="100"/>
+  </object>
+  <object class="StudyImplementation" id="2" name="exemple4_persalys_study" StudyVisible="true" StudyLabel="aStudy">
+    <object member="dataModels_" id="3"/>
+    <object member="dataFieldModels_" id="4"/>
+    <object member="physicalModels_" id="5"/>
+    <object member="limitStates_" id="98"/>
+    <object member="analyses_" id="99"/>
+  </object>
+</openturns-study>
