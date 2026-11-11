@@ -1,12 +1,15 @@
+# %%
 import numpy as np
 from scipy.integrate import solve_ivp
 
+# %%
 # Implémentation du modèle physique pour Persalys (Interface Python)
 
 # Define the ordinary differential equation dy/dt = a*y - b*y^2
 def logistic_rhs(t, y, a, b):
     return a * y[0] - b * (y[0] ** 2)
 
+# %%
 NUMBER_OF_TIME_STEPS = 500
 def _exec(y0, a, b, t0, t_final):
     """
@@ -35,19 +38,21 @@ def _exec(y0, a, b, t0, t_final):
         t_eval=t_eval,
         method='RK45'
     )
-    final_population = sol.t
+    final_population = sol.y[0][-1]
 
     return final_population
 
+# %%
 # Problem parameters
 a = 0.03134
 b = 1.5887e-10
 t0 = 1790.0
 t_final = 2010.0
-y0 = 3.9
+y0 = 3.9e6
 final_population = _exec(y0, a, b, t0, t_final)
 
+# %%
 # Print key population results
-print(f"Population in 1790 (Initial):   {y0:.2f} Million")
+print(f"Population in 1790 (Initial):   {y0/ 1e6:.2f} Million")
 print(f"Population in 2010 (Numerical): {final_population / 1e6:.2f} Million")
 print(f"Theoretical Carrying Capacity:  {(a / b) / 1e6:.2f} Million")
