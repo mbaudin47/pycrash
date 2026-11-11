@@ -3,7 +3,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 # %%
-# Implémentation du modèle physique pour Persalys (Interface Python)
+# Physical model implementation for Persalys (Python Interface)
 
 # Define the ordinary differential equation dy/dt = a*y - b*y^2
 def logistic_rhs(t, y, a, b):
@@ -12,19 +12,25 @@ def logistic_rhs(t, y, a, b):
 # %%
 NUMBER_OF_TIME_STEPS = 500
 def _exec(y0, a, b, t0, t_final):
-    """
-    Fonction d'évaluation appelée par Persalys.
-    
-    Entrées :
-        y0 : Population initiale (en millions)
-        a : Taux de croissance (1/an)
-        b : Coefficient de saturation (1/million)
-        t0 : Année initiale
-        t_final : Année finale
-        
-    Sortie :
-        t_eval : Tableau des années évaluées
-        y_eval : Tableau des populations correspondantes
+    """Evaluation function called by Persalys.
+
+    Parameters
+    ----------
+    y0 : float
+        Initial population (in millions).
+    a : float
+        Growth rate (1/year).
+    b : float
+        Saturation coefficient (1/million).
+    t0 : float
+        Initial year.
+    t_final : float
+        Final year.
+
+    Returns
+    -------
+    final_population : float
+        Computed population at the final year.
     """
     # Time grid for output evaluation
     t_eval = np.linspace(t0, t_final, NUMBER_OF_TIME_STEPS)
@@ -53,6 +59,6 @@ final_population = _exec(y0, a, b, t0, t_final)
 
 # %%
 # Print key population results
-print(f"Population in 1790 (Initial):   {y0/ 1e6:.2f} Million")
+print(f"Population in 1790 (Initial):   {y0 / 1e6:.2f} Million")
 print(f"Population in 2010 (Numerical): {final_population / 1e6:.2f} Million")
 print(f"Theoretical Carrying Capacity:  {(a / b) / 1e6:.2f} Million")
